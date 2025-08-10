@@ -1,0 +1,111 @@
+use std::collections::HashMap;
+
+pub struct Unit {
+    pub name: &'static str,
+    pub conversion_factor: f64,
+    pub base_unit: [i32; 7], // [Length (m), Mass (kg), Time (s), Temperature (K), Electric Current (A), Amount of Substance (mol), Luminous Intensity (cd)]
+}
+
+pub fn unit_map() -> HashMap<&'static str, Unit> {
+    HashMap::from([
+        // ===== Length Units =====
+        ("m", Unit { name: "meter", conversion_factor: 1.0, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+        ("cm", Unit { name: "centimeter", conversion_factor: 1e-2, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+        ("mm", Unit { name: "millimeter", conversion_factor: 1e-3, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+        ("um", Unit { name: "micrometer", conversion_factor: 1e-6, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+        ("nm", Unit { name: "nanometer", conversion_factor: 1e-9, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+        ("km", Unit { name: "kilometer", conversion_factor: 1e3, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+
+        ("mi", Unit { name: "mile", conversion_factor: 1609.344, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+        ("yd", Unit { name: "yard", conversion_factor: 0.9144, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+        ("ft", Unit { name: "foot", conversion_factor: 0.3048, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+        ("in", Unit { name: "inch", conversion_factor: 2.54e-2, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+
+        ("ly", Unit { name: "light year", conversion_factor: 9.4607e15, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+        ("pc", Unit { name: "parsec", conversion_factor: 3.0857e16, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
+
+        // ===== Area Units =====
+        ("m2", Unit { name: "square meter", conversion_factor: 1.0, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
+        ("cm2", Unit { name: "square centimeter", conversion_factor: 1e-4, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
+        ("km2", Unit { name: "square kilometer", conversion_factor: 1e6, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
+        ("ha", Unit { name: "hectare", conversion_factor: 1e4, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
+        ("ac", Unit { name: "acre", conversion_factor: 4046.8564224, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
+
+        // ===== Volume Units =====
+        ("m3", Unit { name: "cubic meter", conversion_factor: 1.0, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
+        ("cm3", Unit { name: "cubic centimeter", conversion_factor: 1e-6, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
+        ("l", Unit { name: "liter", conversion_factor: 1e-3, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
+        ("ml", Unit { name: "milliliter", conversion_factor: 1e-6, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
+        ("gal", Unit { name: "gallon", conversion_factor: 3.785411784, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
+        ("qt", Unit { name: "quart", conversion_factor: 9.4635284e-1, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
+        ("pt", Unit { name: "pint", conversion_factor: 4.7317642e-1, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
+        ("cup", Unit { name: "cup", conversion_factor: 2.3658821e-1, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
+
+        // ===== Velocity Units =====
+        ("m/s", Unit { name: "meter per second", conversion_factor: 1.0, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
+        ("km/h", Unit { name: "kilometer per hour", conversion_factor: 1e3 / 3600.0, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
+        ("mi/h", Unit { name: "mile per hour", conversion_factor: 1609.344 / 3600.0, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
+        ("ft/s", Unit { name: "foot per second", conversion_factor: 0.3048, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
+        ("kn", Unit { name: "knot", conversion_factor: 1852.0 / 3600.0, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
+
+        // ===== Acceleration Units =====
+        ("m/s2", Unit { name: "meter per second squared", conversion_factor: 1.0, base_unit: [1, 0, -2, 0, 0, 0, 0] }),
+        ("km/h2", Unit { name: "kilometer per hour squared", conversion_factor: 1e3 / (3600.0 * 3600.0), base_unit: [1, 0, -2, 0, 0, 0, 0] }),
+        ("ft/s2", Unit { name: "foot per second squared", conversion_factor: 0.3048, base_unit: [1, 0, -2, 0, 0, 0, 0] }),
+
+        // ===== Force Units =====
+        ("N", Unit { name: "newton", conversion_factor: 1.0, base_unit: [1, 1, -2, 0, 0, 0, 0] }),
+        ("kN", Unit { name: "kilonewton", conversion_factor: 1e3, base_unit: [1, 1, -2, 0, 0, 0, 0] }),
+        ("lbf", Unit { name: "pound-force", conversion_factor: 4.4482216152605, base_unit: [1, 1, -2, 0, 0, 0, 0] }),
+
+        // ===== Mass Units =====
+        ("kg", Unit { name: "kilogram", conversion_factor: 1.0, base_unit: [0, 1, 0, 0, 0, 0, 0] }),
+        ("g", Unit { name: "gram", conversion_factor: 1e-3, base_unit: [0, 1, 0, 0, 0, 0, 0] }),
+        ("mg", Unit { name: "milligram", conversion_factor: 1e-6, base_unit: [0, 1, 0, 0, 0, 0, 0] }),
+        ("t", Unit { name: "metric ton", conversion_factor: 1e3, base_unit: [0, 1, 0, 0, 0, 0, 0] }),
+        ("lb", Unit { name: "pound", conversion_factor: 0.45359237, base_unit: [0, 1, 0, 0, 0, 0, 0] }),
+        ("oz", Unit { name: "ounce", conversion_factor: 0.028349523125, base_unit: [0, 1, 0, 0, 0, 0, 0] }),
+
+        // ===== Time Units =====
+        ("ms", Unit { name: "millisecond", conversion_factor: 1e-3, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+        ("s", Unit { name: "second", conversion_factor: 1.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+        ("min", Unit { name: "minute", conversion_factor: 60.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+        ("h", Unit { name: "hour", conversion_factor: 3600.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+        ("d", Unit { name: "day", conversion_factor: 86400.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+        ("wk", Unit { name: "week", conversion_factor: 604800.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+        ("mo", Unit { name: "month", conversion_factor: 2629800.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+        ("yr", Unit { name: "year", conversion_factor: 31536000.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+
+        // ===== Temperature Units =====
+        ("C", Unit { name: "celsius", conversion_factor: 1.0, base_unit: [0, 0, 0, 1, 0, 0, 0] }),
+        ("F", Unit { name: "fahrenheit", conversion_factor: 5.0 / 9.0, base_unit: [0, 0, 0, 1, 0, 0, 0] }), 
+        ("K", Unit { name: "kelvin", conversion_factor: 1.0, base_unit: [0, 0, 0, 1, 0, 0, 0] }),
+
+        // ===== Electric Current Units =====
+        ("A", Unit {
+                    name: "ampere",
+                    conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
+        ("mA", Unit { name: "milliampere", conversion_factor: 1e-3, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
+        ("kA", Unit { name: "kiloampere", conversion_factor: 1e3, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
+        ("MA", Unit { name: "megaampere", conversion_factor: 1e6, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
+
+        // ===== Amount of Substance Units =====
+        ("mol", Unit { name: "mole", conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 0, 1, 0] }),
+        ("kmol", Unit { name: "kilomole", conversion_factor: 1e3, base_unit: [0, 0, 0, 0, 0, 1, 0] }),
+        ("mmol", Unit { name: "millimole", conversion_factor: 1e-3, base_unit: [0, 0, 0, 0, 0, 1, 0] }),
+        ("umol", Unit { name: "micromole", conversion_factor: 1e-6, base_unit: [0, 0, 0, 0, 0, 1, 0] }),
+        ("nmol", Unit { name: "nanomole", conversion_factor: 1e-9, base_unit: [0, 0, 0, 0, 0, 1, 0] }),
+        ("pmol", Unit { name: "picomole", conversion_factor: 1e-12, base_unit: [0, 0, 0, 0, 0, 1, 0] }),
+        ("fmol", Unit { name: "femtomole", conversion_factor: 1e-15, base_unit: [0, 0, 0, 0, 0, 1, 0] }),
+
+        // ===== Luminous Intensity Units =====
+        ("cd", Unit { name: "candela", conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 0, 0, 1] }),
+        ("lm", Unit { name: "lumen", conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 0, 0, 1] }),
+
+        ("lux", Unit { name: "lux", conversion_factor: 1.0, base_unit: [0, 0, -2, 0, 0, 0, 1] }),
+
+        // ===== Angle Units =====
+        ("rad", Unit { name: "radian", conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 0, 0, 0] }),
+        ("deg", Unit { name: "degree", conversion_factor: std::f64::consts::PI / 180.0, base_unit: [0, 0, 0, 0, 0, 0, 0] }),
+    ])
+}

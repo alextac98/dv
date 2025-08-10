@@ -1,0 +1,8 @@
+# Bazel Build Directories
+bazel-bin
+bazel-dv
+bazel-out
+bazel-testlogs
+
+# Rust Build Artifacts
+target

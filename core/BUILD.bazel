@@ -1,0 +1,15 @@
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
+
+package(default_visibility = ["//visibility:public"])
+
+rust_library(
+    name = "dv_rs",
+    srcs = ["src/lib.rs", "src/units.rs"],
+    edition = "2024",
+)
+
+rust_test(
+    name = "integration_tests",
+    srcs = ["tests/version_test.rs", "tests/integration_tests.rs"],
+    deps = [":dv_rs"],
+)

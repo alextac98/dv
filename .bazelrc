@@ -1,0 +1,40 @@
+###############################################################################
+# Bazel configuration file
+###############################################################################
+
+# Enable Bzlmod (new module system)
+common --enable_bzlmod
+
+# # C++ configuration
+# build --cxxopt=-std=c++17
+# build --host_cxxopt=-std=c++17
+
+# # Rust configuration
+# build --@rules_rust//:rustfmt.toml=//:.rustfmt.toml
+
+# # Enable persistent workers for faster builds
+# build --worker_sandboxing=false
+
+# # Output more detailed error messages
+# build --verbose_failures
+
+# # Show test output
+# test --test_output=errors
+
+# # Build optimizations
+# build --compilation_mode=opt
+
+# # Platform-specific configurations
+# build:macos --apple_platform_type=macos
+# build:linux --platforms=//tools/platforms:linux
+
+# # Development mode (faster builds, less optimization)
+# build:dev --compilation_mode=fastbuild
+# build:dev --strip=never
+
+# # Release mode (full optimization)
+# build:release --compilation_mode=opt
+# build:release --strip=always
+
+# # Test configuration
+# test --test_env=RUST_BACKTRACE=1

@@ -1,0 +1,10 @@
+[package]
+name = "dv_rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "dv_rs"
+path = "src/lib.rs"
+
+[dependencies]
