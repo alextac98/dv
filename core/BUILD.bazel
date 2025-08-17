@@ -9,7 +9,19 @@ rust_library(
 )
 
 rust_test(
+    name = "unit_tests",
+    srcs = [
+        "src/lib.rs",
+        "src/units.rs"
+    ],
+    deps = [":dv_rs"],
+)
+
+rust_test(
     name = "integration_tests",
-    srcs = ["tests/version_test.rs", "tests/integration_tests.rs"],
+    srcs = [
+        "tests/version_test.rs",
+        "tests/integration_tests.rs"
+    ],
     deps = [":dv_rs"],
 )

@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
 pub struct Unit {
-    pub name: &'static str,
+    #[allow(dead_code)]
+    pub name: &'static str,     // Unused, kept for documentation and future extensibility
     pub conversion_factor: f64,
-    pub base_unit: [i32; 7], // [Length (m), Mass (kg), Time (s), Temperature (K), Electric Current (A), Amount of Substance (mol), Luminous Intensity (cd)]
+    pub base_unit: [i32; 7],    // [Length (m), Mass (kg), Time (s), Temperature (K), Electric Current (A), Amount of Substance (mol), Luminous Intensity (cd)]
 }
 
 pub fn unit_map() -> HashMap<&'static str, Unit> {
@@ -25,15 +26,10 @@ pub fn unit_map() -> HashMap<&'static str, Unit> {
         ("pc", Unit { name: "parsec", conversion_factor: 3.0857e16, base_unit: [1, 0, 0, 0, 0, 0, 0] }),
 
         // ===== Area Units =====
-        ("m2", Unit { name: "square meter", conversion_factor: 1.0, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
-        ("cm2", Unit { name: "square centimeter", conversion_factor: 1e-4, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
-        ("km2", Unit { name: "square kilometer", conversion_factor: 1e6, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
         ("ha", Unit { name: "hectare", conversion_factor: 1e4, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
         ("ac", Unit { name: "acre", conversion_factor: 4046.8564224, base_unit: [2, 0, 0, 0, 0, 0, 0] }),
 
         // ===== Volume Units =====
-        ("m3", Unit { name: "cubic meter", conversion_factor: 1.0, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
-        ("cm3", Unit { name: "cubic centimeter", conversion_factor: 1e-6, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
         ("l", Unit { name: "liter", conversion_factor: 1e-3, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
         ("ml", Unit { name: "milliliter", conversion_factor: 1e-6, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
         ("gal", Unit { name: "gallon", conversion_factor: 3.785411784, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
@@ -42,16 +38,7 @@ pub fn unit_map() -> HashMap<&'static str, Unit> {
         ("cup", Unit { name: "cup", conversion_factor: 2.3658821e-1, base_unit: [3, 0, 0, 0, 0, 0, 0] }),
 
         // ===== Velocity Units =====
-        ("m/s", Unit { name: "meter per second", conversion_factor: 1.0, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
-        ("km/h", Unit { name: "kilometer per hour", conversion_factor: 1e3 / 3600.0, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
-        ("mi/h", Unit { name: "mile per hour", conversion_factor: 1609.344 / 3600.0, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
-        ("ft/s", Unit { name: "foot per second", conversion_factor: 0.3048, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
         ("kn", Unit { name: "knot", conversion_factor: 1852.0 / 3600.0, base_unit: [1, 0, -1, 0, 0, 0, 0] }),
-
-        // ===== Acceleration Units =====
-        ("m/s2", Unit { name: "meter per second squared", conversion_factor: 1.0, base_unit: [1, 0, -2, 0, 0, 0, 0] }),
-        ("km/h2", Unit { name: "kilometer per hour squared", conversion_factor: 1e3 / (3600.0 * 3600.0), base_unit: [1, 0, -2, 0, 0, 0, 0] }),
-        ("ft/s2", Unit { name: "foot per second squared", conversion_factor: 0.3048, base_unit: [1, 0, -2, 0, 0, 0, 0] }),
 
         // ===== Force Units =====
         ("N", Unit { name: "newton", conversion_factor: 1.0, base_unit: [1, 1, -2, 0, 0, 0, 0] }),
@@ -88,6 +75,21 @@ pub fn unit_map() -> HashMap<&'static str, Unit> {
         ("mA", Unit { name: "milliampere", conversion_factor: 1e-3, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
         ("kA", Unit { name: "kiloampere", conversion_factor: 1e3, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
         ("MA", Unit { name: "megaampere", conversion_factor: 1e6, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
+
+        // ===== Energy Units =====
+        ("ev", Unit { name: "electronvolt", conversion_factor: 1.602176634e-19, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("mJ", Unit { name: "millijoule", conversion_factor: 1e-3, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("J", Unit { name: "joule", conversion_factor: 1.0, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("kJ", Unit { name: "kilojoule", conversion_factor: 1e3, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("MJ", Unit { name: "megajoule", conversion_factor: 1e6, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("GJ", Unit { name: "gigajoule", conversion_factor: 1e9, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("Tj", Unit { name: "terajoule", conversion_factor: 1e12, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("cal", Unit { name: "calorie", conversion_factor: 4.184, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("kcal", Unit { name: "kilocalorie", conversion_factor: 4.184e3, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("Wh", Unit { name: "watt-hour", conversion_factor: 3600.0, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("kWh", Unit { name: "kilowatt-hour", conversion_factor: 3.6e6, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("BTU", Unit { name: "British thermal unit", conversion_factor: 1055.05585, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+        ("erg", Unit { name: "erg", conversion_factor: 1e-7, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
 
         // ===== Amount of Substance Units =====
         ("mol", Unit { name: "mole", conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 0, 1, 0] }),
