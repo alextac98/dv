@@ -16,9 +16,9 @@ impl DimensionalVariable {
     /// Creates a new DimensionalVariable with the given value and unit.
     ///
     /// Rules for writing the unit string:
-    /// - Use a single `/` as a delimeter between the numerator and denominator.
-    /// - Use `-` as a delimeter between individual units
-    /// - Exponents can be represented either by using `^` to indicate exponent (ex. `m^2`) or without the delimeter (ex. `m2`)
+    /// - Use a single `/` as a delimiter between the numerator and denominator.
+    /// - Use `-` as a delimiter between individual units
+    /// - Exponents can be represented either by using `^` to indicate exponent (ex. `m^2`) or without the delimiter (ex. `m2`)
     /// - Inverses can be represented either by negative exponents or in the denominator (ex. `m^-2` or `1/m^2`)
     pub fn new(value: f64, unit_str: &str) -> Result<Self, String> {
         // Fetch the unit details from the unit map
@@ -32,10 +32,26 @@ impl DimensionalVariable {
         });
     }
 
+    /// Returns the value of this DimensionalVariable.
     pub fn value(&self) -> f64 {
         self.value
     }
 
+    /// Converts the value of this DimensionalVariable to the specified unit.
+    pub fn value_in(&self, unit_str: &str) -> Result<f64, String> {
+
+        let (unit, conversion_factor) = unit_str_to_base_unit(unit_str)
+            .map_err(|e| format!("Failed to parse unit '{}': {}", unit_str, e))?;
+
+        // Check if the units are compatible
+        if self.unit != unit {
+            return Err(format!("Incompatible unit conversion to: {}", unit_str));
+        }
+        
+        return Ok(self.value / conversion_factor);
+    }
+
+    /// Returns the base unit array of this DimensionalVariable.
     pub fn unit(&self) -> [i32; 7] {
         self.unit
     }
@@ -87,7 +103,6 @@ fn unit_str_to_base_unit(units_str: &str) -> Result<([i32; 7], f64), String> {
             let unit = unit_map.get(base)
                 .ok_or_else(|| format!("Unknown unit: {}", base))?; 
 
-            // TODO: Make this more efficient by using a mathematical operation instead of a loop
             for j in 0..7 {
                 base_unit[j] += unit.base_unit[j] * power * denominator_multiplier;
             }
@@ -140,7 +155,7 @@ fn read_unit_power(unit: &str) -> Result<(&str, i32), String> {
     if base_end > 0 && bytes[base_end - 1] == b'^' {
         base_end -= 1;
     }
-    let base = &u[..base_end].trim();
+    let base = u[..base_end].trim();
     if base.is_empty() {
         return Err(format!("Missing unit symbol before exponent in \"{}\"", u));
     }
