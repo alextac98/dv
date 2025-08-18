@@ -59,7 +59,6 @@
     "https://bcr.bazel.build/modules/protobuf/27.0/MODULE.bazel": "7873b60be88844a0a1d8f80b9d5d20cfbd8495a689b8763e76c6372998d3f64c",
     "https://bcr.bazel.build/modules/protobuf/27.1/MODULE.bazel": "703a7b614728bb06647f965264967a8ef1c39e09e8f167b3ca0bb1fd80449c0d",
     "https://bcr.bazel.build/modules/protobuf/29.0-rc2/MODULE.bazel": "6241d35983510143049943fc0d57937937122baf1b287862f9dc8590fc4c37df",
-    "https://bcr.bazel.build/modules/protobuf/29.0-rc3/MODULE.bazel": "33c2dfa286578573afc55a7acaea3cada4122b9631007c594bf0729f41c8de92",
     "https://bcr.bazel.build/modules/protobuf/29.0/MODULE.bazel": "319dc8bf4c679ff87e71b1ccfb5a6e90a6dbc4693501d471f48662ac46d04e4e",
     "https://bcr.bazel.build/modules/protobuf/29.0/source.json": "b857f93c796750eef95f0d61ee378f3420d00ee1dd38627b27193aa482f4f981",
     "https://bcr.bazel.build/modules/protobuf/3.19.0/MODULE.bazel": "6b5fbb433f760a99a22b18b6850ed5784ef0e9928a72668b66e4d7ccd47db9b0",
@@ -75,7 +74,6 @@
     "https://bcr.bazel.build/modules/rules_cc/0.0.14/MODULE.bazel": "5e343a3aac88b8d7af3b1b6d2093b55c347b8eefc2e7d1442f7a02dc8fea48ac",
     "https://bcr.bazel.build/modules/rules_cc/0.0.15/MODULE.bazel": "6704c35f7b4a72502ee81f61bf88706b54f06b3cbe5558ac17e2e14666cd5dcc",
     "https://bcr.bazel.build/modules/rules_cc/0.0.16/MODULE.bazel": "7661303b8fc1b4d7f532e54e9d6565771fea666fbdf839e0a86affcd02defe87",
-    "https://bcr.bazel.build/modules/rules_cc/0.0.17/MODULE.bazel": "2ae1d8f4238ec67d7185d8861cb0a2cdf4bc608697c331b95bf990e69b62e64a",
     "https://bcr.bazel.build/modules/rules_cc/0.0.2/MODULE.bazel": "6915987c90970493ab97393024c156ea8fb9f3bea953b2f3ec05c34f19b5695c",
     "https://bcr.bazel.build/modules/rules_cc/0.0.6/MODULE.bazel": "abf360251023dfe3efcef65ab9d56beefa8394d4176dd29529750e1c57eaa33f",
     "https://bcr.bazel.build/modules/rules_cc/0.0.8/MODULE.bazel": "964c85c82cfeb6f3855e6a07054fdb159aced38e99a5eecf7bce9d53990afa3e",
@@ -97,8 +95,6 @@
     "https://bcr.bazel.build/modules/rules_java/7.6.1/MODULE.bazel": "2f14b7e8a1aa2f67ae92bc69d1ec0fa8d9f827c4e17ff5e5f02e91caa3b2d0fe",
     "https://bcr.bazel.build/modules/rules_java/8.12.0/MODULE.bazel": "8e6590b961f2defdfc2811c089c75716cb2f06c8a4edeb9a8d85eaa64ee2a761",
     "https://bcr.bazel.build/modules/rules_java/8.12.0/source.json": "cbd5d55d9d38d4008a7d00bee5b5a5a4b6031fcd4a56515c9accbcd42c7be2ba",
-    "https://bcr.bazel.build/modules/rules_java/8.3.2/MODULE.bazel": "7336d5511ad5af0b8615fdc7477535a2e4e723a357b6713af439fe8cf0195017",
-    "https://bcr.bazel.build/modules/rules_java/8.5.1/MODULE.bazel": "d8a9e38cc5228881f7055a6079f6f7821a073df3744d441978e7a43e20226939",
     "https://bcr.bazel.build/modules/rules_jvm_external/4.4.2/MODULE.bazel": "a56b85e418c83eb1839819f0b515c431010160383306d13ec21959ac412d2fe7",
     "https://bcr.bazel.build/modules/rules_jvm_external/5.1/MODULE.bazel": "33f6f999e03183f7d088c9be518a63467dfd0be94a11d0055fe2d210f89aa909",
     "https://bcr.bazel.build/modules/rules_jvm_external/5.2/MODULE.bazel": "d9351ba35217ad0de03816ef3ed63f89d411349353077348a45348b096615036",
@@ -128,9 +124,7 @@
     "https://bcr.bazel.build/modules/rules_python/0.31.0/MODULE.bazel": "93a43dc47ee570e6ec9f5779b2e64c1476a6ce921c48cc9a1678a91dd5f8fd58",
     "https://bcr.bazel.build/modules/rules_python/0.4.0/MODULE.bazel": "9208ee05fd48bf09ac60ed269791cf17fb343db56c8226a720fbb1cdf467166c",
     "https://bcr.bazel.build/modules/rules_python/0.40.0/MODULE.bazel": "9d1a3cd88ed7d8e39583d9ffe56ae8a244f67783ae89b60caafc9f5cf318ada7",
-    "https://bcr.bazel.build/modules/rules_python/1.0.0/MODULE.bazel": "898a3d999c22caa585eb062b600f88654bf92efb204fa346fb55f6f8edffca43",
-    "https://bcr.bazel.build/modules/rules_python/1.0.0/source.json": "b0162a65c6312e45e7912e39abd1a7f8856c2c7e41ecc9b6dc688a6f6400a917",
-    "https://bcr.bazel.build/modules/rules_rust/0.57.1/MODULE.bazel": "2c9a54ba2ca856b97dc24f58089baf66e9b89ea1f5ead0f9fc36f7352e4eef03",
+    "https://bcr.bazel.build/modules/rules_python/0.40.0/source.json": "939d4bd2e3110f27bfb360292986bb79fd8dcefb874358ccd6cdaa7bda029320",
     "https://bcr.bazel.build/modules/rules_rust/0.63.0/MODULE.bazel": "4144e1606661c7168d23e8b4e7c5f6fb28ef519d9d5d63e0bd789d1b2a4611f8",
     "https://bcr.bazel.build/modules/rules_rust/0.63.0/source.json": "638d4731ad05d31835ba45cffc06e8dc1cca01692a681daf831378cf952ee7e6",
     "https://bcr.bazel.build/modules/rules_shell/0.2.0/MODULE.bazel": "fda8a652ab3c7d8fee214de05e7a9916d8b28082234e8d2c0094505c5268ed3c",
@@ -141,8 +135,7 @@
     "https://bcr.bazel.build/modules/stardoc/0.5.6/MODULE.bazel": "c43dabc564990eeab55e25ed61c07a1aadafe9ece96a4efabb3f8bf9063b71ef",
     "https://bcr.bazel.build/modules/stardoc/0.7.0/MODULE.bazel": "05e3d6d30c099b6770e97da986c53bd31844d7f13d41412480ea265ac9e8079c",
     "https://bcr.bazel.build/modules/stardoc/0.7.1/MODULE.bazel": "3548faea4ee5dda5580f9af150e79d0f6aea934fc60c1cc50f4efdd9420759e7",
-    "https://bcr.bazel.build/modules/stardoc/0.7.2/MODULE.bazel": "fc152419aa2ea0f51c29583fab1e8c99ddefd5b3778421845606ee628629e0e5",
-    "https://bcr.bazel.build/modules/stardoc/0.7.2/source.json": "58b029e5e901d6802967754adf0a9056747e8176f017cfe3607c0851f4d42216",
+    "https://bcr.bazel.build/modules/stardoc/0.7.1/source.json": "b6500ffcd7b48cd72c29bb67bcac781e12701cc0d6d55d266a652583cfcdab01",
     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
     "https://bcr.bazel.build/modules/zlib/1.2.11/MODULE.bazel": "07b389abc85fdbca459b69e2ec656ae5622873af3f845e1c9d80fe179f3effa0",
     "https://bcr.bazel.build/modules/zlib/1.3.1.bcr.5/MODULE.bazel": "eec517b5bbe5492629466e11dae908d043364302283de25581e3eb944326c4ca",
@@ -240,295 +233,6 @@
         "recordedRepoMappingEntries": [
           [
             "rules_kotlin+",
-            "bazel_tools",
-            "bazel_tools"
-          ]
-        ]
-      }
-    },
-    "@@rules_pyo3+//pyo3:extensions.bzl%rust_ext": {
-      "general": {
-        "bzlTransitiveDigest": "EZIJCMADAkxWm2W2EvhVZkopYbRb3+yZFXDIXn9AUKs=",
-        "usagesDigest": "goljb2k1I3miVj9SgBVo17i+XVpTlX0HTACTSEmEV+A=",
-        "recordedFileInputs": {},
-        "recordedDirentsInputs": {},
-        "envVariables": {},
-        "generatedRepoSpecs": {
-          "rpyo3c": {
-            "repoRuleId": "@@rules_rust+//crate_universe/private:crates_vendor.bzl%crates_vendor_remote_repository",
-            "attributes": {
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.bazel",
-              "defs_module": "@@rules_pyo3+//pyo3/3rdparty/crates:defs.bzl"
-            }
-          },
-          "rpyo3c__autocfg-1.3.0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "0c4b4d0bd25bd0b74681c0ad21497610ce1b7c91b1022cd21c80c6fbdd9476b0",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/autocfg/1.3.0/download"
-              ],
-              "strip_prefix": "autocfg-1.3.0",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.autocfg-1.3.0.bazel"
-            }
-          },
-          "rpyo3c__cfg-if-1.0.0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/cfg-if/1.0.0/download"
-              ],
-              "strip_prefix": "cfg-if-1.0.0",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.cfg-if-1.0.0.bazel"
-            }
-          },
-          "rpyo3c__heck-0.5.0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/heck/0.5.0/download"
-              ],
-              "strip_prefix": "heck-0.5.0",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.heck-0.5.0.bazel"
-            }
-          },
-          "rpyo3c__indoc-2.0.5": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "b248f5224d1d606005e02c97f5aa4e88eeb230488bcc03bc9ca4d7991399f2b5",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/indoc/2.0.5/download"
-              ],
-              "strip_prefix": "indoc-2.0.5",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.indoc-2.0.5.bazel"
-            }
-          },
-          "rpyo3c__libc-0.2.158": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "d8adc4bb1803a324070e64a98ae98f38934d91957a99cfb3a43dcbc01bc56439",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/libc/0.2.158/download"
-              ],
-              "strip_prefix": "libc-0.2.158",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.libc-0.2.158.bazel"
-            }
-          },
-          "rpyo3c__memoffset-0.9.1": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "488016bfae457b036d996092f6cb448677611ce4449e970ceaf42695203f218a",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/memoffset/0.9.1/download"
-              ],
-              "strip_prefix": "memoffset-0.9.1",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.memoffset-0.9.1.bazel"
-            }
-          },
-          "rpyo3c__once_cell-1.19.0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/once_cell/1.19.0/download"
-              ],
-              "strip_prefix": "once_cell-1.19.0",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.once_cell-1.19.0.bazel"
-            }
-          },
-          "rpyo3c__portable-atomic-1.7.0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "da544ee218f0d287a911e9c99a39a8c9bc8fcad3cb8db5959940044ecfc67265",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/portable-atomic/1.7.0/download"
-              ],
-              "strip_prefix": "portable-atomic-1.7.0",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.portable-atomic-1.7.0.bazel"
-            }
-          },
-          "rpyo3c__proc-macro2-1.0.86": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "5e719e8df665df0d1c8fbfd238015744736151d4445ec0836b8e628aae103b77",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/proc-macro2/1.0.86/download"
-              ],
-              "strip_prefix": "proc-macro2-1.0.86",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.proc-macro2-1.0.86.bazel"
-            }
-          },
-          "rpyo3c__pyo3-0.23.4": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "57fe09249128b3173d092de9523eaa75136bf7ba85e0d69eca241c7939c933cc",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/pyo3/0.23.4/download"
-              ],
-              "strip_prefix": "pyo3-0.23.4",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.pyo3-0.23.4.bazel"
-            }
-          },
-          "rpyo3c__pyo3-build-config-0.23.4": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "patch_args": [
-                "-p1"
-              ],
-              "patches": [
-                "@@rules_pyo3+//pyo3/3rdparty/patches:resolve_cross_compile_config_path.patch"
-              ],
-              "sha256": "1cd3927b5a78757a0d71aa9dff669f903b1eb64b54142a9bd9f757f8fde65fd7",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/pyo3-build-config/0.23.4/download"
-              ],
-              "strip_prefix": "pyo3-build-config-0.23.4",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.pyo3-build-config-0.23.4.bazel"
-            }
-          },
-          "rpyo3c__pyo3-ffi-0.23.4": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "dab6bb2102bd8f991e7749f130a70d05dd557613e39ed2deeee8e9ca0c4d548d",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/pyo3-ffi/0.23.4/download"
-              ],
-              "strip_prefix": "pyo3-ffi-0.23.4",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.pyo3-ffi-0.23.4.bazel"
-            }
-          },
-          "rpyo3c__pyo3-macros-0.23.4": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "91871864b353fd5ffcb3f91f2f703a22a9797c91b9ab497b1acac7b07ae509c7",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/pyo3-macros/0.23.4/download"
-              ],
-              "strip_prefix": "pyo3-macros-0.23.4",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.pyo3-macros-0.23.4.bazel"
-            }
-          },
-          "rpyo3c__pyo3-macros-backend-0.23.4": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "43abc3b80bc20f3facd86cd3c60beed58c3e2aa26213f3cda368de39c60a27e4",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/pyo3-macros-backend/0.23.4/download"
-              ],
-              "strip_prefix": "pyo3-macros-backend-0.23.4",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.pyo3-macros-backend-0.23.4.bazel"
-            }
-          },
-          "rpyo3c__quote-1.0.37": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "b5b9d34b8991d19d98081b46eacdd8eb58c6f2b201139f7c5f643cc155a633af",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/quote/1.0.37/download"
-              ],
-              "strip_prefix": "quote-1.0.37",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.quote-1.0.37.bazel"
-            }
-          },
-          "rpyo3c__syn-2.0.76": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "578e081a14e0cefc3279b0472138c513f37b41a08d5a3cca9b6e4e8ceb6cd525",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/syn/2.0.76/download"
-              ],
-              "strip_prefix": "syn-2.0.76",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.syn-2.0.76.bazel"
-            }
-          },
-          "rpyo3c__target-lexicon-0.12.16": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "61c41af27dd6d1e27b1b16b489db798443478cef1f06a660c96db617ba5de3b1",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/target-lexicon/0.12.16/download"
-              ],
-              "strip_prefix": "target-lexicon-0.12.16",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.target-lexicon-0.12.16.bazel"
-            }
-          },
-          "rpyo3c__unicode-ident-1.0.12": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/unicode-ident/1.0.12/download"
-              ],
-              "strip_prefix": "unicode-ident-1.0.12",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.unicode-ident-1.0.12.bazel"
-            }
-          },
-          "rpyo3c__unindent-0.2.3": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-            "attributes": {
-              "sha256": "c7de7d73e1754487cb58364ee906a499937a0dfabd86bcb980fa99ec8c8fa2ce",
-              "type": "tar.gz",
-              "urls": [
-                "https://static.crates.io/crates/unindent/0.2.3/download"
-              ],
-              "strip_prefix": "unindent-0.2.3",
-              "build_file": "@@rules_pyo3+//pyo3/3rdparty/crates:BUILD.unindent-0.2.3.bazel"
-            }
-          }
-        },
-        "moduleExtensionMetadata": {
-          "explicitRootModuleDirectDeps": [
-            "rpyo3c",
-            "rpyo3c__pyo3-0.23.4",
-            "rpyo3c__pyo3-ffi-0.23.4"
-          ],
-          "explicitRootModuleDirectDevDeps": [],
-          "useAllRepos": "NO",
-          "reproducible": false
-        },
-        "recordedRepoMappingEntries": [
-          [
-            "rules_pyo3+",
-            "bazel_skylib",
-            "bazel_skylib+"
-          ],
-          [
-            "rules_pyo3+",
-            "bazel_tools",
-            "bazel_tools"
-          ],
-          [
-            "rules_pyo3+",
-            "rpyo3c",
-            "rules_pyo3++rust_ext+rpyo3c"
-          ],
-          [
-            "rules_pyo3+",
-            "rules_rust",
-            "rules_rust+"
-          ],
-          [
-            "rules_rust+",
             "bazel_tools",
             "bazel_tools"
           ]
