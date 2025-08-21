@@ -54,10 +54,12 @@ pub fn unit_map() -> HashMap<&'static str, Unit> {
         ("oz", Unit { name: "ounce", conversion_factor: 0.028349523125, base_unit: [0, 1, 0, 0, 0, 0, 0] }),
 
         // ===== Time Units =====
+        ("ns", Unit { name: "nanosecond", conversion_factor: 1e-9, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+        ("us", Unit { name: "microsecond", conversion_factor: 1e-6, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
         ("ms", Unit { name: "millisecond", conversion_factor: 1e-3, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
         ("s", Unit { name: "second", conversion_factor: 1.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
         ("min", Unit { name: "minute", conversion_factor: 60.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
-        ("h", Unit { name: "hour", conversion_factor: 3600.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
+        ("hr", Unit { name: "hour", conversion_factor: 3600.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
         ("d", Unit { name: "day", conversion_factor: 86400.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
         ("wk", Unit { name: "week", conversion_factor: 604800.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
         ("mo", Unit { name: "month", conversion_factor: 2629800.0, base_unit: [0, 0, 1, 0, 0, 0, 0] }),
@@ -69,9 +71,7 @@ pub fn unit_map() -> HashMap<&'static str, Unit> {
         ("K", Unit { name: "kelvin", conversion_factor: 1.0, base_unit: [0, 0, 0, 1, 0, 0, 0] }),
 
         // ===== Electric Current Units =====
-        ("A", Unit {
-                    name: "ampere",
-                    conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
+        ("A", Unit {name: "ampere", conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
         ("mA", Unit { name: "milliampere", conversion_factor: 1e-3, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
         ("kA", Unit { name: "kiloampere", conversion_factor: 1e3, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
         ("MA", Unit { name: "megaampere", conversion_factor: 1e6, base_unit: [0, 0, 0, 0, 1, 0, 0] }),
@@ -90,6 +90,14 @@ pub fn unit_map() -> HashMap<&'static str, Unit> {
         ("kWh", Unit { name: "kilowatt-hour", conversion_factor: 3.6e6, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
         ("BTU", Unit { name: "British thermal unit", conversion_factor: 1055.05585, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
         ("erg", Unit { name: "erg", conversion_factor: 1e-7, base_unit: [2, 1, -2, 0, 0, 0, 0] }),
+
+        // ===== Power Units =====
+        ("W", Unit { name: "watt", conversion_factor: 1.0, base_unit: [2, 1, -3, 0, 0, 0, 0] }),
+        ("kW", Unit { name: "kilowatt", conversion_factor: 1e3, base_unit: [2, 1, -3, 0, 0, 0, 0] }),
+        ("MW", Unit { name: "megawatt", conversion_factor: 1e6, base_unit: [2, 1, -3, 0, 0, 0, 0] }),
+        ("GW", Unit { name: "gigawatt", conversion_factor: 1e9, base_unit: [2, 1, -3, 0, 0, 0, 0] }),
+        ("TW", Unit { name: "terawatt", conversion_factor: 1e12, base_unit: [2, 1, -3, 0, 0, 0, 0] }),
+        ("hp", Unit { name: "horsepower", conversion_factor: 745.6998715822702, base_unit: [2, 1, -3, 0, 0, 0, 0] }),
 
         // ===== Amount of Substance Units =====
         ("mol", Unit { name: "mole", conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 0, 1, 0] }),

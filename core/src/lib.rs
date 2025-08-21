@@ -10,6 +10,7 @@ pub struct DimensionalVariable {
     pub value: f64,
     pub unit: [i32; 7],
 }
+
 /// A struct representing a dimensional variable with a value and a unit.
 ///
 impl DimensionalVariable {
@@ -55,6 +56,93 @@ impl DimensionalVariable {
     pub fn unit(&self) -> [i32; 7] {
         self.unit
     }
+
+    /// Whether the variable is unitless (all base exponents are 0).
+    pub fn is_unitless(&self) -> bool {
+        self.unit.iter().all(|&e| e == 0)
+    }
+
+    /// Fallible add with unit compatibility check.
+    pub fn try_add(&self, other: &DimensionalVariable) -> Result<DimensionalVariable, String> {
+        if self.unit != other.unit {
+            return Err("Incompatible units for addition".to_string());
+        }
+        Ok(DimensionalVariable { value: self.value + other.value, unit: self.unit })
+    }
+
+    /// Fallible subtraction with unit compatibility check.
+    pub fn try_sub(&self, other: &DimensionalVariable) -> Result<DimensionalVariable, String> {
+        if self.unit != other.unit {
+            return Err("Incompatible units for subtraction".to_string());
+        }
+        Ok(DimensionalVariable { value: self.value - other.value, unit: self.unit })
+    }
+
+    // ---- Math: powers and roots ----
+    /// Raise to integer power. Units exponents are multiplied by exp.
+    pub fn powi(&self, exp: i32) -> DimensionalVariable {
+        let mut unit = self.unit;
+        for i in 0..7 { unit[i] *= exp; }
+        DimensionalVariable { value: self.value.powi(exp), unit }
+    }
+
+    /// Raise to floating power. Requires unitless.
+    pub fn powf(&self, exp: f64) -> Result<DimensionalVariable, String> {
+        if !self.is_unitless() {
+            return Err("powf requires a unitless quantity".to_string());
+        }
+        Ok(DimensionalVariable { value: self.value.powf(exp), unit: [0;7] })
+    }
+
+    /// Square root. Allowed only when all unit exponents are even and value >= 0.
+    pub fn sqrt(&self) -> Result<DimensionalVariable, String> {
+        if self.value < 0.0 {
+            return Err("sqrt of negative value".to_string());
+        }
+        for &e in &self.unit {
+            if e % 2 != 0 { return Err("sqrt requires all unit exponents to be even".to_string()); }
+        }
+        let mut unit = self.unit;
+        for i in 0..7 { unit[i] /= 2; }
+        Ok(DimensionalVariable { value: self.value.sqrt(), unit })
+    }
+
+    // ---- Math: logarithms (unitless only) ----
+    pub fn ln(&self) -> Result<f64, String> {
+        if !self.is_unitless() { return Err("ln requires a unitless quantity".to_string()); }
+        if self.value <= 0.0 { return Err("ln domain error (value <= 0)".to_string()); }
+        Ok(self.value.ln())
+    }
+    pub fn log2(&self) -> Result<f64, String> {
+        if !self.is_unitless() { return Err("log2 requires a unitless quantity".to_string()); }
+        if self.value <= 0.0 { return Err("log2 domain error (value <= 0)".to_string()); }
+        Ok(self.value.log2())
+    }
+    pub fn log10(&self) -> Result<f64, String> {
+        if !self.is_unitless() { return Err("log10 requires a unitless quantity".to_string()); }
+        if self.value <= 0.0 { return Err("log10 domain error (value <= 0)".to_string()); }
+        Ok(self.value.log10())
+    }
+
+    // ---- Math: trigonometry (unitless only, radians recommended) ----
+    pub fn sin(&self) -> Result<f64, String> {
+        if !self.is_unitless() { return Err("sin requires a unitless quantity (radians)".to_string()); }
+        Ok(self.value.sin())
+    }
+    pub fn cos(&self) -> Result<f64, String> {
+        if !self.is_unitless() { return Err("cos requires a unitless quantity (radians)".to_string()); }
+        Ok(self.value.cos())
+    }
+    pub fn tan(&self) -> Result<f64, String> {
+        if !self.is_unitless() { return Err("tan requires a unitless quantity (radians)".to_string()); }
+        Ok(self.value.tan())
+    }
+
+    // ---- Scalar helpers on single values ----
+    pub fn abs(&self) -> DimensionalVariable {
+        DimensionalVariable { value: self.value.abs(), unit: self.unit }
+    }
+ 
 }
 
 fn unit_str_to_base_unit(units_str: &str) -> Result<([i32; 7], f64), String> {
@@ -161,6 +249,268 @@ fn read_unit_power(unit: &str) -> Result<(&str, i32), String> {
     }
 
     Ok((base, exp))
+}
+
+// ---- Helpers for unit arithmetic ----
+fn add_unit_exponents(a: [i32; 7], b: [i32; 7]) -> [i32; 7] {
+    let mut out = a;
+    for i in 0..7 { out[i] += b[i]; }
+    out
+}
+
+fn sub_unit_exponents(a: [i32; 7], b: [i32; 7]) -> [i32; 7] {
+    let mut out = a;
+    for i in 0..7 { out[i] -= b[i]; }
+    out
+}
+
+// ---- Operator trait impls ----
+use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign, DivAssign};
+use std::cmp::Ordering;
+
+// Keep only reference-based binary ops to avoid duplication. Autoref handles owned values.
+impl<'a, 'b> Add<&'b DimensionalVariable> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn add(self, rhs: &'b DimensionalVariable) -> Self::Output {
+        assert!(self.unit == rhs.unit, "Incompatible units for addition: {:?} vs {:?}", self.unit, rhs.unit);
+        DimensionalVariable { value: self.value + rhs.value, unit: self.unit }
+    }
+}
+
+// Delegating wrappers for owned LHS/RHS
+impl Add<DimensionalVariable> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn add(self, rhs: DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Add<&DimensionalVariable>>::add(&self, &rhs)
+    }
+}
+
+impl<'b> Add<&'b DimensionalVariable> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn add(self, rhs: &'b DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Add<&DimensionalVariable>>::add(&self, rhs)
+    }
+}
+
+impl<'a> Add<DimensionalVariable> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn add(self, rhs: DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Add<&DimensionalVariable>>::add(self, &rhs)
+    }
+}
+
+impl<'a, 'b> Sub<&'b DimensionalVariable> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn sub(self, rhs: &'b DimensionalVariable) -> Self::Output {
+        assert!(self.unit == rhs.unit, "Incompatible units for subtraction: {:?} vs {:?}", self.unit, rhs.unit);
+        DimensionalVariable { value: self.value - rhs.value, unit: self.unit }
+    }
+}
+
+impl Sub<DimensionalVariable> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn sub(self, rhs: DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Sub<&DimensionalVariable>>::sub(&self, &rhs)
+    }
+}
+
+impl<'b> Sub<&'b DimensionalVariable> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn sub(self, rhs: &'b DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Sub<&DimensionalVariable>>::sub(&self, rhs)
+    }
+}
+
+impl<'a> Sub<DimensionalVariable> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn sub(self, rhs: DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Sub<&DimensionalVariable>>::sub(self, &rhs)
+    }
+}
+
+impl<'a, 'b> Mul<&'b DimensionalVariable> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn mul(self, rhs: &'b DimensionalVariable) -> Self::Output {
+        DimensionalVariable { value: self.value * rhs.value, unit: add_unit_exponents(self.unit, rhs.unit) }
+    }
+}
+
+impl Mul<DimensionalVariable> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn mul(self, rhs: DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Mul<&DimensionalVariable>>::mul(&self, &rhs)
+    }
+}
+
+impl<'b> Mul<&'b DimensionalVariable> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn mul(self, rhs: &'b DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Mul<&DimensionalVariable>>::mul(&self, rhs)
+    }
+}
+
+impl<'a> Mul<DimensionalVariable> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn mul(self, rhs: DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Mul<&DimensionalVariable>>::mul(self, &rhs)
+    }
+}
+
+impl<'a, 'b> Div<&'b DimensionalVariable> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn div(self, rhs: &'b DimensionalVariable) -> Self::Output {
+        DimensionalVariable { value: self.value / rhs.value, unit: sub_unit_exponents(self.unit, rhs.unit) }
+    }
+}
+
+impl Div<DimensionalVariable> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn div(self, rhs: DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Div<&DimensionalVariable>>::div(&self, &rhs)
+    }
+}
+
+impl<'b> Div<&'b DimensionalVariable> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn div(self, rhs: &'b DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Div<&DimensionalVariable>>::div(&self, rhs)
+    }
+}
+
+impl<'a> Div<DimensionalVariable> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn div(self, rhs: DimensionalVariable) -> Self::Output {
+        <&DimensionalVariable as Div<&DimensionalVariable>>::div(self, &rhs)
+    }
+}
+
+// Assignment ops: implement only for &DimensionalVariable RHS. Owned RHS will autoref.
+impl AddAssign<&DimensionalVariable> for DimensionalVariable {
+    fn add_assign(&mut self, rhs: &DimensionalVariable) {
+        assert!(self.unit == rhs.unit, "Incompatible units for addition assignment: {:?} vs {:?}", self.unit, rhs.unit);
+        self.value += rhs.value;
+    }
+}
+
+impl SubAssign<&DimensionalVariable> for DimensionalVariable {
+    fn sub_assign(&mut self, rhs: &DimensionalVariable) {
+        assert!(self.unit == rhs.unit, "Incompatible units for subtraction assignment: {:?} vs {:?}", self.unit, rhs.unit);
+        self.value -= rhs.value;
+    }
+}
+
+impl MulAssign<&DimensionalVariable> for DimensionalVariable {
+    fn mul_assign(&mut self, rhs: &DimensionalVariable) {
+        self.value *= rhs.value;
+        self.unit = add_unit_exponents(self.unit, rhs.unit);
+    }
+}
+
+impl DivAssign<&DimensionalVariable> for DimensionalVariable {
+    fn div_assign(&mut self, rhs: &DimensionalVariable) {
+        self.value /= rhs.value;
+        self.unit = sub_unit_exponents(self.unit, rhs.unit);
+    }
+}
+
+// Scalar ops
+impl<'a> Mul<f64> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn mul(self, rhs: f64) -> Self::Output {
+        DimensionalVariable { value: self.value * rhs, unit: self.unit }
+    }
+}
+
+impl Mul<f64> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn mul(self, rhs: f64) -> Self::Output {
+        <&DimensionalVariable as Mul<f64>>::mul(&self, rhs)
+    }
+}
+
+impl MulAssign<f64> for DimensionalVariable {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.value *= rhs;
+    }
+}
+
+impl<'a> Div<f64> for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn div(self, rhs: f64) -> Self::Output {
+        DimensionalVariable { value: self.value / rhs, unit: self.unit }
+    }
+}
+
+impl Div<f64> for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn div(self, rhs: f64) -> Self::Output {
+        <&DimensionalVariable as Div<f64>>::div(&self, rhs)
+    }
+}
+
+impl DivAssign<f64> for DimensionalVariable {
+    fn div_assign(&mut self, rhs: f64) {
+        self.value /= rhs;
+    }
+}
+
+// Symmetric scalar ops
+impl<'a> Mul<&'a DimensionalVariable> for f64 {
+    type Output = DimensionalVariable;
+    fn mul(self, rhs: &'a DimensionalVariable) -> Self::Output {
+        DimensionalVariable { value: self * rhs.value, unit: rhs.unit }
+    }
+}
+
+impl Mul<DimensionalVariable> for f64 {
+    type Output = DimensionalVariable;
+    fn mul(self, rhs: DimensionalVariable) -> Self::Output {
+        <f64 as Mul<&DimensionalVariable>>::mul(self, &rhs)
+    }
+}
+
+impl<'a> Div<&'a DimensionalVariable> for f64 {
+    type Output = DimensionalVariable;
+    fn div(self, rhs: &'a DimensionalVariable) -> Self::Output {
+        DimensionalVariable { value: self / rhs.value, unit: sub_unit_exponents([0; 7], rhs.unit) }
+    }
+}
+
+impl Div<DimensionalVariable> for f64 {
+    type Output = DimensionalVariable;
+    fn div(self, rhs: DimensionalVariable) -> Self::Output {
+        <f64 as Div<&DimensionalVariable>>::div(self, &rhs)
+    }
+}
+
+// Unary negation on references and delegating owned variant
+impl<'a> Neg for &'a DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn neg(self) -> Self::Output {
+        DimensionalVariable { value: -self.value, unit: self.unit }
+    }
+}
+
+impl Neg for DimensionalVariable {
+    type Output = DimensionalVariable;
+    fn neg(self) -> Self::Output {
+        <&DimensionalVariable as Neg>::neg(&self)
+    }
+}
+
+// ---- Comparisons: equalities and ordering ----
+impl PartialEq for DimensionalVariable {
+    fn eq(&self, other: &Self) -> bool {
+        if self.unit != other.unit { return false; }
+        self.value == other.value
+    }
+}
+
+impl PartialOrd for DimensionalVariable {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        if self.unit != other.unit { return None; }
+        self.value.partial_cmp(&other.value)
+    }
 }
 
 #[cfg(test)]

@@ -17,11 +17,31 @@ rust_test(
     deps = [":dv_rs"],
 )
 
+# --- Integration tests as separate crates ---
 rust_test(
-    name = "integration_tests",
-    srcs = [
-        "tests/version_test.rs",
-        "tests/integration_tests.rs"
-    ],
+    name = "version_test",
+    srcs = ["tests/version_test.rs"],
     deps = [":dv_rs"],
+)
+
+rust_test(
+    name = "units_tests",
+    srcs = ["tests/units_tests.rs"],
+    deps = [":dv_rs"],
+)
+
+rust_test(
+    name = "operator_tests",
+    srcs = ["tests/operator_tests.rs"],
+    deps = [":dv_rs"],
+)
+
+# Aggregate suite to match the original //core:integration_tests target name
+test_suite(
+    name = "integration_tests",
+    tests = [
+        ":version_test",
+        ":units_tests",
+        ":operator_tests",
+    ],
 )
