@@ -1,11 +1,15 @@
 use std::collections::HashMap;
 
+pub static BASE_UNITS: [&str; 7] = ["m", "kg", "s", "K", "A", "mol", "cd"];
+pub static BASE_UNITS_SIZE: usize = BASE_UNITS.len();
+
 pub struct Unit {
     #[allow(dead_code)]
     pub name: &'static str,     // Unused, kept for documentation and future extensibility
     pub conversion_factor: f64,
-    pub base_unit: [i32; 7],    // [Length (m), Mass (kg), Time (s), Temperature (K), Electric Current (A), Amount of Substance (mol), Luminous Intensity (cd)]
+    pub base_unit: [i32; BASE_UNITS_SIZE],    // [Length (m), Mass (kg), Time (s), Temperature (K), Electric Current (A), Amount of Substance (mol), Luminous Intensity (cd)]
 }
+
 
 pub fn unit_map() -> HashMap<&'static str, Unit> {
     HashMap::from([

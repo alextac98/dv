@@ -8,7 +8,7 @@ pub fn version() -> &'static str {
 
 pub struct DimensionalVariable {
     pub value: f64,
-    pub unit: [i32; 7],
+    pub unit: [i32; units::BASE_UNITS_SIZE],
 }
 
 /// A struct representing a dimensional variable with a value and a unit.
@@ -53,7 +53,7 @@ impl DimensionalVariable {
     }
 
     /// Returns the base unit array of this DimensionalVariable.
-    pub fn unit(&self) -> [i32; 7] {
+    pub fn unit(&self) -> [i32; units::BASE_UNITS_SIZE] {
         self.unit
     }
 
@@ -82,7 +82,7 @@ impl DimensionalVariable {
     /// Raise to integer power. Units exponents are multiplied by exp.
     pub fn powi(&self, exp: i32) -> DimensionalVariable {
         let mut unit = self.unit;
-        for i in 0..7 { unit[i] *= exp; }
+        for i in 0..units::BASE_UNITS_SIZE { unit[i] *= exp; }
         DimensionalVariable { value: self.value.powi(exp), unit }
     }
 
@@ -91,7 +91,7 @@ impl DimensionalVariable {
         if !self.is_unitless() {
             return Err("powf requires a unitless quantity".to_string());
         }
-        Ok(DimensionalVariable { value: self.value.powf(exp), unit: [0;7] })
+        Ok(DimensionalVariable { value: self.value.powf(exp), unit: [0;units::BASE_UNITS_SIZE] })
     }
 
     /// Square root. Allowed only when all unit exponents are even and value >= 0.
@@ -103,7 +103,7 @@ impl DimensionalVariable {
             if e % 2 != 0 { return Err("sqrt requires all unit exponents to be even".to_string()); }
         }
         let mut unit = self.unit;
-        for i in 0..7 { unit[i] /= 2; }
+        for i in 0..units::BASE_UNITS_SIZE { unit[i] /= 2; }
         Ok(DimensionalVariable { value: self.value.sqrt(), unit })
     }
 
@@ -145,7 +145,7 @@ impl DimensionalVariable {
  
 }
 
-fn unit_str_to_base_unit(units_str: &str) -> Result<([i32; 7], f64), String> {
+fn unit_str_to_base_unit(units_str: &str) -> Result<([i32; units::BASE_UNITS_SIZE], f64), String> {
 
     // Start by removing any parentheses or brackets
     let cleaned_units_str = units_str.replace(['(', ')', '[', ']'], "");
@@ -156,7 +156,7 @@ fn unit_str_to_base_unit(units_str: &str) -> Result<([i32; 7], f64), String> {
         return Err("Unit string can only have one '/'".to_string());
     }
 
-    let mut base_unit =  [0; 7];
+    let mut base_unit =  [0; units::BASE_UNITS_SIZE];
     let mut conversion_factor: f64 = 1.0;
 
     for i in 0..parts.len() {
@@ -191,7 +191,7 @@ fn unit_str_to_base_unit(units_str: &str) -> Result<([i32; 7], f64), String> {
             let unit = unit_map.get(base)
                 .ok_or_else(|| format!("Unknown unit: {}", base))?; 
 
-            for j in 0..7 {
+            for j in 0..units::BASE_UNITS_SIZE {
                 base_unit[j] += unit.base_unit[j] * power * denominator_multiplier;
             }
 
@@ -252,15 +252,15 @@ fn read_unit_power(unit: &str) -> Result<(&str, i32), String> {
 }
 
 // ---- Helpers for unit arithmetic ----
-fn add_unit_exponents(a: [i32; 7], b: [i32; 7]) -> [i32; 7] {
+fn add_unit_exponents(a: [i32; units::BASE_UNITS_SIZE], b: [i32; units::BASE_UNITS_SIZE]) -> [i32; units::BASE_UNITS_SIZE] {
     let mut out = a;
-    for i in 0..7 { out[i] += b[i]; }
+    for i in 0..units::BASE_UNITS_SIZE { out[i] += b[i]; }
     out
 }
 
-fn sub_unit_exponents(a: [i32; 7], b: [i32; 7]) -> [i32; 7] {
+fn sub_unit_exponents(a: [i32; units::BASE_UNITS_SIZE], b: [i32; units::BASE_UNITS_SIZE]) -> [i32; units::BASE_UNITS_SIZE] {
     let mut out = a;
-    for i in 0..7 { out[i] -= b[i]; }
+    for i in 0..units::BASE_UNITS_SIZE { out[i] -= b[i]; }
     out
 }
 
@@ -472,7 +472,7 @@ impl Mul<DimensionalVariable> for f64 {
 impl<'a> Div<&'a DimensionalVariable> for f64 {
     type Output = DimensionalVariable;
     fn div(self, rhs: &'a DimensionalVariable) -> Self::Output {
-        DimensionalVariable { value: self / rhs.value, unit: sub_unit_exponents([0; 7], rhs.unit) }
+        DimensionalVariable { value: self / rhs.value, unit: sub_unit_exponents([0; units::BASE_UNITS_SIZE], rhs.unit) }
     }
 }
 
