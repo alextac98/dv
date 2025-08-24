@@ -1,6 +1,8 @@
-// --- dv core (Rust) ---
+#![crate_name = "dv_rs"]
+#![doc = include_str!("../DOCS.md")]
 
-mod units;
+
+pub mod units;
 
 pub fn version() -> &'static str {
     "0.1.0"
@@ -12,7 +14,6 @@ pub struct DimensionalVariable {
 }
 
 /// A struct representing a dimensional variable with a value and a unit.
-///
 impl DimensionalVariable {
     /// Creates a new DimensionalVariable with the given value and unit.
     ///
@@ -21,6 +22,8 @@ impl DimensionalVariable {
     /// - Use `-` as a delimiter between individual units
     /// - Exponents can be represented either by using `^` to indicate exponent (ex. `m^2`) or without the delimiter (ex. `m2`)
     /// - Inverses can be represented either by negative exponents or in the denominator (ex. `m^-2` or `1/m^2`)
+    /// 
+    /// Returns an error if the unit string is invalid or contains unknown units.
     pub fn new(value: f64, unit_str: &str) -> Result<Self, String> {
         // Fetch the unit details from the unit map
         let (base_unit, conversion_factor) = unit_str_to_base_unit(unit_str)
@@ -39,6 +42,7 @@ impl DimensionalVariable {
     }
 
     /// Converts the value of this DimensionalVariable to the specified unit.
+    /// Returns an error if the unit string is invalid or incompatible.
     pub fn value_in(&self, unit_str: &str) -> Result<f64, String> {
 
         let (unit, conversion_factor) = unit_str_to_base_unit(unit_str)
@@ -57,7 +61,7 @@ impl DimensionalVariable {
         self.unit
     }
 
-    /// Whether the variable is unitless (all base exponents are 0).
+    /// Returns whether the variable is unitless (all base exponents are 0).
     pub fn is_unitless(&self) -> bool {
         self.unit.iter().all(|&e| e == 0)
     }
@@ -80,6 +84,7 @@ impl DimensionalVariable {
 
     // ---- Math: powers and roots ----
     /// Raise to integer power. Units exponents are multiplied by exp.
+    /// Returns a new DimensionalVariable.
     pub fn powi(&self, exp: i32) -> DimensionalVariable {
         let mut unit = self.unit;
         for i in 0..units::BASE_UNITS_SIZE { unit[i] *= exp; }
@@ -87,6 +92,7 @@ impl DimensionalVariable {
     }
 
     /// Raise to floating power. Requires unitless.
+    /// Returns a new DimensionalVariable.
     pub fn powf(&self, exp: f64) -> Result<DimensionalVariable, String> {
         if !self.is_unitless() {
             return Err("powf requires a unitless quantity".to_string());
@@ -95,6 +101,7 @@ impl DimensionalVariable {
     }
 
     /// Square root. Allowed only when all unit exponents are even and value >= 0.
+    /// Returns a new DimensionalVariable.
     pub fn sqrt(&self) -> Result<DimensionalVariable, String> {
         if self.value < 0.0 {
             return Err("sqrt of negative value".to_string());
@@ -108,16 +115,21 @@ impl DimensionalVariable {
     }
 
     // ---- Math: logarithms (unitless only) ----
+    /// Natural logarithm. Requires unitless and value > 0.
     pub fn ln(&self) -> Result<f64, String> {
         if !self.is_unitless() { return Err("ln requires a unitless quantity".to_string()); }
         if self.value <= 0.0 { return Err("ln domain error (value <= 0)".to_string()); }
         Ok(self.value.ln())
     }
+
+    /// Base-2 logarithm. Requires unitless and value > 0.
     pub fn log2(&self) -> Result<f64, String> {
         if !self.is_unitless() { return Err("log2 requires a unitless quantity".to_string()); }
         if self.value <= 0.0 { return Err("log2 domain error (value <= 0)".to_string()); }
         Ok(self.value.log2())
     }
+
+    /// Base-10 logarithm. Requires unitless and value > 0.
     pub fn log10(&self) -> Result<f64, String> {
         if !self.is_unitless() { return Err("log10 requires a unitless quantity".to_string()); }
         if self.value <= 0.0 { return Err("log10 domain error (value <= 0)".to_string()); }
@@ -125,26 +137,39 @@ impl DimensionalVariable {
     }
 
     // ---- Math: trigonometry (unitless only, radians recommended) ----
+    /// Sine function. Requires unitless (radians).
     pub fn sin(&self) -> Result<f64, String> {
         if !self.is_unitless() { return Err("sin requires a unitless quantity (radians)".to_string()); }
         Ok(self.value.sin())
     }
+
+    /// Cosine function. Requires unitless (radians).
     pub fn cos(&self) -> Result<f64, String> {
         if !self.is_unitless() { return Err("cos requires a unitless quantity (radians)".to_string()); }
         Ok(self.value.cos())
     }
+
+    /// Tangent function. Requires unitless (radians).
     pub fn tan(&self) -> Result<f64, String> {
         if !self.is_unitless() { return Err("tan requires a unitless quantity (radians)".to_string()); }
         Ok(self.value.tan())
     }
 
     // ---- Scalar helpers on single values ----
+    /// Negate the value, keeping the same unit.
+    pub fn neg(&self) -> DimensionalVariable {
+        DimensionalVariable { value: -self.value, unit: self.unit }
+    }
+
+    /// Returns the absolute value, keeping the same unit.
     pub fn abs(&self) -> DimensionalVariable {
         DimensionalVariable { value: self.value.abs(), unit: self.unit }
     }
  
 }
 
+/// Convert a unit string like "m/s^2" or "kg-m/s^2" into base unit exponents and a conversion factor.
+/// Returns an error if the unit string is invalid or contains unknown units.
 fn unit_str_to_base_unit(units_str: &str) -> Result<([i32; units::BASE_UNITS_SIZE], f64), String> {
 
     // Start by removing any parentheses or brackets
@@ -252,12 +277,14 @@ fn read_unit_power(unit: &str) -> Result<(&str, i32), String> {
 }
 
 // ---- Helpers for unit arithmetic ----
+/// Add two unit exponent arrays element-wise.
 fn add_unit_exponents(a: [i32; units::BASE_UNITS_SIZE], b: [i32; units::BASE_UNITS_SIZE]) -> [i32; units::BASE_UNITS_SIZE] {
     let mut out = a;
     for i in 0..units::BASE_UNITS_SIZE { out[i] += b[i]; }
     out
 }
 
+/// Subtract two unit exponent arrays element-wise.
 fn sub_unit_exponents(a: [i32; units::BASE_UNITS_SIZE], b: [i32; units::BASE_UNITS_SIZE]) -> [i32; units::BASE_UNITS_SIZE] {
     let mut out = a;
     for i in 0..units::BASE_UNITS_SIZE { out[i] -= b[i]; }

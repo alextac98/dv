@@ -1,11 +1,27 @@
-load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test", "rust_doc")
+load("@rules_python//python:defs.bzl", "py_binary")
 
 package(default_visibility = ["//visibility:public"])
 
 rust_library(
     name = "dv_rs",
     srcs = ["src/lib.rs", "src/units.rs"],
+    compile_data = ["DOCS.md"],
     edition = "2024",
+)
+
+# Documentation target (equivalent to `cargo doc` for this crate)
+rust_doc(
+    name = "docs",
+    crate = ":dv_rs",
+
+)
+
+# Simple Python HTTP server to serve the generated docs
+py_binary(
+    name = "serve_docs",
+    srcs = ["serve_docs.py"],
+    data = [":docs"],
 )
 
 rust_test(

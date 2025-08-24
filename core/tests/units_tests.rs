@@ -52,7 +52,7 @@ fn unit_conversion() {
 #[test]
 fn bad_unit_conversion() {
     let d = dv::new(1.0, "m").expect(FAIL_MSG);
-    let result = d.value_in("h");
+    let result = d.value_in("hr");
     assert!(result.is_err(), "Expected error on unknown unit conversion");
 
     let d = dv::new(1.0, "m/s").expect(FAIL_MSG);
