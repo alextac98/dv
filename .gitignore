@@ -6,3 +6,4 @@ bazel-testlogs
 
 # Rust Build Artifacts
 target
+**/Cargo.lock

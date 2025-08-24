@@ -1,16 +1,23 @@
 use std::collections::HashMap;
 
+/// Base SI units: meter (m), kilogram (kg), second (s), kelvin (K), ampere (A), mole (mol), candela (cd)
 pub static BASE_UNITS: [&str; 7] = ["m", "kg", "s", "K", "A", "mol", "cd"];
+
+/// Size of the base units array
 pub static BASE_UNITS_SIZE: usize = BASE_UNITS.len();
 
+/// A physical unit, defined by its name, conversion factor to SI base units, and its representation in base units.
 pub struct Unit {
     #[allow(dead_code)]
-    pub name: &'static str,     // Unused, kept for documentation and future extensibility
+    /// The human-readable name of the unit (e.g., "meter").
+    pub name: &'static str,                 // Unused, kept for documentation and future extensibility
+    /// The conversion factor to the SI base unit.
     pub conversion_factor: f64,
-    pub base_unit: [i32; BASE_UNITS_SIZE],    // [Length (m), Mass (kg), Time (s), Temperature (K), Electric Current (A), Amount of Substance (mol), Luminous Intensity (cd)]
+    /// The representation of the unit in terms of base units.
+    pub base_unit: [i32; BASE_UNITS_SIZE], 
 }
 
-
+/// Unit map from unit strings to their definitions
 pub fn unit_map() -> HashMap<&'static str, Unit> {
     HashMap::from([
         // ===== Length Units =====
@@ -114,7 +121,6 @@ pub fn unit_map() -> HashMap<&'static str, Unit> {
 
         // ===== Luminous Intensity Units =====
         ("cd", Unit { name: "candela", conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 0, 0, 1] }),
-        ("lm", Unit { name: "lumen", conversion_factor: 1.0, base_unit: [0, 0, 0, 0, 0, 0, 1] }),
 
         ("lux", Unit { name: "lux", conversion_factor: 1.0, base_unit: [0, 0, -2, 0, 0, 0, 1] }),
 

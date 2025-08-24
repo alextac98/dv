@@ -5,6 +5,7 @@ module(
 
 # Core rules
 bazel_dep(name = "rules_rust", version = "0.63.0")
+bazel_dep(name = "rules_python", version = "0.36.0")
 
 # Rust toolchains (stable)
 rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
