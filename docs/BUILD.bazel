@@ -1,0 +1,94 @@
+# ---------------------------------------------------------------------------
+# Docusaurus development server & production build with aspect_rules_js
+# ---------------------------------------------------------------------------
+# This BUILD file now gives you native Bazel targets instead:
+#   bazel run //docs:dev     # start local dev server (watch/HMR)
+#   ibazel run //docs:dev    # optional auto-restart when deps change
+#   bazel build //docs:site  # produce static site under bazel-bin/docs/build
+# ---------------------------------------------------------------------------
+
+load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_run_devserver")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@npm//docs:@docusaurus/core/package_json.bzl", docusaurus_bin = "bin")
+
+# Create a node_modules tree for this package
+npm_link_all_packages(
+    name = "node_modules",
+)
+
+# Dev server (starts `docusaurus start`).
+docusaurus_bin.docusaurus_binary(
+    name = "dev",
+    args = [
+        "start",
+        "--host", "0.0.0.0",
+        "--port", "3000",
+    ],
+    chdir = "docs",
+    data = [
+        ":node_modules",
+        "package.json",
+        "pnpm-lock.yaml",
+        "docusaurus.config.ts",
+        "sidebars.ts",
+        "tsconfig.json",
+        ":blog",
+        ":docs_src",
+        ":site_src",
+        ":static_assets",
+    ],
+)
+
+# Production build target. Runs `docusaurus build` and captures the generated
+# static site (the "build" directory) as Bazel outputs.
+docusaurus_bin.docusaurus_binary(
+    name = "prod",
+    args = ["build"],
+    chdir = "docs",
+    data = [
+        ":node_modules",
+        "package.json",
+        "pnpm-lock.yaml",
+        "docusaurus.config.ts",
+        "sidebars.ts",
+        "tsconfig.json",
+        ":blog",
+        ":docs_src",
+        ":site_src",
+        ":static_assets",
+    ],
+    env = {"NODE_ENV": "production"},
+)
+
+# Optional convenience alias if you prefer `//docs:build`.
+alias(
+    name = "build",
+    actual = ":prod",
+)
+
+# ---------------------------------------------------------------------------
+# Content filegroups (directories referenced above)
+# ---------------------------------------------------------------------------
+filegroup(
+    name = "blog",
+    srcs = glob(["blog/**"], exclude = ["**/node_modules/**"]),
+)
+
+filegroup(
+    name = "docs_src",
+    srcs = glob(["docs/**"], exclude = ["**/node_modules/**"]),
+)
+
+filegroup(
+    name = "site_src",
+    srcs = glob([
+        "src/**",
+        "sidebars.ts",
+        "docusaurus.config.ts",
+    ], exclude = ["**/node_modules/**"]),
+)
+
+filegroup(
+    name = "static_assets",
+    srcs = glob(["static/**"], exclude = ["**/node_modules/**"]),
+)
