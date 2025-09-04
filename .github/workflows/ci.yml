@@ -62,10 +62,3 @@ jobs:
       - name: Test Core
         run: |
           bazel test //core/... --test_output=errors --keep_going
-
-      - name: Summarize test logs on failure
-        if: failure()
-        run: |
-          echo '--- BEGIN FAILED TEST LOGS (if any) ---'
-          find bazel-testlogs -name "test.log" -type f -exec sh -c 'echo "::group::{}"; sed -e "s/\x1b\\[[0-9;]*m//g" "{}" | tail -n 200; echo "::endgroup::"' \; || true
-          echo '--- END FAILED TEST LOGS ---'
