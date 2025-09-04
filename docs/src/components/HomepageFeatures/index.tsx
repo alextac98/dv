@@ -1,52 +1,63 @@
-import type {ReactNode} from 'react';
+import React, {type ReactNode} from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  /**
+   * Accept either an SVG React component OR a static asset path (string) such as .png/.webp.
+   * When a string is provided it will be rendered inside an <img> tag.
+   */
+  graphic: React.ComponentType<React.ComponentProps<'svg'>> | string;
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Easy to Use!',
+    graphic: require('@site/static/img/Units.webp').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        DV is designed to be easy to use and integrate into your projects, with a
+        simple and intuitive API. Never worry about unit bugs again!
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Unit-Safe Math and Conversions',
+    graphic: require('@site/static/img/MathConversion.webp').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Converting between units has never been easier, with support for any unit possible!
+        When performing math operations, DV automatically verifies units during calculations,
+        ensuring consistent and accurate results.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Multi-Language Support',
+    graphic: require('@site/static/img/MultiLanguageSupport.webp').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        DimensionalVariables are supported in many programming languages,
+        making it easy to integrate DV into your existing codebase.
       </>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({title, graphic, description}: FeatureItem) {
+  const isImage = typeof graphic === 'string';
+  const GraphicComponent = (!isImage ? (graphic as React.ComponentType<React.ComponentProps<'svg'>>) : null);
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        {isImage ? (
+          <img src={graphic} className={styles.featureSvg} alt={title} />
+        ) : (
+          GraphicComponent && <GraphicComponent className={styles.featureSvg} role="img" />
+        )}
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>

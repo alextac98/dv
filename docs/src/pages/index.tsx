@@ -19,9 +19,9 @@ function HomepageHeader() {
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.buttons}>
           <Link
-            className="button button--secondary button--lg"
+            className={clsx('button button--secondary button--lg', styles.getStartedButton)}
             to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
+              Get Started by Reading the Docs!
           </Link>
         </div>
       </div>
