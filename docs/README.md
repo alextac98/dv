@@ -10,7 +10,7 @@ The bazel rules use pnpm as a package manager, so everything has to go through i
 
 ```bash
 # If you're not already in the right location, do so now!
-cd docs/site
+cd docs
 
 bazel run -- @pnpm --dir $PWD install --lockfile-only
 ```

@@ -21,3 +21,15 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Get Started button custom hover styling (scoped) */
+.getStartedButton {
+  /* Smoothen visual change */
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.getStartedButton:hover {
+  background: #ffd60a; /* yellow */
+  border-color: #ffd60a;
+  color: #000; /* ensure contrast on yellow */
+}

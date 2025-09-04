@@ -1,47 +1,93 @@
 ---
+title: What is DV?
 sidebar_position: 1
 ---
+# What is DV (DimensionalVariable)?
 
-# Tutorial Intro
+DV is a multi‑language library for numeric values with physical units. It parses human‑friendly unit strings (e.g. `"m/s^2"`, `"kWh"`, `"1/ft^2"`), standardizes them to a fixed SI base vector, and enforces dimensional correctness during math operations and conversion. The goal is to make working with units in different languages safe and as close to computationally cheap as working with raw numbers.
 
-Let's discover **Docusaurus in less than 5 minutes**.
+## Core Functionality
 
-## Getting Started
+DV as a standard is simply a struct with two major parts:
+* A 64-bit float representing the value expressed in canonical SI base units
+* A vector of 7 32-bit integers representing the exponents for the base SI units
 
-Get started by **creating a new site**.
+The process from import to storage is as follows:
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+1. Tokenize unit string (supports `/` for numerator/denominator, `-` separator, exponents with `^` or suffix digits, negative powers).
+1. Map each symbol to its base unit exponent vector + conversion factor.
+1. Accumulate exponents (denominator subtracts) into a 7‑element array.
+1. Multiply the numeric value by each unit’s conversion factor to yield SI value.
+1. Store normalized pair; subsequent arithmetic never needs the original string.
 
-### What you'll need
+The vector follows this standard: `[m, kg, s, K, A, mol, cd]`, where each unit represents the base SI units:
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+| Unit | Name | Representation |
+| --- | --- | --- |
+| `m` | meters | distance |
+| `kg` | kilograms | mass |
+| `s` | seconds | time |
+| `K` | kelvin | temperature |
+| `A` | amps | electrical current |
+| `mol` | mol | quantity |
+| `cd` | candela | light intensity |
 
-## Generate a new site
+Example: `9.81 km/s^2` stores as: `{9810, [1, 0, -2, 0, 0, 0, 0]}`.
 
-Generate a new Docusaurus site using the **classic template**.
+The full list of available core units can be found under `core/src/units.rs`. There will be a future feature for users to be able to add their own additional units without needing to re-compile or rebuild the library.
+<!-- TODO: we should really auto-render all the supported core units here. -->
 
-The classic template will automatically be added to your project after you run the command:
+### Parsing Unit Strings
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+DV intelligently can determine what units to parse down to based on some simple string parsing that happens at the creation of the object and when data is extracted out (importantly not during math operations). To effectively parse the unit strings, users must follow these rules:
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+* Use a single `/` as a delimiter between the numerator and denominator.
+* Use a `-` as a delimiter between individual units.
+* Exponents can be represented either by using a `^` to indicate an exponent (ex. `m^2`) or without the delimiter (ex. `m2`).
+* Inverses can be either represented by negative exponents (ex. `m^-2`) or in the denominator (ex. 1/m^2).
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+For those who care about performance, the string lookup table is stored as a hash map, giving us an O(1) complexity.
 
-## Start your site
+### Conversion Operations
 
-Run the development server:
+Unit conversions are built in to the architecture - getting the value out of a DimensionalVariable will automatically convert to the requested unit. See respective language documentation for examples!
 
-```bash
-cd my-website
-npm run start
-```
+### Math Operations
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+The DV library overrides common math operators to add in additional checks and fail on incorrect/bad math operations that don't have compatible units. Each language has specifics on how this overriding works, so users should consult relevant pages. Supported math operations include:
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+| Operation | Checks |
+| --- | --- |
+| addition / subtraction | unit exponent vectors must match |
+| multiplication / division | no checks, unit exponent vectors are added |
+| power / sqrt | power must be an integer, or DV needs to be unit-less |
+| sin / cos / tan | DV must be unit-less |
+| neg / abs | no checks |
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+## Why make another unit management system?
+
+Most languages do have their own way of managing units. However, they fall short on a couple of fronts:
+
+* Cross-language support 
+* No support for safe math / equations
+* Possible wire format for messaging
+
+DV fixes all of these issues
+
+* Deterministic canonical form: any compatible spelling (e.g. `cm`, `m`) collapses to identical exponent vector.
+* Constant‑time arithmetic: ops are just value math + 7‑slot integer add/sub.
+* Explicit safety: incompatible dimensions either return `Err` (in `try_*`) or panic in operator overloads (programmer error surfaced immediately).
+* Stable wire format: serialize once, trust everywhere.
+* Easy to implement bindings—logic is small and testable.
+
+## Supported & Planned Languages
+Status | Language | Notes
+-------|----------|------
+✅ Core | Rust | Reference implementation
+🛠 Planned | Python | pyo3 binding
+🛠 Planned | C / C++ | Thin C ABI + header
+🛠 Planned | JavaScript / TypeScript | WASM or N-API layer
+🛠 Planned | Java | JNI via C ABI (or pure port)
+🛠 Planned | Matlab | MEX wrapper
+
+Cross‑language parity tests will ensure identical exponent math and error strings (where sensible).

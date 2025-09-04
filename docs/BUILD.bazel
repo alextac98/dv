@@ -23,6 +23,7 @@ docusaurus_bin.docusaurus_binary(
         "start",
         "--host", "0.0.0.0",
         "--port", "3000",
+        "--no-open",        # Prevent from automatically opening the browser
     ],
     chdir = "docs",
     data = [
@@ -32,11 +33,13 @@ docusaurus_bin.docusaurus_binary(
         "docusaurus.config.ts",
         "sidebars.ts",
         "tsconfig.json",
-        ":blog",
         ":docs_src",
         ":site_src",
         ":static_assets",
     ],
+    tags = [
+        "ibazel_notify_changes"
+    ]
 )
 
 # Production build target. Runs `docusaurus build` and captures the generated
@@ -52,7 +55,6 @@ docusaurus_bin.docusaurus_binary(
         "docusaurus.config.ts",
         "sidebars.ts",
         "tsconfig.json",
-        ":blog",
         ":docs_src",
         ":site_src",
         ":static_assets",
@@ -69,11 +71,6 @@ alias(
 # ---------------------------------------------------------------------------
 # Content filegroups (directories referenced above)
 # ---------------------------------------------------------------------------
-filegroup(
-    name = "blog",
-    srcs = glob(["blog/**"], exclude = ["**/node_modules/**"]),
-)
-
 filegroup(
     name = "docs_src",
     srcs = glob(["docs/**"], exclude = ["**/node_modules/**"]),
