@@ -1,5 +1,7 @@
 # DV - Dimensional Variables
 
+[![CI](https://github.com/alextac98/dv/actions/workflows/ci.yml/badge.svg)](https://github.com/alextac98/dv/actions/workflows/ci.yml)
+
 DV is a package that keeps track of units, and allows you to perform math while also checking the units to be valid. Features include:
 
 - Storing units with variables in an easily encodable way
