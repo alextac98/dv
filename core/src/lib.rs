@@ -1,6 +1,4 @@
-#![crate_name = "dv_rs"]
 #![doc = include_str!("../DOCS.md")]
-
 
 pub mod units;
 

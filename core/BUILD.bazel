@@ -7,7 +7,7 @@ rust_library(
     name = "dv_rs",
     srcs = ["src/lib.rs", "src/units.rs"],
     compile_data = ["DOCS.md"],
-    edition = "2024",
+    edition = "2021",
 )
 
 # Documentation target (equivalent to `cargo doc` for this crate)
@@ -26,10 +26,8 @@ py_binary(
 
 rust_test(
     name = "unit_tests",
-    srcs = [
-        "src/lib.rs",
-        "src/units.rs"
-    ],
+    # Reuse the library crate so compile_data (DOCS.md) is available; no need to recompile sources under a new crate name
+    crate = ":dv_rs",
     deps = [":dv_rs"],
 )
 
