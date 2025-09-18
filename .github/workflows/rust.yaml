@@ -109,4 +109,4 @@ jobs:
       
       - name: Publish Rust crate
         run: |
-          cd core && cargo publish --token $CARGO_REGISTRY_TOKEN
+          cd core && cargo publish --token "$CARGO_REGISTRY_TOKEN"
