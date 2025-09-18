@@ -1,6 +1,6 @@
 # DV - Dimensional Variables
 
-[![CI](https://github.com/alextac98/dv/actions/workflows/ci.yml/badge.svg)](https://github.com/alextac98/dv/actions/workflows/ci.yml)
+[![Rust Build](https://github.com/alextac98/dv/actions/workflows/rust.yaml/badge.svg)](https://github.com/alextac98/dv/actions/workflows/rust.yaml) ![Crates.io Version](https://img.shields.io/crates/v/dv)
 
 DV is a package that keeps track of units, and allows you to perform math while also checking the units to be valid. Features include:
 
