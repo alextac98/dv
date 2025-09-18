@@ -1,12 +1,14 @@
 # DimensionalVariable (DV) Rust Library
 
-> **Info**: This crate is the multi‑language core. For the exhaustive unit catalog and extended guides see [dv.alextac.com](https://dv.alextac.com).
+| **FULL DOCUMENTATION AT <https://dv.alextac.com>**|
+| --- |
+| This crate is the multi‑language core, so full documentation is centralized on a single website. For the exhaustive unit catalog, extended guides/examples, design rationale, and more, see the link above. |
 
-DimensionalVariable (DV) povides parsing of unit strings (e.g. `"m/s^2"`, `"kWh"`, `"1/ft^2"`), normalization to base SI dimensions, arithmetic with unit checking, and value conversion. Features include:
+DimensionalVariable (DV) povides parsing of unit strings (e.g. `"m/s^2"`, `"kWh"`, `"1/ft^2"`), normalization to base SI dimensions, arithmetic with unit checking, and value conversion. Exponents are `f64`, so fractional dimensions (like square‑roots) are supported. Features include:
 
 - Parse compound units with `/`, `-`, exponents (`^` or suffixed digits), negatives.
 - Convert between compatible units (`m` ↔ `cm`, `kWh` ↔ `J`, etc.).
-- Dimensionally aware math (add/sub match units, pow/sqrt/log validation).
+- Dimensionally aware math (add/sub match units, powi/powf adjust exponents, sqrt halves exponents; logs and trig require unitless).
 
 # Examples
 
@@ -36,7 +38,7 @@ let v = dv::new(3.0, "m/s").expect(FAIL_MSG);
 let t = dv::new(2.0, "s").expect(FAIL_MSG);
 let d = &v * &t;
 assert_eq!(d.value(), 6.0);
-assert_eq!(d.unit(), [1, 0, 0, 0, 0, 0, 0]);
+assert_eq!(d.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
 // Bad Example
 let m = dv::new(1.0, "m").expect(FAIL_MSG);
@@ -48,6 +50,15 @@ assert!(m.try_sub(&s).is_err());
 let m = dv::new(1.0, "m").expect(FAIL_MSG);
 let s = dv::new(1.0, "s").expect(FAIL_MSG);
 let _ = m + s; // should panic due to incompatible units
+
+// Fractional exponents via sqrt and powf
+let a = dv::new(9.0, "m^2/s^2").unwrap();
+let r = a.sqrt().unwrap();
+assert_eq!(r.unit(), [1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0]);
+
+let b = dv::new(4.0, "m^3").unwrap();
+let r2 = b.sqrt().unwrap();
+assert_eq!(r2.unit(), [1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 ```
 
 Check out the the [docs for more](https://dv.alextac.com)!
