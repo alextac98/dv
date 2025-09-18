@@ -10,7 +10,7 @@ DV is a multi‑language library for numeric values with physical units. It pars
 
 DV as a standard is simply a struct with two major parts:
 * A 64-bit float representing the value expressed in canonical SI base units
-* A vector of 7 32-bit integers representing the exponents for the base SI units
+* A vector of 7 64-bit floats representing the exponents for the base SI units (allows fractional exponents)
 
 The process from import to storage is as follows:
 
@@ -32,7 +32,7 @@ The vector follows this standard: `[m, kg, s, K, A, mol, cd]`, where each unit r
 | `mol` | mol | quantity |
 | `cd` | candela | light intensity |
 
-Example: `9.81 km/s^2` stores as: `{9810, [1, 0, -2, 0, 0, 0, 0]}`.
+Example: `9.81 km/s^2` stores as: `{9810.0, [1.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0]}`.
 
 The full list of available core units can be found under `core/src/units.rs`. There will be a future feature for users to be able to add their own additional units without needing to re-compile or rebuild the library.
 <!-- TODO: we should really auto-render all the supported core units here. -->
@@ -60,7 +60,7 @@ The DV library overrides common math operators to add in additional checks and f
 | --- | --- |
 | addition / subtraction | unit exponent vectors must match |
 | multiplication / division | no checks, unit exponent vectors are added |
-| power / sqrt | power must be an integer, or DV needs to be unit-less |
+| power / sqrt | powi multiplies exponents by integer power; powf and sqrt supported with fractional exponents; value must be valid for sqrt; logs/trig remain unitless-only |
 | sin / cos / tan | DV must be unit-less |
 | neg / abs | no checks |
 

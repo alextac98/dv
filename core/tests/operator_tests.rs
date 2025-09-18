@@ -9,16 +9,16 @@ fn add_sub_with_same_units() {
 
     let c = &a + &b;
     assert_eq!(c.value(), 5.0);
-    assert_eq!(c.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(c.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let d = &a - &b;
     assert_eq!(d.value(), 2.0);
-    assert_eq!(d.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(d.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     // Owned variants delegate to reference implementations
     let e = a + b;
     assert_eq!(e.value(), 5.0);
-    assert_eq!(e.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(e.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 }
 
 #[test]
@@ -45,21 +45,21 @@ fn mul_div_unit_exponents() {
     let t = dv::new(2.0, "s").expect(FAIL_MSG);
     let d = &v * &t;
     assert_eq!(d.value(), 6.0);
-    assert_eq!(d.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(d.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     // N * m = J (exponents [2, 1, -2])
     let f = dv::new(5.0, "N").expect(FAIL_MSG);
     let x = dv::new(2.0, "m").expect(FAIL_MSG);
     let w = &f * &x;
     assert_eq!(w.value(), 10.0);
-    assert_eq!(w.unit(), [2, 1, -2, 0, 0, 0, 0]);
+    assert_eq!(w.unit(), [2.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0]);
 
     // (m^2/s) / m = m/s
     let a = dv::new(8.0, "m^2/s").expect(FAIL_MSG);
     let m1 = dv::new(2.0, "m").expect(FAIL_MSG);
     let r = &a / &m1;
     assert_eq!(r.value(), 4.0);
-    assert_eq!(r.unit(), [1, 0, -1, 0, 0, 0, 0]);
+    assert_eq!(r.unit(), [1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0]);
 }
 
 #[test]
@@ -68,21 +68,21 @@ fn scalar_ops() {
 
     let a = &m * 2.0;
     assert_eq!(a.value(), 10.0);
-    assert_eq!(a.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let b = 2.0 * &m;
     assert_eq!(b.value(), 10.0);
-    assert_eq!(b.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(b.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let c = &m / 2.0;
     assert_eq!(c.value(), 2.5);
-    assert_eq!(c.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(c.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     // 2 / (2 1/s) = 1 s
     let inv = dv::new(2.0, "s^-1").expect(FAIL_MSG);
     let d = 2.0 / &inv;
     assert_eq!(d.value(), 1.0);
-    assert_eq!(d.unit(), [0, 0, 1, 0, 0, 0, 0]);
+    assert_eq!(d.unit(), [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]);
 }
 
 #[test]
@@ -92,21 +92,21 @@ fn assignment_ops() {
 
     a += &b; // 5 m
     assert_eq!(a.value(), 5.0);
-    assert_eq!(a.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     a -= &b; // 3 m
     assert_eq!(a.value(), 3.0);
-    assert_eq!(a.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let s_inv = dv::new(2.0, "s^-1").expect(FAIL_MSG);
     a *= &s_inv; // 6 m/s
     assert_eq!(a.value(), 6.0);
-    assert_eq!(a.unit(), [1, 0, -1, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0]);
 
     let s_inv2 = dv::new(3.0, "s^-1").expect(FAIL_MSG);
     a /= &s_inv2; // 2 m
     assert_eq!(a.value(), 2.0);
-    assert_eq!(a.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 }
 
 #[test]
@@ -114,7 +114,7 @@ fn negation_and_unitless() {
     let m = dv::new(5.0, "m").expect(FAIL_MSG);
     let n = -&m;
     assert_eq!(n.value(), -5.0);
-    assert_eq!(n.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(n.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     // Ratio of same units is unitless
     let a = dv::new(10.0, "m").expect(FAIL_MSG);
@@ -141,7 +141,7 @@ fn mixed_owned_and_borrowed_forms() {
     assert_eq!(r1.value(), 5.0);
     assert_eq!(r2.value(), 5.0);
     assert_eq!(r3.value(), 5.0);
-    assert_eq!(r1.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(r1.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 }
 
 #[test]
@@ -156,7 +156,7 @@ fn complex_arithmetic() {
     let q = k * a * dt/ l;
 
     assert_eq!(q.value(), 23.076462160979872, "Incorrect value for q!");
-    assert_eq!(q.unit(), [2, 1, -3, 0, 0, 0, 0], "Expected unit to be Watts!");
+    assert_eq!(q.unit(), [2.0, 1.0, -3.0, 0.0, 0.0, 0.0, 0.0], "Expected unit to be Watts!");
 }
 
 #[test]
@@ -166,54 +166,54 @@ fn mixed_owned_and_borrowed_forms_sub_mul_div() {
     let b = dv::new(3.0, "m").expect(FAIL_MSG);
     let s1 = &a - &b; // & - &
     assert_eq!(s1.value(), 2.0);
-    assert_eq!(s1.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(s1.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let s2 = a - &b; // owned - &
     assert_eq!(s2.value(), 2.0);
-    assert_eq!(s2.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(s2.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let a2 = dv::new(5.0, "m").expect(FAIL_MSG);
     let b2 = dv::new(3.0, "m").expect(FAIL_MSG);
     let s3 = &a2 - b2; // & - owned
     assert_eq!(s3.value(), 2.0);
-    assert_eq!(s3.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(s3.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     // Multiplication
     let m1 = dv::new(2.0, "m").expect(FAIL_MSG);
     let s = dv::new(4.0, "s").expect(FAIL_MSG);
     let p1 = &m1 * &s; // & * &
     assert_eq!(p1.value(), 8.0);
-    assert_eq!(p1.unit(), [1, 0, 1, 0, 0, 0, 0]);
+    assert_eq!(p1.unit(), [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]);
 
     let m2 = dv::new(2.0, "m").expect(FAIL_MSG);
     let p2 = m2 * &dv::new(4.0, "s").expect(FAIL_MSG); // owned * &
     assert_eq!(p2.value(), 8.0);
-    assert_eq!(p2.unit(), [1, 0, 1, 0, 0, 0, 0]);
+    assert_eq!(p2.unit(), [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]);
 
     let m3 = dv::new(2.0, "m").expect(FAIL_MSG);
     let s2 = dv::new(4.0, "s").expect(FAIL_MSG);
     let p3 = &m3 * s2; // & * owned
     assert_eq!(p3.value(), 8.0);
-    assert_eq!(p3.unit(), [1, 0, 1, 0, 0, 0, 0]);
+    assert_eq!(p3.unit(), [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]);
 
     // Division
     let num1 = dv::new(8.0, "m^2-s").expect(FAIL_MSG);
     let den1 = dv::new(2.0, "s").expect(FAIL_MSG);
     let d1 = &num1 / &den1; // & / &
     assert_eq!(d1.value(), 4.0);
-    assert_eq!(d1.unit(), [2, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(d1.unit(), [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let num2 = dv::new(8.0, "m^2-s").expect(FAIL_MSG);
     let den2 = dv::new(2.0, "s").expect(FAIL_MSG);
     let d2 = num2 / &den2; // owned / &
     assert_eq!(d2.value(), 4.0);
-    assert_eq!(d2.unit(), [2, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(d2.unit(), [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let num3 = dv::new(8.0, "m^2-s").expect(FAIL_MSG);
     let den3 = dv::new(2.0, "s").expect(FAIL_MSG);
     let d3 = &num3 / den3; // & / owned
     assert_eq!(d3.value(), 4.0);
-    assert_eq!(d3.unit(), [2, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(d3.unit(), [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 }
 
 #[test]
@@ -222,35 +222,35 @@ fn scalar_owned_variants_and_assign() {
     let m = dv::new(3.0, "m").expect(FAIL_MSG);
     let r1 = m * 2.0;
     assert_eq!(r1.value(), 6.0);
-    assert_eq!(r1.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(r1.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     // Owned / f64
     let m2 = dv::new(3.0, "m").expect(FAIL_MSG);
     let r2 = m2 / 2.0;
     assert_eq!(r2.value(), 1.5);
-    assert_eq!(r2.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(r2.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     // f64 * owned
     let m3 = dv::new(3.0, "m").expect(FAIL_MSG);
     let r3 = 2.0 * m3;
     assert_eq!(r3.value(), 6.0);
-    assert_eq!(r3.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(r3.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     // f64 / owned (inverse units)
     let inv = dv::new(2.0, "s^-1").expect(FAIL_MSG);
     let r4 = 2.0 / inv;
     assert_eq!(r4.value(), 1.0);
-    assert_eq!(r4.unit(), [0, 0, 1, 0, 0, 0, 0]);
+    assert_eq!(r4.unit(), [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]);
 
     // Compound assignments with f64
     let mut kg = dv::new(5.0, "kg").expect(FAIL_MSG);
     kg *= 2.0;
     assert_eq!(kg.value(), 10.0);
-    assert_eq!(kg.unit(), [0, 1, 0, 0, 0, 0, 0]);
+    assert_eq!(kg.unit(), [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     kg /= 4.0;
     assert_eq!(kg.value(), 2.5);
-    assert_eq!(kg.unit(), [0, 1, 0, 0, 0, 0, 0]);
+    assert_eq!(kg.unit(), [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 }
 
 #[test]
@@ -260,22 +260,22 @@ fn assignment_ops_owned_rhs() {
 
     a += &b; // RHS by reference
     assert_eq!(a.value(), 5.0);
-    assert_eq!(a.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let s_inv = dv::new(2.0, "s^-1").expect(FAIL_MSG);
     a *= &s_inv; // 10 m/s
     assert_eq!(a.value(), 10.0);
-    assert_eq!(a.unit(), [1, 0, -1, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0]);
 
     let s_inv2 = dv::new(2.0, "s^-1").expect(FAIL_MSG);
     a /= &s_inv2; // back to 5 m
     assert_eq!(a.value(), 5.0);
-    assert_eq!(a.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     let one_m = dv::new(1.0, "m").expect(FAIL_MSG);
     a -= &one_m; // 4 m
     assert_eq!(a.value(), 4.0);
-    assert_eq!(a.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 }
 
 #[test]
@@ -283,7 +283,7 @@ fn negation_owned() {
     let m = dv::new(5.0, "m").expect(FAIL_MSG);
     let n = -m;
     assert_eq!(n.value(), -5.0);
-    assert_eq!(n.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(n.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 }
 
 #[test]
@@ -318,17 +318,19 @@ fn powi_and_sqrt() {
     let a = dv::new(2.0, "m/s^2").expect(FAIL_MSG);
     let p = a.powi(3);
     assert!((p.value() - 8.0).abs() < 1e-12);
-    assert_eq!(p.unit(), [3, 0, -6, 0, 0, 0, 0]);
+    assert_eq!(p.unit(), [3.0, 0.0, -6.0, 0.0, 0.0, 0.0, 0.0]);
 
     // sqrt of even exponents works
     let b = dv::new(9.0, "m^2/s^2").expect(FAIL_MSG);
     let r = b.sqrt().expect(FAIL_MSG);
     assert!((r.value() - 3.0).abs() < 1e-12);
-    assert_eq!(r.unit(), [1, 0, -1, 0, 0, 0, 0]);
+    assert_eq!(r.unit(), [1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0]);
 
-    // sqrt error: odd exponent
+    // sqrt now allows fractional exponents
     let c = dv::new(4.0, "m^3").expect(FAIL_MSG);
-    assert!(c.sqrt().is_err());
+    let sr = c.sqrt().expect(FAIL_MSG);
+    assert!((sr.value() - 2.0).abs() < 1e-12);
+    assert_eq!(sr.unit(), [1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
     // sqrt error: negative value
     let d = dv::new(-1.0, "m^2").expect(FAIL_MSG);
@@ -345,7 +347,7 @@ fn powf_logs_trig_require_unitless() {
     let u = &x / &y; // value = 5, unitless
     assert!(u.is_unitless());
 
-    // powf on unitless
+    // powf works for dimensional too (exponents become fractional)
     let p = u.powf(2.5).expect(FAIL_MSG);
     assert!((p.value() - 5f64.powf(2.5)).abs() < 1e-12);
     assert!(p.is_unitless());
@@ -363,9 +365,8 @@ fn powf_logs_trig_require_unitless() {
     assert!((angle.cos().unwrap() - (PI / 4.0).cos()).abs() < 1e-12);
     assert!((angle.tan().unwrap() - (PI / 4.0).tan()).abs() < 1e-12);
 
-    // Errors for dimensional powf/logs/trig
+    // Errors for dimensional logs/trig
     let m = dv::new(2.0, "m").expect(FAIL_MSG);
-    assert!(m.powf(1.1).is_err());
     assert!(m.ln().is_err());
     assert!(m.log2().is_err());
     assert!(m.log10().is_err());
@@ -415,5 +416,5 @@ fn absolute_value() {
     let m = dv::new(-5.0, "m").expect(FAIL_MSG);
     let a = m.abs();
     assert_eq!(a.value(), 5.0);
-    assert_eq!(a.unit(), [1, 0, 0, 0, 0, 0, 0]);
+    assert_eq!(a.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 }
