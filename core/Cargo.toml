@@ -1,19 +1,20 @@
 [package]
 name = "dv"
-version = "0.0.0"
+version = "0.0.1"
 edition = "2021"
-authors = ["Alex Tacescu <alextac98@gmail.com"]
+authors = [ "Alex Tacescu <alextac98@gmail.com>",]
 description = "Core Rust library for DimensionalVariable, a multi-language library for handling physical quantities with units."
 license = "Apache-2.0"
 homepage = "https://dv.alextac.com"
 repository = "https://github.com/alextac98/dv"
 readme = "DOCS.md"
-
-keywords = ["units", "dimensional-analysis", "physical-quantities", "conversion", "rust"]
-categories = ["science::robotics", "science", "mathematics", "aerospace"]
+keywords = [ "units", "dimensions", "physical-quantities", "conversion", "robotics", "unit-checking",]
+categories = [ "science::robotics", "science", "mathematics", "aerospace",]
 
 [lib]
 name = "dv_rs"
 path = "src/lib.rs"
 
 [dependencies]
+
+[build-dependencies]

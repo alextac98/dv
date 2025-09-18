@@ -22,7 +22,7 @@ This project is currently a work in progress. Initial desired features will be t
 - [ ] Write tests for Rust Core development
 - [ ] Python bindings
 - [ ] C++ bindings
-- [ ] Docs and Docs website!
+- [x] Docs and Docs website!
 
 ## License
 

@@ -3,6 +3,12 @@ load("@rules_python//python:defs.bzl", "py_binary")
 
 package(default_visibility = ["//visibility:public"])
 
+exports_files(["Cargo.toml"])  # Expose root version file to other packages
+
+# ==============================================================================
+# Rust Library
+# ==============================================================================
+
 rust_library(
     name = "dv_rs",
     srcs = ["src/lib.rs", "src/units.rs"],
@@ -10,11 +16,14 @@ rust_library(
     edition = "2021",
 )
 
+# ==============================================================================
+# Documentation
+# ==============================================================================
+
 # Documentation target (equivalent to `cargo doc` for this crate)
 rust_doc(
     name = "docs",
     crate = ":dv_rs",
-
 )
 
 # Simple Python HTTP server to serve the generated docs
@@ -24,17 +33,14 @@ py_binary(
     data = [":docs"],
 )
 
+# ==============================================================================
+# Tests
+# ==============================================================================
+
 rust_test(
     name = "unit_tests",
     # Reuse the library crate so compile_data (DOCS.md) is available; no need to recompile sources under a new crate name
     crate = ":dv_rs",
-    deps = [":dv_rs"],
-)
-
-# --- Integration tests as separate crates ---
-rust_test(
-    name = "version_test",
-    srcs = ["tests/version_test.rs"],
     deps = [":dv_rs"],
 )
 
@@ -54,7 +60,6 @@ rust_test(
 test_suite(
     name = "integration_tests",
     tests = [
-        ":version_test",
         ":units_tests",
         ":operator_tests",
     ],

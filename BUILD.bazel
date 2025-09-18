@@ -1,0 +1,16 @@
+
+exports_files(["VERSION.toml"])  # Expose root version file to other packages
+
+# ==============================================================================
+# Version Setting / Checking
+# ==============================================================================
+
+py_binary(
+    name = "update_versions",
+    srcs = ["//:tools/update_versions.py"],
+    data = ["//:VERSION.toml", "//core:Cargo.toml"],
+    deps = [
+        "@pypi//toml",
+        "@pypi//requests",
+    ]
+)
