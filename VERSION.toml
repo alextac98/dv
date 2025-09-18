@@ -1,0 +1,13 @@
+# VERSION.toml: version file for the project
+# This file is used to specify the version of the project in a structured format.
+# ========================================================================================
+# Versioning guildelines: https://dv.alextac.com/docs/dev/guidelines#versioning--releases
+# ========================================================================================
+
+major = 0
+minor = 0
+
+[patch]
+rust = 1
+# python = 0
+# cpp = 0

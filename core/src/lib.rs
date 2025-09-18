@@ -2,10 +2,6 @@
 
 pub mod units;
 
-pub fn version() -> &'static str {
-    "0.1.0"
-}
-
 pub struct DimensionalVariable {
     pub value: f64,
     pub unit: [i32; units::BASE_UNITS_SIZE],

@@ -87,3 +87,15 @@ The testing framework is split up into several key tests:
 * Regression tests: checks that no features have regressed, including units values.
 
 Units and their scalars are included in the regression test suite. 100% test coverage on all units is the goal, but currently not enforced. There are plans to create a regression test suite that will cover all supported languages, but that isn't implemented yet (see https://github.com/alextac98/dv/issues/15).
+
+## Updating Tools Requirements.txt
+
+If you're interfacing with python and need to add a new dependency, here's how to do it:
+
+1. Add your new requirement to `requirements.in`
+
+2. Using `uv` or a similar tool, run the following command to generate the requirements.txt:
+
+```bash
+uv pip compile tools/requirements.in -o tools/requirements.txt
+``

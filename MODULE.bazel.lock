@@ -407,7 +407,7 @@
     "@@rules_nodejs+//nodejs:extensions.bzl%node": {
       "general": {
         "bzlTransitiveDigest": "SqbzUarOVzAfK28Ca5+NIU3LUwnW/b3h0xXBUS97oyI=",
-        "usagesDigest": "U4GnbR1EET5crLsIg4LCRFx8kpi1AOra5AO1sz20RZU=",
+        "usagesDigest": "q6ypddPnk4I9nliqwCjAyUH6RxTh7jlEdilEYbj7eP0=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
