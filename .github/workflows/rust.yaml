@@ -88,6 +88,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, core-test, version-check]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: 
+      name: Production
     env:
       CI: true
       CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -107,4 +109,4 @@ jobs:
       
       - name: Publish Rust crate
         run: |
-          cd core && cargo publish --token "$CARGO_REGISTRY_TOKEN"
+          cd core && cargo publish --token $CARGO_REGISTRY_TOKEN

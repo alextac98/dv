@@ -50,5 +50,4 @@ let s = dv::new(1.0, "s").expect(FAIL_MSG);
 let _ = m + s; // should panic due to incompatible units
 ```
 
-Check out the the docs for more!
-
+Check out the the [docs for more](https://dv.alextac.com)!
