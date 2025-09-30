@@ -14,3 +14,8 @@ cd docs
 
 bazel run -- @pnpm --dir $PWD install --lockfile-only
 ```
+
+## Content overview
+
+- Rust core overview: see `docs/rust.md`.
+- C and C++ usage: see `docs/c.md` and `docs/cpp.md` for Bazel and CMake examples.

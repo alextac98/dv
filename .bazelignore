@@ -1,2 +1,6 @@
 # Ignore Rust crate build file
 core/target
+
+# Ignore CMake build files
+CMakeLists.txt
+build/

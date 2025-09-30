@@ -1,6 +1,10 @@
 # DV - Dimensional Variables
 
+> [!NOTE]
+> Full information, documentation, examples, and more can be found on the project website: https://dv.alextac.com/
+
 [![Rust Build](https://github.com/alextac98/dv/actions/workflows/rust.yaml/badge.svg)](https://github.com/alextac98/dv/actions/workflows/rust.yaml) ![Crates.io Version](https://img.shields.io/crates/v/dv)
+
 
 DV is a package that keeps track of units, and allows you to perform math while also checking the units to be valid. Features include:
 
@@ -8,21 +12,15 @@ DV is a package that keeps track of units, and allows you to perform math while 
 - Performing math on/between units while also checking the units
 - Multi-language support:
     - Rust
-    - Python (Planned)
-    - C/C++ (Planned)
-    - Javascript (Planned)
-    - Java (Planned)
-    - Matlab (Planned)
+    - C/C++
+    - Python (Planned on [GH-2](https://github.com/alextac98/dv/issues/2))
+    - Javascript (Planned on [GH-5](https://github.com/alextac98/dv/issues/5))
+    - Java (Planned on [GH-6](https://github.com/alextac98/dv/issues/6))
+    - Matlab (Planned on [GH-7](https://github.com/alextac98/dv/issues/7))
 
-## Work in Progress!
+## Contributing to the project
 
-This project is currently a work in progress. Initial desired features will be tracked on this README, with eventual feature and bug tracking on Github issues.
-
-- [ ] Develop Rust Core
-- [ ] Write tests for Rust Core development
-- [ ] Python bindings
-- [ ] C++ bindings
-- [x] Docs and Docs website!
+This project is always a work in progress. We welcome contributions, small or large! Please visit this page to learn more! https://dv.alextac.com/docs/category/developers-guides
 
 ## License
 

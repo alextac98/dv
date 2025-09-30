@@ -1,4 +1,4 @@
-load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test", "rust_doc")
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test", "rust_doc", "rust_shared_library", "rust_static_library")
 load("@rules_python//python:defs.bzl", "py_binary")
 
 package(default_visibility = ["//visibility:public"])
@@ -14,6 +14,24 @@ rust_library(
     srcs = ["src/lib.rs", "src/units.rs"],
     compile_data = ["DOCS.md"],
     edition = "2021",
+)
+
+# C ABI shared library for C/C++ consumers
+rust_shared_library(
+    name = "dv_capi_shared",
+    srcs = ["capi/src/lib.rs"],
+    crate_name = "dv_capi",
+    edition = "2021",
+    deps = [":dv_rs"],
+)
+
+# Static variant for C/C++ to link without runtime dylib.
+rust_static_library(
+    name = "dv_capi_static",
+    srcs = ["capi/src/lib.rs"],
+    crate_name = "dv_capi",
+    edition = "2021",
+    deps = [":dv_rs"],
 )
 
 # ==============================================================================
