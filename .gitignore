@@ -8,5 +8,8 @@ bazel-testlogs
 target
 **/Cargo.lock
 
+# CMake Build Directories
+build/
+
 # VSCode Settings
 .vscode/

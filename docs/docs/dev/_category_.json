@@ -1,6 +1,6 @@
 {
     "label": "Developers Guides",
-    "position": 3,
+    "position": 4,
     "link": {
         "type": "generated-index",
         "description": "Guidelines and best practices for contributing to the project."

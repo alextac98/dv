@@ -8,6 +8,6 @@ major = 0
 minor = 1
 
 [patch]
-rust = 0
+rust = 1
 # python = 0
-# cpp = 0
+cpp = 0

@@ -1,0 +1,44 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+# C/C++ headers
+cc_library(
+    name = "dv_headers",
+    hdrs = [
+        "include/dv_c.h",
+        "include/dv.hpp",
+    ],
+    includes = ["include"],
+)
+
+# Linkable library for C/C++ that exposes the Rust C ABI.
+cc_library(
+    name = "dv_c",
+    hdrs = ["include/dv_c.h"],
+    deps = ["//core:dv_capi_static"],
+    includes = ["include"],
+)
+
+cc_library(
+    name = "dv_cpp",
+    hdrs = ["include/dv.hpp"],
+    deps = [":dv_c"],
+    includes = ["include"],
+)
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+cc_binary(
+    name = "demo_cpp",
+    srcs = ["examples/demo_cpp.cpp"],
+    deps = [":dv_cpp"],
+)
+
+cc_binary(
+    name = "demo_c",
+    srcs = ["examples/demo_c.c"],
+    deps = [":dv_c"],
+)

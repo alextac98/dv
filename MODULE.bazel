@@ -12,6 +12,27 @@ rust.toolchain(edition = "2024")
 use_repo(rust, "rust_toolchains")
 
 # ==============================================================================
+# C/C++ Setup
+# ==============================================================================
+bazel_dep(name = "rules_cc", version = "0.2.8")
+
+# ==============================================================================
+# Hermetic C/C++ toolchains (LLVM/Clang)
+# ==============================================================================
+bazel_dep(name = "toolchains_llvm", version = "1.5.0")
+llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
+llvm.toolchain(
+    name = "llvm_toolchain",
+    llvm_version = "19.1.6",
+)
+use_repo(llvm, "llvm_toolchain")
+
+# Register the LLVM cc toolchains so Bazel uses hermetic clang by default
+register_toolchains(
+    "@llvm_toolchain//:all",
+)
+
+# ==============================================================================
 # Python Setup
 # ==============================================================================
 bazel_dep(name = "rules_python", version = "0.40.0")
