@@ -1,6 +1,11 @@
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_binary")
+load("@rules_rust//rust:defs.bzl", "rust_shared_library", "rust_static_library")
 
 package(default_visibility = ["//visibility:public"])
+
+# =============================================================================
+# C/C++ Interface
+# =============================================================================
 
 # C/C++ headers
 cc_library(
@@ -16,7 +21,7 @@ cc_library(
 cc_library(
     name = "dv_c",
     hdrs = ["include/dv_c.h"],
-    deps = ["//core:dv_capi_static"],
+    deps = ["//cpp:dv_capi_static"],
     includes = ["include"],
 )
 
@@ -25,6 +30,28 @@ cc_library(
     hdrs = ["include/dv.hpp"],
     deps = [":dv_c"],
     includes = ["include"],
+)
+
+# =============================================================================
+# C-compatible Rust Library
+# =============================================================================
+
+# C ABI shared library for C/C++ consumers
+rust_shared_library(
+    name = "dv_capi_shared",
+    srcs = ["capi/src/lib.rs"],
+    crate_name = "dv_capi",
+    edition = "2021",
+    deps = ["//core:dv_rs"],
+)
+
+# Static variant for C/C++ to link without runtime dylib.
+rust_static_library(
+    name = "dv_capi_static",
+    srcs = ["capi/src/lib.rs"],
+    crate_name = "dv_capi",
+    edition = "2021",
+    deps = ["//core:dv_rs"],
 )
 
 # =============================================================================
