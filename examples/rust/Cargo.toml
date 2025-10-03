@@ -1,0 +1,10 @@
+[package]
+name = "dv_example_rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dv_rs = { path = "../../core", package = "dv" }
+
+# If you want to use the published version from crates.io
+# dv = 0.1.1
