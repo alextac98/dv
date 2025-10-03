@@ -6,7 +6,7 @@ option(DV_BUILD_SHARED "Build shared library" ON)
 
 # Build Rust C-ABI via Cargo. We use ExternalProject for portability.
 include(ExternalProject)
-set(DV_RUST_DIR ${CMAKE_CURRENT_LIST_DIR}/core/capi)
+set(DV_RUST_DIR ${CMAKE_CURRENT_LIST_DIR}/cpp/capi)
 set(DV_BUILD_CMD cargo build --manifest-path ${DV_RUST_DIR}/Cargo.toml --release)
 
 ExternalProject_Add(dv_capi_ext
@@ -15,7 +15,9 @@ ExternalProject_Add(dv_capi_ext
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ${DV_BUILD_CMD}
     INSTALL_COMMAND ""
-    BUILD_BYPRODUCTS ${DV_RUST_DIR}/target/release/libdv_capi.a
+    BUILD_BYPRODUCTS 
+        ${DV_RUST_DIR}/target/release/libdv_capi.a
+        ${DV_RUST_DIR}/target/release/libdv_capi.dylib
 )
 
 # Library artifact path
@@ -35,8 +37,16 @@ set_target_properties(dv_c PROPERTIES
 )
 add_dependencies(dv_c dv_capi_ext)
 
+# Help executables find the dylib at runtime on macOS when running from build tree
+if(APPLE)
+    set_property(TARGET dv_c PROPERTY INTERFACE_LINK_DIRECTORIES ${DV_RUST_DIR}/target/release)
+endif()
+
 add_library(dv_cpp INTERFACE)
 target_include_directories(dv_cpp INTERFACE ${CMAKE_CURRENT_LIST_DIR}/cpp/include)
 target_link_libraries(dv_cpp INTERFACE dv_c)
 
 add_subdirectory(cpp)
+
+add_subdirectory(examples/c)
+add_subdirectory(examples/cpp)

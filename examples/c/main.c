@@ -10,14 +10,14 @@ static void print_last_error(const char* prefix) {
     }
 }
 
-int main() {
-    dv_var* d = dv_var_new(10.0, "m");
+int main(void) {
+    dv_var* d = dv_var_new(42.0, "m");
     if (!d) { print_last_error("dv_var_new(d)"); return 1; }
 
-    dv_var* t = dv_var_new(2.0, "s");
+    dv_var* t = dv_var_new(3.0, "s");
     if (!t) { print_last_error("dv_var_new(t)"); dv_var_free(d); return 1; }
 
-    dv_var* v = dv_var_div(d, t); // 5 m/s
+    dv_var* v = dv_var_div(d, t); // 14 m/s
     if (!v) { print_last_error("dv_var_div(d,t)"); dv_var_free(d); dv_var_free(t); return 1; }
 
     double mph = 0.0;
