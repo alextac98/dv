@@ -62,4 +62,4 @@ private:
 
 inline size_t base_units_size() { return dv_base_units_size(); }
 
-} // namespace dvpp
+} // namespace dv

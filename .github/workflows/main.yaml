@@ -1,0 +1,177 @@
+name: Main Pipeline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+
+  # ============================================================================
+  # General Jobs
+  # ============================================================================
+
+  version-check:
+    name: Version Check
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Version Check
+        run: bazel run //:update_versions -- --dryrun
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: version-check
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}-${{ hashFiles('.bazelversion', 'MODULE.bazel', 'MODULE.bazel.lock') }}
+          restore-keys: |
+            bazel-${{ runner.os }}-
+
+      - name: Build everything
+        run: bazel build //... --keep_going
+
+  # =============================================================================
+  # Rust Specific Jobs
+  # =============================================================================
+
+  rust-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}-${{ hashFiles('.bazelversion', 'MODULE.bazel', 'MODULE.bazel.lock') }}
+          restore-keys: |
+            bazel-${{ runner.os }}-
+
+      - name: Test Core
+        run: |
+          bazel test //core/... --test_output=errors --keep_going
+
+  rust-publish:
+    name: Publish Rust Crate
+    runs-on: ubuntu-latest
+    needs: [build, rust-tests, version-check]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: 
+      name: Production
+    env:
+      CI: true
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Publish Rust crate
+        run: |
+          cd core && cargo publish --token $CARGO_REGISTRY_TOKEN
+
+  # =============================================================================
+  # C/C++ Specific Jobs
+  # =============================================================================
+
+  #  TODO GH-12: Add C++ regression tests when available
+
+  cpp-example-test:
+    name: C++ Example Build
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}-${{ hashFiles('.bazelversion', 'MODULE.bazel', 'MODULE.bazel.lock') }}
+          restore-keys: |
+            bazel-${{ runner.os }}-
+      
+      - name: Run C++ Example (Bazel)
+        run: |
+          bazel run //examples/cpp:cpp_example
+
+      - name: Run C++ Example (CMake)
+        run: |
+          cmake -S . -B build
+          cmake --build build --target dv_example_cpp
+          ./build/examples/cpp/dv_example_cpp
+
+  c-example-test:
+    name: C Example Build
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}-${{ hashFiles('.bazelversion', 'MODULE.bazel', 'MODULE.bazel.lock') }}
+          restore-keys: |
+            bazel-${{ runner.os }}-
+      
+      - name: Run C++ Example (Bazel)
+        run: |
+          bazel run //examples/c:c_example
+      
+      - name: Run C Example (CMake)
+        run: |
+          cmake -S . -B build
+          cmake --build build --target dv_example_c
+          ./build/examples/cpp/dv_example_c

@@ -53,19 +53,3 @@ rust_static_library(
     edition = "2021",
     deps = ["//core:dv_rs"],
 )
-
-# =============================================================================
-# Examples
-# =============================================================================
-
-cc_binary(
-    name = "demo_cpp",
-    srcs = ["examples/demo_cpp.cpp"],
-    deps = [":dv_cpp"],
-)
-
-cc_binary(
-    name = "demo_c",
-    srcs = ["examples/demo_c.c"],
-    deps = [":dv_c"],
-)

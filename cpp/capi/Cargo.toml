@@ -13,4 +13,4 @@ crate-type = ["staticlib", "cdylib"]
 path = "src/lib.rs"
 
 [dependencies]
-dv = { path = ".." }
+dv = { path = "../../core" }

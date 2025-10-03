@@ -3,7 +3,7 @@ title: Rust
 sidebar_position: 2
 ---
 
-# DV + Rust Examples
+# DV with Rust
 
 ```rust
 use dv_rs::DimensionalVariable as dv;
