@@ -9,5 +9,4 @@ minor = 1
 
 [patch]
 rust = 1
-# python = 0
-cpp = 0
+cpp = 1
