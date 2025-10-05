@@ -1,7 +1,6 @@
 import argparse
 import toml
 import requests
-import json
 
 
 def parse_version_toml(version_file_path="VERSION.toml") -> tuple:
@@ -32,7 +31,7 @@ def update_rust(versions: tuple, dryrun: bool = False) -> bool:
             In the case of dryrun, returns False if versions are inconsistent, True if consistent.
     """
     major, minor, patch = versions
-    version_str = f"{major}.{minor}.{patch['rust']}"
+    version_str = f"{major}.{minor}.{patch}"
 
     # Get all used versions from Crates.io
     crate_details = requests.get("https://crates.io/api/v1/crates/dv").json()

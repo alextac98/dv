@@ -1,7 +1,10 @@
-name: Main Pipeline
+name: main
 
 on:
+  # Explicitly list PR activity types so transitions from Draft → Ready trigger CI.
+  # Note: PRs from forks may still require a maintainer to "Approve and run" before jobs execute.
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches:
       - main
@@ -88,26 +91,6 @@ jobs:
         run: |
           bazel test //core/... --test_output=errors --keep_going
 
-  rust-publish:
-    name: Publish Rust Crate
-    runs-on: ubuntu-latest
-    needs: [build, rust-tests, version-check]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment: 
-      name: Production
-    env:
-      CI: true
-      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Publish Rust crate
-        run: |
-          cd core && cargo publish --token $CARGO_REGISTRY_TOKEN
-
   # =============================================================================
   # C/C++ Specific Jobs
   # =============================================================================
@@ -144,7 +127,7 @@ jobs:
           cmake -S . -B build
           cmake --build build --target dv_example_cpp
           ./build/examples/cpp/dv_example_cpp
-
+  
   c-example-test:
     name: C Example Build
     runs-on: ubuntu-latest
@@ -166,12 +149,17 @@ jobs:
           restore-keys: |
             bazel-${{ runner.os }}-
       
-      - name: Run C++ Example (Bazel)
+      - name: Run C Example (Bazel)
         run: |
           bazel run //examples/c:c_example
-      
-      - name: Run C Example (CMake)
-        run: |
-          cmake -S . -B build
-          cmake --build build --target dv_example_c
-          ./build/examples/cpp/dv_example_c
+
+  publish:
+    name: Call publish workflow
+    # Only call publish after a successful push build on main branch
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [version-check, build, rust-tests, cpp-example-test, c-example-test]
+    uses: ./.github/workflows/publish.yaml
+    permissions:
+      contents: write
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
