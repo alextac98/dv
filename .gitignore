@@ -8,6 +8,13 @@ bazel-testlogs
 target
 **/Cargo.lock
 
+# Python Temporary Files
+**/.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 # CMake Build Directories
 build/
 
