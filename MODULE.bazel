@@ -48,7 +48,7 @@ use_repo(pip, "pypi")
 # ==============================================================================
 # JavaScript / Node.js Setup
 # ==============================================================================
-bazel_dep(name = "aspect_rules_js", version = "2.5.0")
+bazel_dep(name = "aspect_rules_js", version = "2.6.0")
 
 # Node.js version
 # By default you get the node version from DEFAULT_NODE_VERSION in @rules_nodejs//nodejs:repositories.bzl
