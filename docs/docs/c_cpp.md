@@ -19,20 +19,7 @@ For Bazel, make sure you properly have both Rust and C/C++ toolchains (ideally h
 
 DV exposes a C API and a thin C++ wrapper (`dv.hpp`). You can use it from Bazel or CMake.
 
-### Quick start (Bazel)
-
-```bzl
-# BUILD.bazel
-load("@rules_cc//cc:defs.bzl", "cc_binary")
-
-cc_binary(
-    name = "example",
-    srcs = ["main.cpp"],
-    deps = ["@dv//cpp:dv_cpp"],  # C++ wrapper
-)
-```
-
-```cpp
+```cpp 
 #include "dv.hpp"
 #include <iostream>
 
@@ -46,11 +33,30 @@ int main() {
 
 ```
 
-### Quick start (CMake)
+### Bazel with C++
 
-Curren
+```bzl title="MODULE.bazel"
+bazel_dep(name = "dv", version = "0.0.0")
+git_override(
+    module_name = "dv",
+    remote = "https://github.com/alextac98/dv.git",
+    commit = "main",
+)`
+```
 
-```cmake
+```bzl title="BUILD.bazel"
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
+cc_binary(
+    name = "example",
+    srcs = ["main.cpp"],
+    deps = ["@dv//cpp:dv_cpp"],  # C++ wrapper
+)
+```
+
+### CMake with C++
+
+```cmake title="CMakeLists.txt"
 include(FetchContent)
 FetchContent_Declare(dv GIT_REPOSITORY https://github.com/alextac98/dv.git GIT_TAG main)
 FetchContent_MakeAvailable(dv)
@@ -68,8 +74,6 @@ target_link_libraries(example PRIVATE dv_cpp)
 
 Use the C header `dv_c.h` for a simple opaque handle API.
 
-### Example
-
 ```c
 #include "dv_c.h"
 #include <stdio.h>
@@ -83,9 +87,20 @@ int main(){
 }
 ```
 
-### Bazel
+### Bazel with C
 
-```bzl
+```bzl title="MODULE.bazel"
+bazel_dep(name = "dv", version = "0.0.0")
+git_override(
+    module_name = "dv",
+    remote = "https://github.com/alextac98/dv.git",
+    commit = "main",
+)`
+```
+
+```bzl title="BUILD.bazel"
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
 cc_binary(
   name = "example_c",
   srcs = ["main.c"],
@@ -93,9 +108,9 @@ cc_binary(
 )
 ```
 
-### CMake
+### CMake with C
 
-```cmake
+```cmake title="CMakeLists.txt"
 include(FetchContent)
 FetchContent_Declare(dv GIT_REPOSITORY https://github.com/alextac98/dv.git GIT_TAG main)
 FetchContent_MakeAvailable(dv)
