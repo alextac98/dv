@@ -1,0 +1,203 @@
+.languageCards {
+  padding: 4rem 0;
+  background: linear-gradient(180deg, var(--ifm-background-color) 0%, var(--ifm-color-emphasis-100) 100%);
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 3rem;
+}
+
+.cardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  user-select: none;
+}
+
+.card {
+  background: var(--ifm-background-color);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.langName {
+  font-size: 1.8rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.comingSoonBadge {
+  background: var(--ifm-color-emphasis-100);
+  border: 5px solid var(--ifm-color-warning);
+  padding: 1rem;
+  border-radius: 12px;
+  color: var(--ifm-font-color-base);
+  font-size: 1.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 135px;
+}
+
+.cardBody {
+  flex: 1;
+  margin-bottom: 1.5rem;
+}
+
+.packageInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.packageLabel {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-600);
+  font-weight: 500;
+}
+
+.packageManager {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+.codeBlock {
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  overflow: hidden;
+  height: 135px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.copyButton {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+  opacity: 0.8;
+}
+
+.copyButton:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.copyButton:active {
+  transform: scale(0.95);
+}
+
+.codeBlock code {
+  background: none;
+  padding: 0;
+  border: none;
+  color: var(--ifm-font-color-base);
+}
+
+.codeBlock textarea {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  color: var(--ifm-font-color-base);
+  resize: none;
+  outline: none;
+  cursor: text;
+  white-space: pre;
+  overflow: auto;
+  user-select: text;
+  flex: 1;
+  min-height: 0;
+}
+
+.cardFooter {
+  margin-top: auto;
+}
+
+.docLink {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.docLink:hover {
+  color: var(--ifm-color-primary-dark);
+  text-decoration: underline;
+}
+
+@media (max-width: 996px) {
+  .cardsContainer {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+}
