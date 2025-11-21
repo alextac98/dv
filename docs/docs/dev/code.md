@@ -29,6 +29,19 @@ bazel test //core/...
 bazel run //core:serve_docs
 ```
 
+#### Python
+
+```shell
+# Build the extension
+bazel build //python:maturin_build
+
+# Run tests
+bazel test //python:test_dv
+
+# Run example
+bazel run //examples/python:python_example
+```
+
 #### Documentation Site
 
 ```shell
@@ -50,8 +63,8 @@ The core of the library is written in rust, and lives in the `core` directory. L
 |---|---|
 | `core/` | Rust crate + core functionality |
 | `docs/` | Docs site for users and developers |
-| `cpp/` | (PLANNED) C/C++ bindings |
-| `python/` | (PLANNED) Python bindings |
+| `cpp/` | C/C++ bindings |
+| `python/` | Python bindings |
 | `MODULE.bazel` | Bazel module dependencies |
 
 ### Contributing Units

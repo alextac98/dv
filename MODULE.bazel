@@ -11,6 +11,28 @@ rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(edition = "2024")
 use_repo(rust, "rust_toolchains")
 
+# Crate universe for external Rust dependencies (PyO3)
+crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
+crate.spec(
+    package = "pyo3",
+    version = "0.21",
+    features = ["extension-module", "abi3-py38"],
+)
+crate.annotation(
+    crate = "pyo3",
+    gen_all_binaries = False,
+    # Remove incompatible platform constraint
+    additive_build_file_content = """
+config_setting(
+    name = "always_true",
+    values = {},
+)
+""",
+)
+crate.from_specs()
+use_repo(crate, "crates")
+
+
 # ==============================================================================
 # C/C++ Setup
 # ==============================================================================
@@ -36,11 +58,20 @@ register_toolchains(
 # Python Setup
 # ==============================================================================
 bazel_dep(name = "rules_python", version = "0.40.0")
+bazel_dep(name = "rules_uv", version = "0.88.0")
 
+# Register Python 3.12 toolchain
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    python_version = "3.12",
+)
+use_repo(python, "python_3_12")
+
+# Set up pip dependencies
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "pypi",
-    python_version = "3.11",
+    python_version = "3.12",
     requirements_lock = "//:tools/requirements.txt",
 )
 use_repo(pip, "pypi")

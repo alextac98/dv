@@ -64,3 +64,9 @@ test_suite(
         ":operator_tests",
     ],
 )
+
+filegroup(
+    name = "rust_sources",
+    srcs = glob(["**/*.rs", "**/*.toml", "**/*.md"]),
+    visibility = ["//python:__pkg__"],
+)

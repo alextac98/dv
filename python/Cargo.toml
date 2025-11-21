@@ -1,0 +1,17 @@
+[package]
+name = "dv_py"
+version = "0.1.2"
+edition = "2021"
+authors = ["Alex Tacescu <alextac98@gmail.com>"]
+license = "Apache-2.0"
+description = "Python bindings for dv (DimensionalVariable)"
+publish = false
+
+[lib]
+name = "dv_py"
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[dependencies]
+dv_rs = { package = "dv", path = "../core" }
+pyo3 = { version = "0.21", features = ["extension-module"] }
