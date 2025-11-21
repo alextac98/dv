@@ -3,9 +3,20 @@ module(
 )
 
 # =============================================================================
+# Import Bazel Dependencies
+# =============================================================================
+
+bazel_dep(name = "platforms", version="1.0.0")
+bazel_dep(name = "rules_rust", version = "0.67.0")
+bazel_dep(name = "rules_rust_pyo3", version = "0.67.0")
+bazel_dep(name = "rules_cc", version = "0.2.8")
+bazel_dep(name = "rules_python", version = "1.6.3")
+bazel_dep(name = "rules_uv", version = "0.88.0")
+bazel_dep(name = "aspect_rules_js", version = "2.6.0")
+
+# =============================================================================
 # Rust Setup
 # =============================================================================
-bazel_dep(name = "rules_rust", version = "0.63.0")
 
 rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(edition = "2024")
@@ -15,32 +26,26 @@ use_repo(rust, "rust_toolchains")
 crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
 crate.spec(
     package = "pyo3",
-    version = "0.21",
-    features = ["extension-module", "abi3-py38"],
-)
-crate.annotation(
-    crate = "pyo3",
-    gen_all_binaries = False,
-    # Remove incompatible platform constraint
-    additive_build_file_content = """
-config_setting(
-    name = "always_true",
-    values = {},
-)
-""",
+    version = "0.27",
+    features = ["extension-module", "abi3", "abi3-py38", "anyhow"],
 )
 crate.from_specs()
 use_repo(crate, "crates")
 
+# ==============================================================================
+# PyO3 Setup
+# ==============================================================================
+
+register_toolchains(
+    "@rules_rust_pyo3//toolchains:toolchain",
+    "@rules_rust_pyo3//toolchains:rust_toolchain",
+)
 
 # ==============================================================================
 # C/C++ Setup
 # ==============================================================================
-bazel_dep(name = "rules_cc", version = "0.2.8")
 
-# ==============================================================================
 # Hermetic C/C++ toolchains (LLVM/Clang)
-# ==============================================================================
 bazel_dep(name = "toolchains_llvm", version = "1.5.0")
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
 llvm.toolchain(
@@ -57,8 +62,6 @@ register_toolchains(
 # ==============================================================================
 # Python Setup
 # ==============================================================================
-bazel_dep(name = "rules_python", version = "0.40.0")
-bazel_dep(name = "rules_uv", version = "0.88.0")
 
 # Register Python 3.12 toolchain
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
@@ -79,7 +82,6 @@ use_repo(pip, "pypi")
 # ==============================================================================
 # JavaScript / Node.js Setup
 # ==============================================================================
-bazel_dep(name = "aspect_rules_js", version = "2.6.0")
 
 # Node.js version
 # By default you get the node version from DEFAULT_NODE_VERSION in @rules_nodejs//nodejs:repositories.bzl
