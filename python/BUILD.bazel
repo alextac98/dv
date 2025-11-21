@@ -1,45 +1,17 @@
 load("@rules_python//python:defs.bzl", "py_library", "py_test")
+load("@rules_rust//rust:defs.bzl", "rust_shared_library")
+load("@rules_rust_pyo3//:defs.bzl", "pyo3_extension")
 
 package(default_visibility = ["//visibility:public"])
 
-filegroup(
-    name = "rust_sources", 
-    srcs = glob(["**/*.rs", "**/*.toml", "**/*.lock"]),
-)
-
 # =============================================================================
-# Python PyO3 Extension Module (built with maturin)
+# Python PyO3 Extension Module
 # =============================================================================
 
-# Use genrule to build the extension with maturin
-genrule(
-    name = "maturin_build",
-    srcs = [
-        "//core:rust_sources",
-        "//python:rust_sources",
-    ],
-    outs = ["dv/dv_py.so"],
-    cmd = """
-        EXECROOT="$$PWD"
-        OUTPUT_FILE="$$EXECROOT/$@"
-        
-        # Maturin expects to run from the python directory with core as a sibling
-        $(location @pypi//maturin:maturin) build \
-            --manifest-path python/Cargo.toml \
-            --release \
-            --strip \
-            --manylinux off \
-            -o wheels
-        
-        WHEEL=$$(ls -t wheels/*.whl | head -1)
-        unzip -q -j "$$WHEEL" "*.so" -d .
-        SO_FILE=$$(find . -name "*.so" -type f | head -1)
-        
-        mkdir -p "$$(dirname "$$OUTPUT_FILE")"
-        cp "$$SO_FILE" "$$OUTPUT_FILE"
-    """,
-    tools = ["@pypi//maturin:maturin"],
-    local = 1,
+pyo3_extension(
+    name = "dv_py",
+    srcs = ["src/lib.rs"],
+    deps = ["//core:dv_rs", "@crates//:pyo3"],
 )
 
 # Python library that exposes the extension module
@@ -49,7 +21,7 @@ py_library(
     srcs = [
         "dv/__init__.py",
     ],
-    data = [":maturin_build"],
+    data = [":dv_py"],
     imports = ["."],
     visibility = ["//visibility:public"],
 )
