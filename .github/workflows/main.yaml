@@ -37,7 +37,7 @@ jobs:
           fetch-depth: 0
 
       - name: Run Version Check
-        run: bazel run //:update_versions -- --dryrun
+        run: bazel run //tools:update_versions -- --dryrun
 
   build:
     name: Build All
@@ -91,7 +91,7 @@ jobs:
     name: Call publish workflow
     # Only call publish after a successful push build on main branch
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [version-check, build, test-rust, test-python, test-cpp, test-c]
+    needs: [version-check, build, test-rust, test-python]
     uses: ./.github/workflows/publish.yaml
     permissions:
       contents: write

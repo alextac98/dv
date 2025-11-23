@@ -4,6 +4,12 @@ load("@rules_rust_pyo3//:defs.bzl", "pyo3_extension")
 
 package(default_visibility = ["//visibility:public"])
 
+# Export files for version management and publishing
+exports_files([
+    "Cargo.toml",
+    "pyproject.toml",
+])
+
 # =============================================================================
 # Python PyO3 Extension Module
 # =============================================================================
