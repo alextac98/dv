@@ -16,13 +16,12 @@ Example:
 # The .so file is in the same directory as this __init__.py
 try:
     # Try relative import first (when used as package 'dv')
-    from . import dv_py
-    DimensionalVariable = dv_py.DimensionalVariable
-    DVError = dv_py.DVError
+    from . import dv_py as dv
 except ImportError:
     # Fall back to direct import (when __init__.py is run directly)
-    import dv_py
-    DimensionalVariable = dv_py.DimensionalVariable
-    DVError = dv_py.DVError
+    import dv_py as dv
+
+DimensionalVariable = dv.DimensionalVariable
+DVError = dv.DVError
 
 __all__ = ["DimensionalVariable", "DVError"]

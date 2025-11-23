@@ -1,6 +1,4 @@
-module(
-    name = "dv",
-)
+module(name = "dv")
 
 # =============================================================================
 # Import Bazel Dependencies
@@ -22,20 +20,9 @@ rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(edition = "2024")
 use_repo(rust, "rust_toolchains")
 
-# Crate universe for external Rust dependencies (PyO3)
-crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
-crate.spec(
-    package = "pyo3",
-    version = "0.27",
-    features = ["extension-module", "abi3", "abi3-py38", "anyhow"],
-)
-crate.from_specs()
-use_repo(crate, "crates")
-
 # ==============================================================================
 # PyO3 Setup
 # ==============================================================================
-
 register_toolchains(
     "@rules_rust_pyo3//toolchains:toolchain",
     "@rules_rust_pyo3//toolchains:rust_toolchain",

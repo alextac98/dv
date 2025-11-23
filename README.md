@@ -13,7 +13,7 @@ DV is a package that keeps track of units, and allows you to perform math while 
 - Multi-language support:
     - Rust
     - C/C++
-    - Python (Planned on [GH-2](https://github.com/alextac98/dv/issues/2))
+    - Python
     - Javascript (Planned on [GH-5](https://github.com/alextac98/dv/issues/5))
     - Java (Planned on [GH-6](https://github.com/alextac98/dv/issues/6))
     - Matlab (Planned on [GH-7](https://github.com/alextac98/dv/issues/7))
