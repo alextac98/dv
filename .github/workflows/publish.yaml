@@ -109,7 +109,7 @@ jobs:
 
   finalize:
     name: Create Git Tag
-    needs: [prepare, publish-rust, publish-python, publish-cpp]
+    needs: [prepare, publish-rust, publish-python]
     if: needs.prepare.outputs.should_publish == 'true' && needs.prepare.outputs.dry_run == 'false'
     runs-on: ubuntu-latest
     steps:
@@ -136,7 +136,7 @@ jobs:
 
   dry-run-summary:
     name: Dry-run Summary
-    needs: [prepare, publish-rust, publish-python, publish-cpp]
+    needs: [prepare, publish-rust, publish-python]
     if: needs.prepare.outputs.should_publish == 'true' && needs.prepare.outputs.dry_run == 'true'
     runs-on: ubuntu-latest
     steps:

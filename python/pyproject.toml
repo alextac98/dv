@@ -1,0 +1,42 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "dv"
+version = "0.0.0"
+description = "Python bindings for dv (DimensionalVariable) - dimensional analysis for physical quantities"
+authors = [
+    {name = "Alex Tacescu", email = "alextac98@gmail.com"}
+]
+license = {text = "Apache-2.0"}
+readme = "../README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 3 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Software Development :: Libraries",
+]
+keywords = ["units", "dimensions", "physical-quantities", "unit-conversion", "unit-checking"]
+
+[project.urls]
+Homepage = "https://dv.alextac.com"
+Documentation = "https://dv.alextac.com"
+Repository = "https://github.com/alextac98/dv"
+Issues = "https://github.com/alextac98/dv/issues"
+
+[tool.maturin]
+# The Python package name is 'dv'
+module-name = "dv.dv_py"
+python-source = "."

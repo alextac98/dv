@@ -13,9 +13,14 @@ pip_compile(
 py_binary(
     name = "update_versions",
     srcs = ["update_versions.py"],
-    data = ["//:VERSION.toml", "//core:Cargo.toml"],
+    data = [
+        "//:VERSION.toml",
+        "//core:Cargo.toml",
+        "//python:Cargo.toml",
+        "//python:pyproject.toml",
+    ],
     deps = [
         "@pypi//toml",
         "@pypi//requests",
-    ]
+    ],
 )
