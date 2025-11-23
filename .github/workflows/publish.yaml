@@ -27,63 +27,6 @@ defaults:
     shell: bash
 
 jobs:
-  prepare:
-    name: Prepare Release
-    # Extra guard to ensure we only publish from main when called
-    if: github.ref_name == 'main' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-      should_publish: ${{ steps.tag_check.outputs.should_publish }}
-      dry_run: ${{ steps.dry_run.outputs.dry_run }}
-    steps:
-      - name: Checkout repository at triggering commit
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0 # we need tags and history
-
-      - name: Extract version from VERSION.toml
-        id: version
-        run: |
-          VERSION=$(python3 tools/update_versions.py --print-version rust)
-          if [[ -z "$VERSION" ]]; then
-            echo "Failed to read version from VERSION.toml" >&2
-            exit 1
-          fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Set dry-run mode
-        id: dry_run
-        run: |
-          DRY_RUN="${{ github.event.inputs.dry_run || 'false' }}"
-          echo "dry_run=$DRY_RUN" >> "$GITHUB_OUTPUT"
-          if [[ "$DRY_RUN" == "true" ]]; then
-            echo "🔍 Running in dry-run mode"
-          fi
-
-      - name: Determine if release tag already exists
-        id: tag_check
-        run: |
-          TAG="v${{ steps.version.outputs.version }}"
-          EXISTS=$(python3 tools/update_versions.py --check-tag-exists "$TAG")
-          DRY_RUN="${{ steps.dry_run.outputs.dry_run }}"
-          
-          if [[ "$DRY_RUN" == "true" ]]; then
-            echo "🔍 Dry-run mode: Would check for tag $TAG"
-            echo "should_publish=true" >> "$GITHUB_OUTPUT"
-          elif [[ "$EXISTS" == "true" ]]; then
-            echo "Tag $TAG already exists. Skipping publish." >&2
-            echo "should_publish=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Tag $TAG does not exist yet. We should publish." >&2
-            echo "should_publish=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Check core crate version matches VERSION.toml
-        if: steps.tag_check.outputs.should_publish == 'true'
-        run: |
-          python3 tools/update_versions.py --assert-cargo-version "${{ steps.version.outputs.version }}"
 
   publish-rust:
     name: Publish Rust Core
@@ -106,33 +49,6 @@ jobs:
       dry_run: ${{ needs.prepare.outputs.dry_run == 'true' }}
     secrets:
       PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-
-  finalize:
-    name: Create Git Tag
-    needs: [prepare, publish-rust, publish-python]
-    if: needs.prepare.outputs.should_publish == 'true' && needs.prepare.outputs.dry_run == 'false'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository at triggering commit
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-
-      - name: Create and push git tag
-        env:
-          VERSION: ${{ needs.prepare.outputs.version }}
-        run: |
-          TAG="v${VERSION}"
-          git fetch --tags --quiet
-          if git tag -l "$TAG" | grep -q "^$TAG$"; then
-            echo "Tag $TAG already exists. Nothing to do."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG" -m "Release $TAG"
-          git push origin "$TAG"
 
   dry-run-summary:
     name: Dry-run Summary
