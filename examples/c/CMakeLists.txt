@@ -4,7 +4,7 @@ project(dv_c_example C)
 # Expect to be added from repo root as part of the overall build. Use include and link from cpp/ setup.
 add_executable(dv_example_c main.c)
 target_include_directories(dv_example_c PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../../cpp/include)
-target_link_libraries(dv_example_c PRIVATE dv_c)
+target_link_libraries(dv_example_c PRIVATE dv_c m)
 
 if(APPLE)
 	# Allow running example if dv_capi.dylib is used at runtime
