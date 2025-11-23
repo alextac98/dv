@@ -18,50 +18,39 @@ on:
 
 jobs:
   build-wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    env:
-      CI: true
-      BAZELISK_ALLOW_ENVS: Y
+    name: Build wheels on ${{ matrix.platform.os }} (${{ matrix.platform.target }})
+    runs-on: ${{ matrix.platform.runner }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        platform:
+          # Linux
+          - { os: linux, runner: ubuntu-latest, target: x86_64-unknown-linux-gnu }        # x86 64-bit
+          - { os: linux, runner: ubuntu-latest, target: aarch64-unknown-linux-gnu }       # Arm 64-bit
+          - { os: linux, runner: ubuntu-latest, target: armv7-unknown-linux-gnueabihf }   # Arm 32-bit
+          # macOS
+          - { os: macos, runner: macos-13, target: x86_64-apple-darwin }                  # x86 64-bit
+          - { os: macos, runner: macos-14, target: aarch64-apple-darwin }                 # Arm 64-bit
+          # Windows
+          - { os: windows, runner: windows-latest, target: x86_64-pc-windows-msvc }       # x86 64-bit
+          - { os: windows, runner: windows-latest, target: aarch64-pc-windows-msvc }      # Arm 64-bit
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Cache Bazel
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/bazel
-          key: bazel-${{ runner.os }}-${{ hashFiles('.bazelversion', 'MODULE.bazel', 'MODULE.bazel.lock') }}
-          restore-keys: |
-            bazel-${{ runner.os }}-
-
-      - name: Build Python extension with Bazel
-        run: |
-          bazel build //python:dv_py --compilation_mode=opt
-          bazel test //python/...
-
-      - name: Set up Python for wheel packaging
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install maturin for wheel packaging
-        run: pip install maturin
-
       - name: Build wheels
-        working-directory: python
-        run: |
-          maturin build --release --strip --out dist/
+        uses: PyO3/maturin-action@v1
+        with:
+          working-directory: python
+          target: ${{ matrix.platform.target }}
+          args: --release --strip --out dist
+          manylinux: auto
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}
+          name: wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
           path: python/dist/*.whl
 
   publish-pypi:
