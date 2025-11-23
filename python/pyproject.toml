@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "dv"
-version = "0.0.0"
+version = "0.1.2"
 description = "Python bindings for dv (DimensionalVariable) - dimensional analysis for physical quantities"
 authors = [
     {name = "Alex Tacescu", email = "alextac98@gmail.com"}
