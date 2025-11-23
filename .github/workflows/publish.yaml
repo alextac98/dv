@@ -5,6 +5,15 @@ on:
     secrets:
       CARGO_REGISTRY_TOKEN:
         required: true
+      PYPI_API_TOKEN:
+        required: true
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Perform a dry run without actually publishing'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: publish-${{ github.ref_name }}
@@ -19,13 +28,14 @@ defaults:
 
 jobs:
   prepare:
-    name: prepare-release
+    name: Prepare Release
     # Extra guard to ensure we only publish from main when called
-    if: github.ref_name == 'main'
+    if: github.ref_name == 'main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
       should_publish: ${{ steps.tag_check.outputs.should_publish }}
+      dry_run: ${{ steps.dry_run.outputs.dry_run }}
     steps:
       - name: Checkout repository at triggering commit
         uses: actions/checkout@v4
@@ -43,12 +53,26 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Set dry-run mode
+        id: dry_run
+        run: |
+          DRY_RUN="${{ github.event.inputs.dry_run || 'false' }}"
+          echo "dry_run=$DRY_RUN" >> "$GITHUB_OUTPUT"
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "🔍 Running in dry-run mode"
+          fi
+
       - name: Determine if release tag already exists
         id: tag_check
         run: |
           TAG="v${{ steps.version.outputs.version }}"
           EXISTS=$(python3 tools/update_versions.py --check-tag-exists "$TAG")
-          if [[ "$EXISTS" == "true" ]]; then
+          DRY_RUN="${{ steps.dry_run.outputs.dry_run }}"
+          
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "🔍 Dry-run mode: Would check for tag $TAG"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$EXISTS" == "true" ]]; then
             echo "Tag $TAG already exists. Skipping publish." >&2
             echo "should_publish=false" >> "$GITHUB_OUTPUT"
           else
@@ -62,41 +86,31 @@ jobs:
           python3 tools/update_versions.py --assert-cargo-version "${{ steps.version.outputs.version }}"
 
   publish-rust:
-    name: publish-rust-core
+    name: Publish Rust Core
     needs: [prepare]
     if: needs.prepare.outputs.should_publish == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository at triggering commit
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
+    uses: ./.github/workflows/_publish-rust.yaml
+    with:
+      version: ${{ needs.prepare.outputs.version }}
+      dry_run: ${{ needs.prepare.outputs.dry_run == 'true' }}
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Dry-run package build (core)
-        working-directory: core
-        run: |
-          cargo package --allow-dirty
-
-      - name: Publish core crate to crates.io
-        working-directory: core
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: |
-          if [[ -z "${CARGO_REGISTRY_TOKEN}" ]]; then
-            echo "Missing secret CARGO_REGISTRY_TOKEN" >&2
-            exit 1
-          fi
-          # --no-verify can be risky; we prefer a clean publish after the dry-run
-          cargo publish --allow-dirty
-
-  finalize:
-    name: create-tag
+  publish-python:
+    name: Publish Python Bindings
     needs: [prepare, publish-rust]
     if: needs.prepare.outputs.should_publish == 'true'
+    uses: ./.github/workflows/_publish-python.yaml
+    with:
+      version: ${{ needs.prepare.outputs.version }}
+      dry_run: ${{ needs.prepare.outputs.dry_run == 'true' }}
+    secrets:
+      PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+  finalize:
+    name: Create Git Tag
+    needs: [prepare, publish-rust, publish-python, publish-cpp]
+    if: needs.prepare.outputs.should_publish == 'true' && needs.prepare.outputs.dry_run == 'false'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository at triggering commit
@@ -120,28 +134,17 @@ jobs:
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
 
-  # --- Future expansion examples ---
-  # publish-python:
-  #   name: publish-python
-  #   needs: [prepare]
-  #   if: needs.prepare.outputs.should_publish == 'true'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         ref: ${{ github.event.workflow_run.head_sha }}
-  #         fetch-depth: 0
-  #     # build wheel/sdist, publish to PyPI using TWINE_USERNAME/TWINE_PASSWORD
-  #
-  # publish-cpp:
-  #   name: publish-cpp
-  #   needs: [prepare]
-  #   if: needs.prepare.outputs.should_publish == 'true'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         ref: ${{ github.event.workflow_run.head_sha }}
-  #         fetch-depth: 0
-  #     # upload headers/artifacts to a package registry if desired
+  dry-run-summary:
+    name: Dry-run Summary
+    needs: [prepare, publish-rust, publish-python, publish-cpp]
+    if: needs.prepare.outputs.should_publish == 'true' && needs.prepare.outputs.dry_run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summary
+        run: |
+          echo "🔍 Dry-run completed successfully!"
+          echo "Version: ${{ needs.prepare.outputs.version }}"
+          echo "All packages built successfully but not published."
+          echo "To publish for real, run this workflow without dry_run or push to main."
+
 

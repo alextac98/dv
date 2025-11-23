@@ -1,0 +1,35 @@
+name: Test Rust
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: 'Operating system to run on'
+        required: false
+        type: string
+        default: 'ubuntu-latest'
+
+jobs:
+  test-rust:
+    name: Test Rust Core
+    runs-on: ${{ inputs.os }}
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}-${{ hashFiles('.bazelversion', 'MODULE.bazel', 'MODULE.bazel.lock') }}
+          restore-keys: |
+            bazel-${{ runner.os }}-
+
+      - name: Test Core
+        run: |
+          bazel test //core/... --test_output=errors --keep_going

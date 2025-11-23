@@ -5,3 +5,17 @@ pip_compile(
     requirements_in = ":requirements.in",
     requirements_txt = ":requirements.txt",
 )
+
+# ==============================================================================
+# Version Setting / Checking
+# ==============================================================================
+
+py_binary(
+    name = "update_versions",
+    srcs = ["update_versions.py"],
+    data = ["//:VERSION.toml", "//core:Cargo.toml"],
+    deps = [
+        "@pypi//toml",
+        "@pypi//requests",
+    ]
+)
