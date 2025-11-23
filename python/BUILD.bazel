@@ -11,7 +11,7 @@ package(default_visibility = ["//visibility:public"])
 pyo3_extension(
     name = "dv_py",
     srcs = ["src/lib.rs"],
-    deps = ["//core:dv_rs", "@crates//:pyo3"],
+    deps = ["//core:dv_rs"],
 )
 
 # Python library that exposes the extension module
