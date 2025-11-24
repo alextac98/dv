@@ -90,8 +90,8 @@ jobs:
   publish:
     name: Call publish workflow
     # Only call publish after a successful push build on main branch
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [version-check, build, test-rust, test-python]
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: [version-check, build, test-rust, test-python, test-cpp, test-c]
     uses: ./.github/workflows/publish.yaml
     permissions:
       contents: write
