@@ -3,10 +3,6 @@ name: Publish Python
 on:
   workflow_call:
     inputs:
-      version:
-        description: 'Version to publish'
-        required: true
-        type: string
       dry_run:
         description: 'Perform a dry run without actually publishing'
         required: false
