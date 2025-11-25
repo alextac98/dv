@@ -1,0 +1,116 @@
+name: C and C++ CI Workflow
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: 'Operating system to run on'
+        required: false
+        type: string
+        default: 'ubuntu-latest'
+
+jobs: 
+  # ----------------------------------------------------------------------------
+  # Build C and C++ Package
+  # ----------------------------------------------------------------------------
+
+
+  # ----------------------------------------------------------------------------
+  # Test C
+  # ----------------------------------------------------------------------------
+
+  test-c-bazel:
+    name: Test C Bindings with Bazel
+    runs-on: ${{ inputs.os }}
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}
+          restore-keys: bazel-${{ runner.os }}
+      
+      - name: Run C Example (Bazel)
+        run: |
+          bazel run //examples/c:c_example
+
+  test-c-cmake:
+    name: Test C Bindings with CMake
+    runs-on: ${{ inputs.os }}
+    env:
+      CI: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Rust for CMake
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run C Example (CMake)
+        run: |
+          cmake -S . -B build
+          cmake --build build --target dv_example_c
+          ./build/examples/c/dv_example_c
+
+  # ----------------------------------------------------------------------------
+  # Test C++
+  # ----------------------------------------------------------------------------
+
+  test-cpp-bazel:
+    name: Test C++ Bindings with Bazel
+    runs-on: ${{ inputs.os }}
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}
+          restore-keys: bazel-${{ runner.os }}
+      
+      - name: Run C++ Example (Bazel)
+        run: |
+          bazel run //examples/cpp:cpp_example
+
+  test-cpp-cmake:
+    name: Test C++ Bindings with CMake
+    runs-on: ${{ inputs.os }}
+    env:
+      CI: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Rust for CMake
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run C++ Example (CMake)
+        run: |
+          cmake -S . -B build
+          cmake --build build --target dv_example_cpp
+          ./build/examples/cpp/dv_example_cpp
+
+  # ----------------------------------------------------------------------------
+  # Publish C/C++ Package
+  # ----------------------------------------------------------------------------
+
+    # No publish step for C/C++ packages

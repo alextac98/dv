@@ -36,6 +36,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}
+          restore-keys: bazel-${{ runner.os }}
+
       - name: Run Version Check
         run: bazel run //tools:update_versions -- --dryrun
 
@@ -56,9 +63,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/bazel
-          key: bazel-${{ runner.os }}-${{ hashFiles('.bazelversion', 'MODULE.bazel', 'MODULE.bazel.lock') }}
-          restore-keys: |
-            bazel-${{ runner.os }}-
+          key: bazel-${{ runner.os }}
+          restore-keys: bazel-${{ runner.os }}
 
       - name: Build everything
         run: bazel build //... --keep_going
@@ -67,34 +73,21 @@ jobs:
   # Language-Specific Test Jobs
   # =============================================================================
 
-  test-rust:
-    name: Test Rust
+  rust-build:
+    name: Build and Publish Rust Crate
     needs: build
-    uses: ./.github/workflows/_test-rust.yaml
-
-  test-python:
-    name: Test Python
-    needs: build
-    uses: ./.github/workflows/_test-python.yaml
-
-  test-cpp:
-    name: Test C++
-    needs: build
-    uses: ./.github/workflows/_test-cpp.yaml
-  
-  test-c:
-    name: Test C
-    needs: build
-    uses: ./.github/workflows/_test-c.yaml
-
-  publish:
-    name: Call publish workflow
-    # Only call publish after a successful push build on main branch
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    needs: [version-check, build, test-rust, test-python, test-cpp, test-c]
-    uses: ./.github/workflows/publish.yaml
-    permissions:
-      contents: write
+    uses: ./.github/workflows/_rust.yaml
     secrets:
       CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  python-build:
+    name: Build and Publish Python Package
+    needs: build
+    uses: ./.github/workflows/_python.yaml
+    secrets:
       PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+  c-cpp-build:
+    name: Build and Publish C and C++ Library
+    needs: build
+    uses: ./.github/workflows/_c_cpp.yaml
