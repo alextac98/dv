@@ -3,7 +3,7 @@ This project is a library in multiple languages for handling units and checking 
 
 ## Agent Instructions
 
-Please use Bazel as the build system for all tasks related to building, testing, and managing dependencies. Ensure that any new code or changes adhere to the existing project structure and coding standards.
+Please use Bazel as the build system for all tasks related to building, testing, and managing dependencies. Ensure that any new code or changes adhere to the existing project structure and coding standards. Avoid making any unnecessary scripts or extra code outside of what is required for the task.
 
 ## Folder Structure
 - `core`: Contains the core library implemented in Rust.

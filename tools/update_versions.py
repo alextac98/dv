@@ -248,7 +248,7 @@ def main():
 
     if not all_passed:
         print("\n❌ Version inconsistencies detected. Please resolve the issues above.")
-        print("   Run `bazel run //:update_versions` to automatically fix issues where possible.")
+        print("   Run `bazel run //tools:update_versions` to automatically fix issues where possible.")
         exit(1)
 
     print("\n✅ All version checks passed!")
