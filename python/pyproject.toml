@@ -4,11 +4,11 @@ build-backend = "maturin"
 
 [project]
 name = "dv"
-version = "0.1.3"
+version = "0.1.4"
 description = "Python bindings for dv (DimensionalVariable) - dimensional analysis for physical quantities"
 readme = "../README.md"
 requires-python = ">=3.9"
-classifiers = [ "Development Status :: 3 - Beta", "Intended Audience :: Developers", "Intended Audience :: Science/Research", "License :: OSI Approved :: Apache Software License", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.9", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Programming Language :: Python :: 3.13", "Programming Language :: Rust", "Topic :: Scientific/Engineering", "Topic :: Scientific/Engineering :: Physics", "Topic :: Software Development :: Libraries",]
+classifiers = [ "Development Status :: 4 - Beta", "Intended Audience :: Developers", "Intended Audience :: Science/Research", "License :: OSI Approved :: Apache Software License", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.9", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Programming Language :: Python :: 3.13", "Programming Language :: Python :: 3.14", "Programming Language :: Python :: 3.15", "Programming Language :: Rust", "Topic :: Scientific/Engineering", "Topic :: Scientific/Engineering :: Physics", "Topic :: Software Development :: Libraries",]
 keywords = [ "units", "dimensions", "physical-quantities", "unit-conversion", "unit-checking",]
 [[project.authors]]
 name = "Alex Tacescu"
