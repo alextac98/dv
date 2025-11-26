@@ -1,7 +1,7 @@
 """Unit tests for the Python DimensionalVariable bindings."""
 
 import pytest
-from dv import DimensionalVariable, DVError
+from dv_py import DimensionalVariable, DVError
 
 
 class TestConstruction:

@@ -3,9 +3,9 @@ requires = [ "maturin>=1.0,<2.0",]
 build-backend = "maturin"
 
 [project]
-name = "dv"
-version = "0.1.4"
-description = "Python bindings for dv (DimensionalVariable) - dimensional analysis for physical quantities"
+name = "dv_py"
+version = "0.1.5"
+description = "Python bindings for dv (DimensionalVariable) - keeping track of units and dimensions for physical quantities"
 readme = "../README.md"
 requires-python = ">=3.9"
 classifiers = [ "Development Status :: 4 - Beta", "Intended Audience :: Developers", "Intended Audience :: Science/Research", "License :: OSI Approved :: Apache Software License", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.9", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Programming Language :: Python :: 3.13", "Programming Language :: Python :: 3.14", "Programming Language :: Python :: 3.15", "Programming Language :: Rust", "Topic :: Scientific/Engineering", "Topic :: Scientific/Engineering :: Physics", "Topic :: Software Development :: Libraries",]

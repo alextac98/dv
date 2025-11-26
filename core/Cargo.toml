@@ -1,6 +1,6 @@
 [package]
 name = "dv"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 authors = [ "Alex Tacescu <alextac98@gmail.com>",]
 description = "Core Rust library for DimensionalVariable, a multi-language library for handling physical quantities with units."

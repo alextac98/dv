@@ -2,7 +2,7 @@ use pyo3::prelude::*;
 use pyo3::exceptions::PyTypeError;
 use dv_rs::DimensionalVariable;
 
-pyo3::create_exception!(dv_py, DVError, pyo3::exceptions::PyException);
+pyo3::create_exception!(dv_pyo3, DVError, pyo3::exceptions::PyException);
 
 /// A dimensioned variable that combines a numerical value with physical units.
 /// 
@@ -336,7 +336,7 @@ impl PyDV {
 
 /// Python module for dv (DimensionalVariable).
 #[pymodule]
-fn dv_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn dv_pyo3(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyDV>()?;
     m.add("DVError", m.py().get_type::<DVError>())?;
     Ok(())
