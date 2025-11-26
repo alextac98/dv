@@ -3,6 +3,6 @@ load("@rules_python//python:defs.bzl", "py_binary")
 py_binary(
     name = "python_example",
     srcs = ["main.py"],
-    deps = ["//python:dv"],
+    deps = ["//python:dv_py"],
     main = "main.py",
 )

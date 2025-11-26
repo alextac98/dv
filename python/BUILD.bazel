@@ -15,7 +15,7 @@ exports_files([
 # =============================================================================
 
 pyo3_extension(
-    name = "dv_py",
+    name = "dv_pyo3",
     srcs = ["src/lib.rs"],
     deps = ["//core:dv_rs"],
 )
@@ -23,11 +23,11 @@ pyo3_extension(
 # Python library that exposes the extension module
 # This creates a "dv" package by making __init__.py available at the root level
 py_library(
-    name = "dv",
+    name = "dv_py",
     srcs = [
-        "dv/__init__.py",
+        "dv_py/__init__.py",
     ],
-    data = [":dv_py"],
+    data = [":dv_pyo3"],
     imports = ["."],
     visibility = ["//visibility:public"],
 )
@@ -40,7 +40,7 @@ py_test(
     name = "test_dv",
     srcs = ["tests/test_dv.py"],
     deps = [
-        ":dv",
+        ":dv_py",
         "@pypi//pytest:pkg",
     ],
 )

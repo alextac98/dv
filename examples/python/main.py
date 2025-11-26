@@ -7,7 +7,7 @@ This example demonstrates:
 - Error handling for incompatible operations
 """
 
-from dv import DimensionalVariable, DVError
+from dv_py import DimensionalVariable, DVError
 
 
 def main():
