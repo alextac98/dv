@@ -7,6 +7,17 @@ sidebar_position: 3
 
 DV supports python via PyO3 bindings to the core library. Any Rust `Results<>` are converted to Python exceptions.
 
+The project currently builds for these architectures:
+* Linux
+    * x86 64-bit
+    * Arm 64-bit (aarch64-gnu)
+    * Arm 32-bit (armv7-gnueabihf)
+* MacOS
+    * Arm 64-bit
+    * x86 64-bit
+* Windows
+    * x86 64-bit
+
 ## Examples
 
 ```python title="python-example.py"
