@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './LanguageCards.module.css';
+import DownloadCounter from '@site/src/components/DownloadCounter';
 
 interface LanguageCardProps {
   name: string;
@@ -7,25 +8,29 @@ interface LanguageCardProps {
   packageManager: string;
   packageCommand: string;
   docLink: string;
-  isComingSoon: boolean;
+  packageManagerUrl?: string;
+  packageManagerIcon?: string;
+  isComingSoon?: boolean;
 }
 
 const languages: LanguageCardProps[] = [
   {
     name: 'Rust',
     icon: '🦀',
-    packageManager: 'Cargo',
+    packageManager: 'crates.io',
     packageCommand: 'cargo add dv',
     docLink: '/docs/rust',
-    isComingSoon: false,
+    packageManagerUrl: 'https://crates.io/crates/dv',
+    packageManagerIcon: '/img/package_managers/cargo-logo.png',
   },
   {
     name: 'Python',
     icon: '🐍',
-    packageManager: 'pip',
+    packageManager: 'PyPI',
     packageCommand: 'pip install dv_py',
     docLink: '/docs/python',
-    isComingSoon: false,
+    packageManagerUrl: 'https://pypi.org/project/dv-py/',
+    packageManagerIcon: '/img/package_managers/PyPI-Logo-notext.svg',
   },
   {
     name: 'Bazel',
@@ -38,7 +43,12 @@ git_override(
     commit = "main",
 )`,
     docLink: '/docs/c_cpp#bazel-with-c',
-    isComingSoon: false,
+    // packageManagerUrl: 'https://registry.bazel.build/modules/dv',
+    // packageManagerIcon: (
+    //   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    //     <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L19.82 8 12 11.82 4.18 8 12 4.18zM4 9.82l7 3.5v7.36l-7-3.5V9.82zm16 0v7.36l-7 3.5v-7.36l7-3.5z"/>
+    //   </svg>
+    // ),
   },
   {
     name: 'C/C++ (CMake)',
@@ -48,11 +58,16 @@ git_override(
 FetchContent_Declare(dv GIT_REPOSITORY https://github.com/alextac98/dv.git GIT_TAG main)
 FetchContent_MakeAvailable(dv)`,
     docLink: '/docs/c_cpp#cmake-with-c',
-    isComingSoon: false,
+    // packageManagerUrl: 'https://github.com/alextac98/dv',
+    // packageManagerIcon: (
+    //   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    //     <path d="M11.25 2.5l-9 9v9h9v-9l9-9h-9zm1.5 15.75h-6v-6l6-6v12zm7.5-10.5l-6 6v6h6v-12z"/>
+    //   </svg>
+    // ),
   },
 ];
 
-function LanguageCard({ name, icon, packageManager, packageCommand, docLink, isComingSoon}: LanguageCardProps) {
+function LanguageCard({ name, icon, packageManager, packageCommand, docLink, packageManagerUrl, packageManagerIcon, isComingSoon}: LanguageCardProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async (e: React.MouseEvent) => {
@@ -73,6 +88,22 @@ function LanguageCard({ name, icon, packageManager, packageCommand, docLink, isC
       <div className={styles.cardHeader}>
         <span className={styles.icon}>{icon}</span>
         <h3 className={styles.langName}>{name}</h3>
+        {packageManagerUrl && (
+          <a 
+            href={packageManagerUrl} 
+            className={styles.packageManagerLink}
+            onClick={(e) => e.stopPropagation()}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className={styles.packageManagerLinkText}>Download On {packageManager}</span>
+            {packageManagerIcon ? (
+              <img src={packageManagerIcon} alt={`${packageManager} icon`} className={styles.packageManagerIconImg} />
+            ) : (
+              <img src="/img/package_managers/default-logo.svg" alt={`${packageManager} icon`} className={styles.packageManagerIconImg} />
+            )}
+          </a>
+        )}
       </div>
       <div className={styles.cardBody}>
         {isComingSoon ? (
@@ -151,6 +182,7 @@ export default function LanguageCards() {
     <section className={styles.languageCards}>
       <div className="container">
         <h2 className={styles.title}>Supported Languages</h2>
+        <DownloadCounter />
         <p className={styles.subtitle}>
           Choose your preferred language and get started with dimensional variables!
         </p>

@@ -2,8 +2,37 @@
 title: Rust
 sidebar_position: 2
 ---
+<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px'}}>
+  <h1 style={{margin: 0}}>DV with Rust</h1>
+  <div style={{display: 'flex', gap: '8px', flexShrink: 0}}>
+    <a href="https://crates.io/crates/dv" target="_blank" rel="noopener noreferrer">
+      <img src="https://img.shields.io/crates/v/dv.svg" alt="crates.io" />
+    </a>
+    <a href="https://crates.io/crates/dv" target="_blank" rel="noopener noreferrer">
+      <img src="https://img.shields.io/crates/d/dv.svg" alt="downloads" />
+    </a>
+  </div>
+</div>
+#
 
-# DV with Rust
+The core library is written in Rust, and can be installed via Crates.io or directly from GitHub.
+
+## Quickstart
+
+Add DV to your Rust project by adding it to your `Cargo.toml`:
+
+```toml title="Cargo.toml"
+[dependencies]
+dv_rs = "*"  # Or specify a version like "0.4.0"
+```
+
+Or use cargo to add it:
+
+```bash
+cargo add dv_rs
+```
+
+Then import and use it in your code:
 
 ```rust
 use dv_rs::DimensionalVariable as dv;
@@ -20,7 +49,7 @@ let result = d.value_in("h");
 assert!(result.is_err());
 ```
 
-Most math is supported, including `+`, `-`, `*`, `/`, `powi`, `powf`, `sqrt`, `abs`. Units are checked to make sure math operations are compatible.
+## Example
 
 ```rust
 use dv_rs::DimensionalVariable as dv;

@@ -3,7 +3,18 @@ title: Python
 sidebar_position: 3
 ---
 
-# DV with Python
+<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px'}}>
+  <h1 style={{margin: 0}}>DV with Python</h1>
+  <div style={{display: 'flex', gap: '8px', flexShrink: 0}}>
+    <a href="https://pypi.org/project/dv-py/" target="_blank" rel="noopener noreferrer">
+      <img src="https://img.shields.io/pypi/v/dv-py.svg" alt="PyPI" />
+    </a>
+    <a href="https://pypi.org/project/dv-py/" target="_blank" rel="noopener noreferrer">
+      <img src="https://img.shields.io/pypi/dm/dv-py.svg" alt="downloads" />
+    </a>
+  </div>
+</div>
+#
 
 DV supports python via PyO3 bindings to the core library. Any Rust `Results<>` are converted to Python exceptions.
 
@@ -17,6 +28,29 @@ The project currently builds for these architectures:
     * x86 64-bit
 * Windows
     * x86 64-bit
+    
+## Quickstart
+
+Install DV using pip:
+
+```bash
+pip install dv-py
+```
+
+Then import and use it in your Python code:
+
+```python
+from dv import DV
+
+# Create dimensioned variables
+velocity = DV(10.0, "m/s")
+time = DV(2.0, "s")
+
+# Perform calculations with automatic dimensional analysis
+distance = velocity * time
+print(f"Distance: {distance.value_in('m')} m")
+```
+
 
 ## Examples
 
