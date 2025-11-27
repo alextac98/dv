@@ -120,7 +120,7 @@ def update_python(versions: tuple, dryrun: bool = False) -> bool:
 
     # Get all used versions from PyPI
     try:
-        pypi_details = requests.get("https://pypi.org/pypi/dv/json").json()
+        pypi_details = requests.get("https://pypi.org/pypi/dv-py/json").json()
         pypi_versions = list(pypi_details["releases"].keys())
     except requests.exceptions.HTTPError:
         # Package doesn't exist yet on PyPI

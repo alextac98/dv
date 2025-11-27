@@ -1,3 +1,8 @@
+"""
+Bazel MODULE file for the DimensionalVariable project.
+https://dv.alextac.com
+"""
+
 module(name = "dv")
 
 # =============================================================================

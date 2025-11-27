@@ -338,6 +338,6 @@ impl PyDV {
 #[pymodule]
 fn dv_pyo3(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyDV>()?;
-    m.add("DVError", m.py().get_type::<DVError>())?;
+    m.add("DVError", m.py().get_type_bound::<DVError>())?;
     Ok(())
 }
