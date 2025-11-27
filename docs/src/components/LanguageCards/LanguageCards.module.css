@@ -1,5 +1,5 @@
 .languageCards {
-  padding: 4rem 0;
+  padding: 1rem 0;
   background: linear-gradient(180deg, var(--ifm-background-color) 0%, var(--ifm-color-emphasis-100) 100%);
 }
 
@@ -54,6 +54,55 @@
   gap: 1rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
+  position: relative;
+}
+
+.packageManagerLink {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  text-decoration: none;
+  background: var(--ifm-color-primary);
+  border: none;
+  opacity: 0.8;
+}
+
+.packageManagerLink:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.packageManagerLink:active {
+  transform: scale(0.95);
+}
+
+.packageManagerLinkText {
+  font-size: 1rem;
+  color: white;
+  font-weight: 700;
+}
+
+.packageManagerLink svg {
+  color: white;
+  flex-shrink: 0;
+}
+
+.packageManagerIconImg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.packageManagerIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ifm-color-primary);
 }
 
 .icon {

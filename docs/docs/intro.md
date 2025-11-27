@@ -86,7 +86,7 @@ Status | Language | Notes
 ✅ Core | Rust | Reference implementation
 ✅ C | C ABI (`dv_c.h`)
 ✅ C++ | C++ RAII wrapper (`dv.hpp`)
-🛠 Planned | Python | pyo3 binding
+✅ Python | Python via PyO3
 🛠 Planned | JavaScript / TypeScript | WASM or N-API layer
 🛠 Planned | Java | JNI via C ABI (or pure port)
 🛠 Planned | Matlab | MEX wrapper
