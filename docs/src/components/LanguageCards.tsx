@@ -23,9 +23,9 @@ const languages: LanguageCardProps[] = [
     name: 'Python',
     icon: '🐍',
     packageManager: 'pip',
-    packageCommand: 'pip install dv',
-    docLink: 'https://github.com/alextac98/dv/issues/2',
-    isComingSoon: true,
+    packageCommand: 'pip install dv_py',
+    docLink: '/docs/python',
+    isComingSoon: false,
   },
   {
     name: 'Bazel',
