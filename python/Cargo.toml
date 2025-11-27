@@ -19,5 +19,5 @@ package = "dv"
 path = "../core"
 
 [dependencies.pyo3]
-version = "0.21"
-features = [ "extension-module",]
+version = "0.26"
+features = [ "extension-module", "abi3-py38", "generate-import-lib"]
