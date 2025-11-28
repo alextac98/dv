@@ -58,7 +58,7 @@ class TestValueAccess:
         """Test getting base unit exponents."""
         v = DimensionalVariable(10.0, "m")
         base = v.base_units()
-        assert base == (1, 0, 0, 0, 0, 0, 0)  # [m, kg, s, K, A, mol, cd]
+        assert base == (1, 0, 0, 0, 0, 0, 0, 0)  # [m, kg, s, K, A, mol, cd, rad]
 
 
 class TestArithmetic:
@@ -312,3 +312,26 @@ class TestComplexExamples:
         assert velocity.value_in("km/hr") == pytest.approx(10.0)
         # Convert to m/s
         assert velocity.value_in("m/s") == pytest.approx(2.777778, rel=1e-3)
+
+    def test_angle_conversion(self):
+        """Test angle conversions between radians and degrees."""
+        import math
+        angle_rad = DimensionalVariable(math.pi, "rad")
+        angle_deg = DimensionalVariable(180.0, "deg")
+        
+        # π radians should equal 180 degrees
+        assert angle_rad.value_in("rad") == pytest.approx(angle_deg.value_in("rad"))
+        assert angle_rad.value_in("deg") == pytest.approx(180.0)
+        assert angle_deg.value_in("rad") == pytest.approx(math.pi)
+    
+    def test_angle_trigonometry(self):
+        """Test trigonometric functions with angles."""
+        import math
+        angle = DimensionalVariable(math.pi / 4, "rad")
+        
+        # sin(π/4) ≈ 0.707
+        assert angle.sin().value() == pytest.approx(math.sin(math.pi / 4))
+        # cos(π/4) ≈ 0.707
+        assert angle.cos().value() == pytest.approx(math.cos(math.pi / 4))
+        # tan(π/4) = 1
+        assert angle.tan().value() == pytest.approx(1.0)

@@ -81,10 +81,10 @@ impl PyDV {
     /// Get the base unit exponents as a tuple.
     ///
     /// Returns:
-    ///     tuple: (m, kg, s, K, A, mol, cd) exponents
-    fn base_units(&self) -> (f64, f64, f64, f64, f64, f64, f64) {
+    ///     tuple: (m, kg, s, K, A, mol, cd, rad) exponents
+    fn base_units(&self) -> (f64, f64, f64, f64, f64, f64, f64, f64) {
         let units = self.inner.unit();
-        (units[0], units[1], units[2], units[3], units[4], units[5], units[6])
+        (units[0], units[1], units[2], units[3], units[4], units[5], units[6], units[7])
     }
 
     /// Addition operator.
@@ -258,7 +258,7 @@ impl PyDV {
     ///     DVError: If the value is not unitless
     fn ln(&self) -> PyResult<PyDV> {
         match self.inner.ln() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 7] } }),
+            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -272,7 +272,7 @@ impl PyDV {
     ///     DVError: If the value is not unitless
     fn log2(&self) -> PyResult<PyDV> {
         match self.inner.log2() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 7] } }),
+            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -286,49 +286,49 @@ impl PyDV {
     ///     DVError: If the value is not unitless
     fn log10(&self) -> PyResult<PyDV> {
         match self.inner.log10() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 7] } }),
+            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
 
-    /// Sine (requires unitless value).
+    /// Sine (requires angle or unitless value).
     ///
     /// Returns:
     ///     DV: The sine (unitless)
     ///
     /// Raises:
-    ///     DVError: If the value is not unitless
+    ///     DVError: If the value is not an angle or unitless
     fn sin(&self) -> PyResult<PyDV> {
         match self.inner.sin() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 7] } }),
+            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
 
-    /// Cosine (requires unitless value).
+    /// Cosine (requires angle or unitless value).
     ///
     /// Returns:
     ///     DV: The cosine (unitless)
     ///
     /// Raises:
-    ///     DVError: If the value is not unitless
+    ///     DVError: If the value is not an angle or unitless
     fn cos(&self) -> PyResult<PyDV> {
         match self.inner.cos() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 7] } }),
+            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
 
-    /// Tangent (requires unitless value).
+    /// Tangent (requires angle or unitless value).
     ///
     /// Returns:
     ///     DV: The tangent (unitless)
     ///
     /// Raises:
-    ///     DVError: If the value is not unitless
+    ///     DVError: If the value is not an angle or unitless
     fn tan(&self) -> PyResult<PyDV> {
         match self.inner.tan() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 7] } }),
+            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
