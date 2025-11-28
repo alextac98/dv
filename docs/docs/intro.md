@@ -10,7 +10,7 @@ DV is a multi‑language library for numeric values with physical units. It pars
 
 DV as a standard is simply a struct with two major parts:
 * A 64-bit float representing the value expressed in canonical SI base units
-* A vector of 7 64-bit floats representing the exponents for the base SI units (allows fractional exponents)
+* A vector of 8 64-bit floats representing the exponents for the base SI units plus angle (allows fractional exponents)
 
 The process from import to storage is as follows:
 
@@ -20,7 +20,7 @@ The process from import to storage is as follows:
 1. Multiply the numeric value by each unit’s conversion factor to yield SI value.
 1. Store normalized pair; subsequent arithmetic never needs the original string.
 
-The vector follows this standard: `[m, kg, s, K, A, mol, cd]`, where each unit represents the base SI units:
+The vector follows this standard: `[m, kg, s, K, A, mol, cd, rad]`, where each unit represents the base SI units:
 
 | Unit | Name | Representation |
 | --- | --- | --- |
@@ -31,10 +31,14 @@ The vector follows this standard: `[m, kg, s, K, A, mol, cd]`, where each unit r
 | `A` | amps | electrical current |
 | `mol` | mol | quantity |
 | `cd` | candela | light intensity |
+| `rad` | radians | angle |
 
-Example: `9.81 km/s^2` stores as: `{9810.0, [1.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0]}`.
+Example: `9.81 km/s^2` stores as: `{9810.0, [1.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0]}`.
+
+You may ask - aren't angles unitless? You'd be technically correct, but enough users use angles for projects that it made sense to have it as its own unit. See the FAQ for more information.
 
 The full list of available core units can be found under `core/src/units.rs`. There will be a future feature for users to be able to add their own additional units without needing to re-compile or rebuild the library.
+
 <!-- TODO: we should really auto-render all the supported core units here. -->
 
 ### Parsing Unit Strings
@@ -61,7 +65,7 @@ The DV library overrides common math operators to add in additional checks and f
 | addition / subtraction | unit exponent vectors must match |
 | multiplication / division | no checks, unit exponent vectors are added |
 | power / sqrt | powi multiplies exponents by integer power; powf and sqrt supported with fractional exponents; value must be valid for sqrt; logs/trig remain unitless-only |
-| sin / cos / tan | DV must be unit-less |
+| sin / cos / tan | DV must be angle (radians) or unit-less |
 | neg / abs | no checks |
 
 ## Why make another unit management system?

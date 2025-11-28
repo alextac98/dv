@@ -60,7 +60,7 @@ let v = dv::new(3.0, "m/s").expect(FAIL_MSG);
 let t = dv::new(2.0, "s").expect(FAIL_MSG);
 let d = &v * &t;
 assert_eq!(d.value(), 6.0);
-assert_eq!(d.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
+assert_eq!(d.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
 // Bad Example
 let m = dv::new(1.0, "m").expect(FAIL_MSG);
@@ -76,10 +76,20 @@ let _ = m + s; // should panic due to incompatible units
 // Fractional exponents via sqrt and powf
 let a = dv::new(9.0, "m^2/s^2").unwrap();
 let r = a.sqrt().unwrap();
-assert_eq!(r.unit(), [1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0]);
+assert_eq!(r.unit(), [1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
 
 let b = dv::new(4.0, "m^3").unwrap();
 let r2 = b.sqrt().unwrap();
-assert_eq!(r2.unit(), [1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
+assert_eq!(r2.unit(), [1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
+
+// Angles (radians and degrees)
+let angle_rad = dv::new(std::f64::consts::PI, "rad").unwrap();
+let angle_deg = dv::new(180.0, "deg").unwrap();
+assert_eq!(angle_rad.value_in("rad").unwrap(), angle_deg.value_in("rad").unwrap());
+
+// Trigonometric functions require radians
+use std::f64::consts::PI;
+let angle = dv::new(PI / 4.0, "rad").unwrap();
+assert!((angle.sin().unwrap() - (PI / 4.0).sin()).abs() < 1e-12);
 ```
 

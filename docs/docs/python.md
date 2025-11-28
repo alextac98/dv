@@ -154,8 +154,22 @@ def main():
     accel = DV(9.81, "m/s^2")
     base = accel.base_units()
     print(f"   acceleration = {accel.value_in('m/s^2')} m/s²")
-    print(f"   base units (m, kg, s, K, A, mol, cd): {base}")
+    print(f"   base units (m, kg, s, K, A, mol, cd, rad): {base}")
     print(f"   interpretation: m^{base[0]} * s^{base[2]}\n")
+
+    # Example 11: Working with angles
+    print("11. Working with angles:")
+    import math
+    angle_rad = DV(math.pi, "rad")
+    angle_deg = DV(180.0, "deg")
+    print(f"   π radians = {angle_rad.value_in('rad')} rad")
+    print(f"   180 degrees = {angle_deg.value_in('deg')} deg")
+    print(f"   180 degrees = {angle_deg.value_in('rad'):.4f} rad")
+    
+    # Trigonometric functions
+    angle = DV(math.pi / 4, "rad")
+    print(f"   sin(π/4) = {angle.sin().value():.4f}")
+    print(f"   cos(π/4) = {angle.cos().value():.4f}\n")
 
     print("=== Example Complete ===")
 

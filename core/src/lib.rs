@@ -124,22 +124,39 @@ impl DimensionalVariable {
         Ok(self.value.log10())
     }
 
-    // ---- Math: trigonometry (unitless only, radians recommended) ----
-    /// Sine function. Requires unitless (radians).
+    // ---- Math: trigonometry (requires angle dimension or unitless) ----
+    /// Check if the variable has angle dimension (only rad exponent is non-zero)
+    fn is_angle(&self) -> bool {
+        // Angle dimension: [0, 0, 0, 0, 0, 0, 0, 1] (only rad exponent is 1)
+        for i in 0..units::BASE_UNITS_SIZE - 1 {
+            if self.unit[i] != 0.0 {
+                return false;
+            }
+        }
+        self.unit[units::BASE_UNITS_SIZE - 1] == 1.0
+    }
+
+    /// Sine function. Requires angle (radians) or unitless.
     pub fn sin(&self) -> Result<f64, String> {
-        if !self.is_unitless() { return Err("sin requires a unitless quantity (radians)".to_string()); }
+        if !self.is_unitless() && !self.is_angle() { 
+            return Err("sin requires an angle or unitless quantity".to_string()); 
+        }
         Ok(self.value.sin())
     }
 
-    /// Cosine function. Requires unitless (radians).
+    /// Cosine function. Requires angle (radians) or unitless.
     pub fn cos(&self) -> Result<f64, String> {
-        if !self.is_unitless() { return Err("cos requires a unitless quantity (radians)".to_string()); }
+        if !self.is_unitless() && !self.is_angle() { 
+            return Err("cos requires an angle or unitless quantity".to_string()); 
+        }
         Ok(self.value.cos())
     }
 
-    /// Tangent function. Requires unitless (radians).
+    /// Tangent function. Requires angle or unitless.
     pub fn tan(&self) -> Result<f64, String> {
-        if !self.is_unitless() { return Err("tan requires a unitless quantity (radians)".to_string()); }
+        if !self.is_unitless() && !self.is_angle() { 
+            return Err("tan requires an angle or unitless quantity".to_string()); 
+        }
         Ok(self.value.tan())
     }
 

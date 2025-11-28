@@ -1,22 +1,25 @@
 import React, {type ReactNode} from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
+import ThemedImage from '@theme/ThemedImage';
 import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
   /**
-   * Accept either an SVG React component OR a static asset path (string) such as .png/.webp.
-   * When a string is provided it will be rendered inside an <img> tag.
+   * Accept either an SVG React component, a static asset path (string), or themed images object.
    */
-  graphic: React.ComponentType<React.ComponentProps<'svg'>> | string;
+  graphic: React.ComponentType<React.ComponentProps<'svg'>> | string | {light: string; dark: string};
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
     title: 'Easy to Use!',
-    graphic: require('@site/static/img/Units.webp').default,
+    graphic: {
+      light: require('@site/static/img/Units-light.png').default,
+      dark: require('@site/static/img/Units-dark.png').default,
+    },
     description: (
       <>
         DV is designed to be easy to use and integrate into your projects, with a
@@ -48,12 +51,19 @@ const FeatureList: FeatureItem[] = [
 ];
 
 function Feature({title, graphic, description}: FeatureItem) {
+  const isThemedImage = typeof graphic === 'object' && 'light' in graphic && 'dark' in graphic;
   const isImage = typeof graphic === 'string';
-  const GraphicComponent = (!isImage ? (graphic as React.ComponentType<React.ComponentProps<'svg'>>) : null);
+  const GraphicComponent = (!isImage && !isThemedImage ? (graphic as React.ComponentType<React.ComponentProps<'svg'>>) : null);
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        {isImage ? (
+        {isThemedImage ? (
+          <ThemedImage
+            sources={{light: graphic.light, dark: graphic.dark}}
+            className={styles.featureSvg}
+            alt={title}
+          />
+        ) : isImage ? (
           <img src={graphic} className={styles.featureSvg} alt={title} />
         ) : (
           GraphicComponent && <GraphicComponent className={styles.featureSvg} role="img" />

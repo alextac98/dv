@@ -22,12 +22,19 @@ DV exposes a C API and a thin C++ wrapper (`dv.hpp`). You can use it from Bazel 
 ```cpp 
 #include "dv.hpp"
 #include <iostream>
+#include <cmath>
 
 int main() {
     dv::DV mass(10.0, "kg");
     dv::DV accel(9.81, "m/s^2");
     dv::DV force = mass * accel; // N
     std::cout << "force = " << force.value_in("lbf") << " lbf\n";
+    
+    // Working with angles
+    dv::DV angle_rad(M_PI / 4.0, "rad");
+    dv::DV angle_deg(45.0, "deg");
+    std::cout << "45 degrees = " << angle_deg.value_in("rad") << " radians\n";
+    
     return 0;
 }
 
