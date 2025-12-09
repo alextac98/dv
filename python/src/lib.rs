@@ -291,13 +291,13 @@ impl PyDV {
         }
     }
 
-    /// Sine (requires angle or unitless value).
+    /// Sine (requires angle).
     ///
     /// Returns:
     ///     DV: The sine (unitless)
     ///
     /// Raises:
-    ///     DVError: If the value is not an angle or unitless
+    ///     DVError: If the value is not an angle
     fn sin(&self) -> PyResult<PyDV> {
         match self.inner.sin() {
             Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
@@ -305,13 +305,13 @@ impl PyDV {
         }
     }
 
-    /// Cosine (requires angle or unitless value).
+    /// Cosine (requires angle).
     ///
     /// Returns:
     ///     DV: The cosine (unitless)
     ///
     /// Raises:
-    ///     DVError: If the value is not an angle or unitless
+    ///     DVError: If the value is not an angle
     fn cos(&self) -> PyResult<PyDV> {
         match self.inner.cos() {
             Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
@@ -319,13 +319,13 @@ impl PyDV {
         }
     }
 
-    /// Tangent (requires angle or unitless value).
+    /// Tangent (requires angle).
     ///
     /// Returns:
     ///     DV: The tangent (unitless)
     ///
     /// Raises:
-    ///     DVError: If the value is not an angle or unitless
+    ///     DVError: If the value is not an angle
     fn tan(&self) -> PyResult<PyDV> {
         match self.inner.tan() {
             Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),

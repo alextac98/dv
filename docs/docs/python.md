@@ -166,7 +166,7 @@ def main():
     print(f"   180 degrees = {angle_deg.value_in('deg')} deg")
     print(f"   180 degrees = {angle_deg.value_in('rad'):.4f} rad")
     
-    # Trigonometric functions
+    # Trigonometric functions require angle unit
     angle = DV(math.pi / 4, "rad")
     print(f"   sin(π/4) = {angle.sin().value():.4f}")
     print(f"   cos(π/4) = {angle.cos().value():.4f}\n")

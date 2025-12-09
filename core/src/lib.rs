@@ -136,26 +136,26 @@ impl DimensionalVariable {
         self.unit[units::BASE_UNITS_SIZE - 1] == 1.0
     }
 
-    /// Sine function. Requires angle (radians) or unitless.
+    /// Sine function. Requires angle (radians).
     pub fn sin(&self) -> Result<f64, String> {
-        if !self.is_unitless() && !self.is_angle() { 
-            return Err("sin requires an angle or unitless quantity".to_string()); 
+        if !self.is_angle() { 
+            return Err("sin requires an angle quantity".to_string()); 
         }
         Ok(self.value.sin())
     }
 
-    /// Cosine function. Requires angle (radians) or unitless.
+    /// Cosine function. Requires angle (radians).
     pub fn cos(&self) -> Result<f64, String> {
-        if !self.is_unitless() && !self.is_angle() { 
-            return Err("cos requires an angle or unitless quantity".to_string()); 
+        if !self.is_angle() { 
+            return Err("cos requires an angle quantity".to_string()); 
         }
         Ok(self.value.cos())
     }
 
-    /// Tangent function. Requires angle or unitless.
+    /// Tangent function. Requires angle (radians).
     pub fn tan(&self) -> Result<f64, String> {
-        if !self.is_unitless() && !self.is_angle() { 
-            return Err("tan requires an angle or unitless quantity".to_string()); 
+        if !self.is_angle() { 
+            return Err("tan requires an angle quantity".to_string()); 
         }
         Ok(self.value.tan())
     }
