@@ -104,3 +104,15 @@ fn errors_on_unknown_unit() {
     let result = dv::new(1.0, "unknown_unit");
     assert!(result.is_err(), "Expected error on unknown unit");
 }
+
+#[test]
+fn electrical_units() {
+    let voltage = dv::new(10.0, "V").expect(FAIL_MSG);
+    let current = dv::new(2.0, "A").expect(FAIL_MSG);
+    let resistance = dv::new(5.0, "Ohm").expect(FAIL_MSG);
+
+    assert!(voltage == &current * &resistance, "Ohm's law failed");
+
+    let power = dv::new(20.0, "W").expect(FAIL_MSG);
+    assert!(power == &voltage * &current, "Power calculation failed");
+}
