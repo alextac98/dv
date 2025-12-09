@@ -43,11 +43,22 @@ impl DimensionalVariable {
             .map_err(|e| format!("Failed to parse unit '{}': {}", unit_str, e))?;
 
         // Check if the units are compatible
-        if self.unit != unit {
+        if !self.check_compatibility(unit) {
             return Err(format!("Incompatible unit conversion to: {}", unit_str));
         }
         
         return Ok(self.value / conversion_factor);
+    }
+
+    pub fn check_compatibility(&self, other_unit: [f64; units::BASE_UNITS_SIZE]) -> bool {
+
+       // If the angle unit == 1, then allow compatibility to linear units
+       if self.unit[7] == 1.0 {
+            // Compare only the first 7 base units (ignore the angle unit)
+            return &self.unit[..units::BASE_UNITS_SIZE - 1] == &other_unit[..units::BASE_UNITS_SIZE - 1];
+       }
+
+        return self.unit == other_unit;
     }
 
     /// Returns the base unit array of this DimensionalVariable.
@@ -62,7 +73,7 @@ impl DimensionalVariable {
 
     /// Fallible add with unit compatibility check.
     pub fn try_add(&self, other: &DimensionalVariable) -> Result<DimensionalVariable, String> {
-        if self.unit != other.unit {
+        if !self.check_compatibility(other.unit) {
             return Err("Incompatible units for addition".to_string());
         }
         return Ok(DimensionalVariable { value: self.value + other.value, unit: self.unit });
@@ -70,7 +81,7 @@ impl DimensionalVariable {
 
     /// Fallible subtraction with unit compatibility check.
     pub fn try_sub(&self, other: &DimensionalVariable) -> Result<DimensionalVariable, String> {
-        if self.unit != other.unit {
+        if !self.check_compatibility(other.unit) {
             return Err("Incompatible units for subtraction".to_string());
         }
         return Ok(DimensionalVariable { value: self.value - other.value, unit: self.unit });
@@ -355,8 +366,7 @@ use std::cmp::Ordering;
 impl<'a, 'b> Add<&'b DimensionalVariable> for &'a DimensionalVariable {
     type Output = DimensionalVariable;
     fn add(self, rhs: &'b DimensionalVariable) -> Self::Output {
-        assert!(self.unit == rhs.unit, "Incompatible units for addition: {:?} vs {:?}", self.unit, rhs.unit);
-        DimensionalVariable { value: self.value + rhs.value, unit: self.unit }
+        return self.try_add(rhs).expect("Incompatible units for addition");
     }
 }
 
@@ -385,8 +395,7 @@ impl<'a> Add<DimensionalVariable> for &'a DimensionalVariable {
 impl<'a, 'b> Sub<&'b DimensionalVariable> for &'a DimensionalVariable {
     type Output = DimensionalVariable;
     fn sub(self, rhs: &'b DimensionalVariable) -> Self::Output {
-        assert!(self.unit == rhs.unit, "Incompatible units for subtraction: {:?} vs {:?}", self.unit, rhs.unit);
-        DimensionalVariable { value: self.value - rhs.value, unit: self.unit }
+        return self.try_sub(rhs).expect("Incompatible units for subtraction");
     }
 }
 
@@ -470,15 +479,13 @@ impl<'a> Div<DimensionalVariable> for &'a DimensionalVariable {
 // Assignment ops: implement only for &DimensionalVariable RHS. Owned RHS will autoref.
 impl AddAssign<&DimensionalVariable> for DimensionalVariable {
     fn add_assign(&mut self, rhs: &DimensionalVariable) {
-        assert!(self.unit == rhs.unit, "Incompatible units for addition assignment: {:?} vs {:?}", self.unit, rhs.unit);
-        self.value += rhs.value;
+        *self = self.try_add(rhs).expect("Incompatible units for addition assignment");
     }
 }
 
 impl SubAssign<&DimensionalVariable> for DimensionalVariable {
     fn sub_assign(&mut self, rhs: &DimensionalVariable) {
-        assert!(self.unit == rhs.unit, "Incompatible units for subtraction assignment: {:?} vs {:?}", self.unit, rhs.unit);
-        self.value -= rhs.value;
+        *self = self.try_sub(rhs).expect("Incompatible units for subtraction assignment");
     }
 }
 
@@ -584,14 +591,16 @@ impl Neg for DimensionalVariable {
 // ---- Comparisons: equalities and ordering ----
 impl PartialEq for DimensionalVariable {
     fn eq(&self, other: &Self) -> bool {
-        if self.unit != other.unit { return false; }
+        if !self.check_compatibility(other.unit) {
+            return false;
+        }
         self.value == other.value
     }
 }
 
 impl PartialOrd for DimensionalVariable {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        if self.unit != other.unit { return None; }
+        if !self.check_compatibility(other.unit) { return None; }
         self.value.partial_cmp(&other.value)
     }
 }

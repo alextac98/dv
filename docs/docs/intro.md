@@ -45,7 +45,11 @@ You may ask - aren't angles unitless? You'd be technically correct, but we chose
 
 Angles are often used in engineering, and keeping track of angles separately can be very useful! When you get into more complex math, especially with angle math operators like `sin/cos/tan` and their inverses `arcsin/arccos/arctan`, relying on having the proper units becomes very necessary.
 
-However, 
+Therefore, this library treats angle units in a slightly special way. As expected trigonometry functions (`sin/cos/tan`) requre a dimension that is only an angle, and return a unitless dimension. The inverse trigonometyr functions (`asin/acos/atan`) do the exact opposite - they require a unitless dimension and return an angle dimension.
+
+Additionally, the DimensionalVariable system allow for conversion from angular dimensions (angle exponent == 1) to also be equivalent to non-angular dimenions (angle exponent != 1), but not the other way around. This allows for equations (torque * angular speed = power), but protects against accidental math (frequency should not equal angular speed).
+
+If you come up with an edge case that breaks this logic, please open a GitHub issue to start the discussion, or propose a new fix!
 
 ### Parsing Unit Strings
 
@@ -71,7 +75,8 @@ The DV library overrides common math operators to add in additional checks and f
 | addition / subtraction | unit exponent vectors must match |
 | multiplication / division | no checks, unit exponent vectors are added |
 | power / sqrt | powi multiplies exponents by integer power; powf and sqrt supported with fractional exponents; value must be valid for sqrt; logs/trig remain unitless-only |
-| sin / cos / tan | DV must be angle (radians) or unit-less |
+| sin / cos / tan | DV must be angle (radians), returns a unitless value |
+| asin / acos / atan | DV must be unitless, returns an angled value |
 | neg / abs | no checks |
 
 ## Why make another unit management system?
