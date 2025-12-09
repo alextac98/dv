@@ -88,7 +88,7 @@ pub fn unit_map() -> HashMap<&'static str, Unit> {
         ("MA", Unit { name: "megaampere", conversion_factor: 1e6, base_unit: [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0] }),
 
         // ===== Energy Units =====
-        ("ev", Unit { name: "electronvolt", conversion_factor: 1.602176634e-19, base_unit: [2.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0] }),
+        ("eV", Unit { name: "electronvolt", conversion_factor: 1.602176634e-19, base_unit: [2.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0] }),
         ("mJ", Unit { name: "millijoule", conversion_factor: 1e-3, base_unit: [2.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0] }),
         ("J", Unit { name: "joule", conversion_factor: 1.0, base_unit: [2.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0] }),
         ("kJ", Unit { name: "kilojoule", conversion_factor: 1e3, base_unit: [2.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0] }),
@@ -109,6 +109,21 @@ pub fn unit_map() -> HashMap<&'static str, Unit> {
         ("GW", Unit { name: "gigawatt", conversion_factor: 1e9, base_unit: [2.0, 1.0, -3.0, 0.0, 0.0, 0.0, 0.0, 0.0] }),
         ("TW", Unit { name: "terawatt", conversion_factor: 1e12, base_unit: [2.0, 1.0, -3.0, 0.0, 0.0, 0.0, 0.0, 0.0] }),
         ("hp", Unit { name: "horsepower", conversion_factor: 745.6998715822702, base_unit: [2.0, 1.0, -3.0, 0.0, 0.0, 0.0, 0.0, 0.0] }),
+
+        // ===== Electrical Charge Units =====
+        ("Coulomb", Unit { name: "coulomb", conversion_factor: 1.0, base_unit: [0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0] }),
+        ("mC", Unit { name: "millicoulomb", conversion_factor: 1e-3, base_unit: [0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0] }),
+        ("kC", Unit { name: "kilocoulomb", conversion_factor: 1e3, base_unit: [0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0] }),
+
+        // ===== Electric Potential Units =====
+        ("V", Unit { name: "volt", conversion_factor: 1.0, base_unit: [2.0, 1.0, -3.0, 0.0, -1.0, 0.0, 0.0, 0.0] }),
+        ("mV", Unit { name: "millivolt", conversion_factor: 1e-3, base_unit: [2.0, 1.0, -3.0, 0.0, -1.0, 0.0, 0.0, 0.0] }),
+        ("kV", Unit { name: "kilovolt", conversion_factor: 1e3, base_unit: [2.0, 1.0, -3.0, 0.0, -1.0, 0.0, 0.0, 0.0] }),
+
+        // ===== Electric Resistance Units =====
+        ("Ohm", Unit { name: "ohm", conversion_factor: 1.0, base_unit: [2.0, 1.0, -3.0, 0.0, -2.0, 0.0, 0.0, 0.0] }),
+        ("mOhm", Unit { name: "milliohm", conversion_factor: 1e-3, base_unit: [2.0, 1.0, -3.0, 0.0, -2.0, 0.0, 0.0, 0.0] }),
+        ("kOhm", Unit { name: "kiloohm", conversion_factor: 1e3, base_unit: [2.0, 1.0, -3.0, 0.0, -2.0, 0.0, 0.0, 0.0] }),
 
         // ===== Amount of Substance Units =====
         ("mol", Unit { name: "mole", conversion_factor: 1.0, base_unit: [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0] }),
