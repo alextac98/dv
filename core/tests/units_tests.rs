@@ -36,6 +36,18 @@ fn angle_conversions() {
 }
 
 #[test]
+fn angle_to_linear_conversions() {
+    let torque = dv::new(10.0, "N-m").expect(FAIL_MSG);
+    let angular_speed = dv::new(2.0, "rad/s").expect(FAIL_MSG);
+
+    let power = torque * angular_speed;
+
+    // Power = Torque * Angular Speed
+    assert_eq!(power.unit(), [2.0, 1.0, -3.0, 0.0, 0.0, 0.0, 0.0, 1.0], "Incorrect unit for angular power.");
+    assert!((power.value_in("W").expect(FAIL_MSG) - 20.0).abs() < 1e-10);
+}
+
+#[test]
 fn unit_str_to_unit_simple_simple() {
     let dv = dv::new(4.6483, "m/s").expect(FAIL_MSG);
     assert_eq!(dv.value(), 4.6483, "Expected value to be 4.6483");
