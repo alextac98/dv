@@ -191,3 +191,59 @@ pub extern "C" fn dv_var_sqrt(a: *const dv_var) -> *mut dv_var {
         Err(e) => { set_last_error(e); ptr::null_mut() }
     }
 }
+
+#[no_mangle]
+pub extern "C" fn dv_var_asin(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    match a.inner.asin() {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: v })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_var_acos(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    match a.inner.acos() {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: v })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_var_atan(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    match a.inner.atan() {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: v })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+// Free-standing trigonometric functions that take raw f64 and return angle in radians
+
+#[no_mangle]
+pub extern "C" fn dv_asin(x: c_double) -> *mut dv_var {
+    match dv_rs::asin(x) {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: v })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_acos(x: c_double) -> *mut dv_var {
+    match dv_rs::acos(x) {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: v })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_atan(x: c_double) -> *mut dv_var {
+    match dv_rs::atan(x) {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: v })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}

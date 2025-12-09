@@ -160,6 +160,42 @@ impl DimensionalVariable {
         Ok(self.value.tan())
     }
 
+    /// Arcsine function. Requires unitless value in [-1, 1]. Returns angle in radians.
+    pub fn asin(&self) -> Result<DimensionalVariable, String> {
+        if !self.is_unitless() {
+            return Err("asin requires a unitless quantity".to_string());
+        }
+        if self.value < -1.0 || self.value > 1.0 {
+            return Err("asin requires a value in the range [-1, 1]".to_string());
+        }
+        let mut unit = [0.0; units::BASE_UNITS_SIZE];
+        unit[units::BASE_UNITS_SIZE - 1] = 1.0; // radians
+        Ok(DimensionalVariable { value: self.value.asin(), unit })
+    }
+
+    /// Arccosine function. Requires unitless value in [-1, 1]. Returns angle in radians.
+    pub fn acos(&self) -> Result<DimensionalVariable, String> {
+        if !self.is_unitless() {
+            return Err("acos requires a unitless quantity".to_string());
+        }
+        if self.value < -1.0 || self.value > 1.0 {
+            return Err("acos requires a value in the range [-1, 1]".to_string());
+        }
+        let mut unit = [0.0; units::BASE_UNITS_SIZE];
+        unit[units::BASE_UNITS_SIZE - 1] = 1.0; // radians
+        Ok(DimensionalVariable { value: self.value.acos(), unit })
+    }
+
+    /// Arctangent function. Requires unitless value. Returns angle in radians.
+    pub fn atan(&self) -> Result<DimensionalVariable, String> {
+        if !self.is_unitless() {
+            return Err("atan requires a unitless quantity".to_string());
+        }
+        let mut unit = [0.0; units::BASE_UNITS_SIZE];
+        unit[units::BASE_UNITS_SIZE - 1] = 1.0; // radians
+        Ok(DimensionalVariable { value: self.value.atan(), unit })
+    }
+
     // ---- Scalar helpers on single values ----
     /// Negate the value, keeping the same unit.
     pub fn neg(&self) -> DimensionalVariable {
@@ -171,6 +207,21 @@ impl DimensionalVariable {
         DimensionalVariable { value: self.value.abs(), unit: self.unit }
     }
  
+}
+
+/// Arcsin function for f64 input, returns DimensionalVariable in radians.
+pub fn asin(x: f64) -> Result<DimensionalVariable, String> {
+    return DimensionalVariable::new(x, "").unwrap().asin();
+}
+
+/// Arccos function for f64 input, returns DimensionalVariable in radians.
+pub fn acos(x: f64) -> Result<DimensionalVariable, String> {
+    return DimensionalVariable::new(x, "").unwrap().acos();
+}
+
+/// Arctan function for f64 input, returns DimensionalVariable in radians.
+pub fn atan(x: f64) -> Result<DimensionalVariable, String> {
+    return DimensionalVariable::new(x, "").unwrap().atan();
 }
 
 /// Convert a unit string like "m/s^2" or "kg-m/s^2" into base unit exponents and a conversion factor.

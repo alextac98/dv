@@ -39,6 +39,16 @@ dv_var* dv_var_powi(const dv_var* a, int exp);
 dv_var* dv_var_powf(const dv_var* a, double exp);
 dv_var* dv_var_sqrt(const dv_var* a);
 
+// Inverse trigonometric functions (return angle in radians)
+dv_var* dv_var_asin(const dv_var* a);
+dv_var* dv_var_acos(const dv_var* a);
+dv_var* dv_var_atan(const dv_var* a);
+
+// Free-standing inverse trigonometric functions (take raw double, return angle in radians)
+dv_var* dv_asin(double x);
+dv_var* dv_acos(double x);
+dv_var* dv_atan(double x);
+
 #ifdef __cplusplus
 }
 #endif

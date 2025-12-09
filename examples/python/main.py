@@ -8,7 +8,7 @@ This example demonstrates:
 - Working with angles (radians and degrees)
 """
 
-from dv_py import DimensionalVariable, DVError
+from dv_py import DimensionalVariable, DVError, asin, acos, atan
 
 
 def main():
@@ -114,7 +114,12 @@ def main():
     # Trigonometric functions with radians
     angle = DimensionalVariable(math.pi / 4, "rad")
     print(f"   sin(π/4) = {angle.sin().value():.4f}")
-    print(f"   cos(π/4) = {angle.cos().value():.4f}\n")
+    print(f"   cos(π/4) = {angle.cos().value():.4f}")
+    
+    # Free-standing inverse trig functions
+    print(f"   asin(0.5) = {asin(0.5).value_in('rad'):.4f} rad")
+    print(f"   acos(0.5) = {acos(0.5).value_in('deg'):.2f} deg")
+    print(f"   atan(1.0) = {atan(1.0).value_in('deg'):.2f} deg (should be 45)\n")
 
     print("=== Example Complete ===")
 

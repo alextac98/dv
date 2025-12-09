@@ -1,4 +1,5 @@
 use dv_rs::DimensionalVariable as dv;
+use dv_rs::{asin, acos, atan};
 
 const FAIL_MSG: &str = "Failed to create DimensionalVariable";
 
@@ -420,4 +421,58 @@ fn absolute_value() {
     let a = m.abs();
     assert_eq!(a.value(), 5.0);
     assert_eq!(a.unit(), [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
+}
+
+#[test]
+fn inverse_trig_functions() {
+    use std::f64::consts::PI;
+
+    // asin on unitless value
+    let half = dv::new(0.5, "").expect(FAIL_MSG);
+    let angle = half.asin().expect(FAIL_MSG);
+    assert!((angle.value() - 0.5_f64.asin()).abs() < 1e-12);
+    assert_eq!(angle.unit(), [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]); // radians
+
+    assert!(asin(half.value()).unwrap().value() - angle.value() < 1e-12);
+
+    // acos on unitless value
+    let angle2 = half.acos().expect(FAIL_MSG);
+    assert!((angle2.value() - 0.5_f64.acos()).abs() < 1e-12);
+    assert_eq!(angle2.unit(), [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+
+    assert!(acos(half.value()).unwrap().value() - angle2.value() < 1e-12);
+
+    // atan on unitless value
+    let one = dv::new(1.0, "").expect(FAIL_MSG);
+    let angle3 = one.atan().expect(FAIL_MSG);
+    assert!((angle3.value() - PI / 4.0).abs() < 1e-12);
+    assert_eq!(angle3.unit(), [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+
+    assert!(atan(one.value()).unwrap().value() - angle3.value() < 1e-12);
+
+    // asin/acos edge cases at -1 and 1
+    let neg_one = dv::new(-1.0, "").expect(FAIL_MSG);
+    let pos_one = dv::new(1.0, "").expect(FAIL_MSG);
+    assert!((neg_one.asin().unwrap().value() - (-PI / 2.0)).abs() < 1e-12);
+    assert!((pos_one.asin().unwrap().value() - (PI / 2.0)).abs() < 1e-12);
+    assert!((neg_one.acos().unwrap().value() - PI).abs() < 1e-12);
+    assert!((pos_one.acos().unwrap().value() - 0.0).abs() < 1e-12);
+
+    // Round-trip: sin(asin(x)) == x
+    let val = dv::new(0.7, "").expect(FAIL_MSG);
+    let angle4 = val.asin().expect(FAIL_MSG);
+    assert!((angle4.sin().unwrap() - 0.7).abs() < 1e-12);
+
+    // Error: asin/acos on non-unitless
+    let m = dv::new(0.5, "m").expect(FAIL_MSG);
+    assert!(m.asin().is_err());
+    assert!(m.acos().is_err());
+    assert!(m.atan().is_err());
+
+    // Error: asin/acos out of range
+    let out_of_range = dv::new(2.0, "").expect(FAIL_MSG);
+    assert!(out_of_range.asin().is_err());
+    assert!(out_of_range.acos().is_err());
+    // atan has no domain restriction
+    assert!(out_of_range.atan().is_ok());
 }

@@ -23,5 +23,8 @@ except ImportError:
 
 DimensionalVariable = dv.DimensionalVariable
 DVError = dv.DVError
+asin = dv.asin
+acos = dv.acos
+atan = dv.atan
 
-__all__ = ["DimensionalVariable", "DVError"]
+__all__ = ["DimensionalVariable", "DVError", "asin", "acos", "atan"]
