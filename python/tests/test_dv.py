@@ -261,24 +261,24 @@ class TestMathFunctions:
         result = v.log10()
         assert result.value() == pytest.approx(2.0)
 
-    def test_sin_unitless(self):
-        """Test sine of a unitless value."""
+    def test_sin_angle(self):
+        """Test sine of an angle value."""
         import math
-        v = DimensionalVariable(math.pi / 2, "")
+        v = DimensionalVariable(math.pi / 2, "rad")
         result = v.sin()
         assert result.value() == pytest.approx(1.0)
 
-    def test_cos_unitless(self):
-        """Test cosine of a unitless value."""
+    def test_cos_angle(self):
+        """Test cosine of an angle value."""
         import math
-        v = DimensionalVariable(0.0, "")
+        v = DimensionalVariable(0.0, "rad")
         result = v.cos()
         assert result.value() == pytest.approx(1.0)
 
-    def test_tan_unitless(self):
-        """Test tangent of a unitless value."""
+    def test_tan_angle(self):
+        """Test tangent of an angle value."""
         import math
-        v = DimensionalVariable(math.pi / 4, "")
+        v = DimensionalVariable(math.pi / 4, "rad")
         result = v.tan()
         assert result.value() == pytest.approx(1.0)
 
@@ -338,6 +338,26 @@ class TestMathFunctions:
         v = DimensionalVariable(2.0, "")
         with pytest.raises(DVError):
             v.acos()
+
+    def test_sin_with_unitless_fails(self):
+        """Test that sin of a unitless value raises DVError."""
+        import math
+        v = DimensionalVariable(math.pi / 2, "")
+        with pytest.raises(DVError):
+            v.sin()
+
+    def test_cos_with_unitless_fails(self):
+        """Test that cos of a unitless value raises DVError."""
+        v = DimensionalVariable(0.0, "")
+        with pytest.raises(DVError):
+            v.cos()
+
+    def test_tan_with_unitless_fails(self):
+        """Test that tan of a unitless value raises DVError."""
+        import math
+        v = DimensionalVariable(math.pi / 4, "")
+        with pytest.raises(DVError):
+            v.tan()
 
     def test_inverse_trig_round_trip(self):
         """Test that sin(asin(x)) == x."""

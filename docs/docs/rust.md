@@ -87,7 +87,7 @@ let angle_rad = dv::new(std::f64::consts::PI, "rad").unwrap();
 let angle_deg = dv::new(180.0, "deg").unwrap();
 assert_eq!(angle_rad.value_in("rad").unwrap(), angle_deg.value_in("rad").unwrap());
 
-// Trigonometric functions require radians
+// Trigonometric functions require angle unit (radians or degrees)
 use std::f64::consts::PI;
 let angle = dv::new(PI / 4.0, "rad").unwrap();
 assert!((angle.sin().unwrap() - (PI / 4.0).sin()).abs() < 1e-12);
