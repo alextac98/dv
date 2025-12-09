@@ -10,7 +10,7 @@ See the [intro page](./intro.md)!
 
 ## Aren't Angles unitless?
 
-Yes, technically! However, angles are often used in engineering, and keeping track of angles separately to other units can be very useful. Therefore, we've decided to add it as an official 8th unit type. If you'd like to disucss this decision more, please feel free to open a ticket or pull request if you have a better idea!
+Yes, technically! However, we found keeping track of angle as a unit to be very useful. [Read more about it here.](./intro.md#angles-as-units)
 
 ## How do I contribute to DV?
 

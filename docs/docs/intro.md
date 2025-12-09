@@ -35,11 +35,17 @@ The vector follows this standard: `[m, kg, s, K, A, mol, cd, rad]`, where each u
 
 Example: `9.81 km/s^2` stores as: `{9810.0, [1.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0]}`.
 
-You may ask - aren't angles unitless? You'd be technically correct, but enough users use angles for projects that it made sense to have it as its own unit. See the FAQ for more information.
-
 The full list of available core units can be found under `core/src/units.rs`. There will be a future feature for users to be able to add their own additional units without needing to re-compile or rebuild the library.
 
 <!-- TODO: we should really auto-render all the supported core units here. -->
+
+### Angles as units?!?!
+
+You may ask - aren't angles unitless? You'd be technically correct, but we chose to do something a bit special to add some useful functionality.
+
+Angles are often used in engineering, and keeping track of angles separately can be very useful! When you get into more complex math, especially with angle math operators like `sin/cos/tan` and their inverses `arcsin/arccos/arctan`, relying on having the proper units becomes very necessary.
+
+However, 
 
 ### Parsing Unit Strings
 

@@ -51,6 +51,11 @@ public:
     DV powf(double e) const { return from_new(dv_var_powf(cptr(), e)); }
     DV sqrt() const { return from_new(dv_var_sqrt(cptr())); }
 
+    // Inverse trigonometric functions (return angle in radians)
+    DV asin() const { return from_new(dv_var_asin(cptr())); }
+    DV acos() const { return from_new(dv_var_acos(cptr())); }
+    DV atan() const { return from_new(dv_var_atan(cptr())); }
+
 private:
     static DV from_new(dv_var* p) {
         if (!p) throw std::runtime_error(last_error());
@@ -58,8 +63,17 @@ private:
     }
 
     dv_var* ptr_;
+
+    friend DV asin(double x);
+    friend DV acos(double x);
+    friend DV atan(double x);
 };
 
 inline size_t base_units_size() { return dv_base_units_size(); }
+
+// Free-standing inverse trigonometric functions (take raw double, return angle in radians)
+inline DV asin(double x) { return DV::from_new(dv_asin(x)); }
+inline DV acos(double x) { return DV::from_new(dv_acos(x)); }
+inline DV atan(double x) { return DV::from_new(dv_atan(x)); }
 
 } // namespace dv

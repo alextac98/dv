@@ -332,6 +332,75 @@ impl PyDV {
             Err(e) => Err(DVError::new_err(e)),
         }
     }
+
+    /// Arcsine (requires unitless value in [-1, 1]).
+    ///
+    /// Returns:
+    ///     DV: The arcsine as an angle in radians
+    ///
+    /// Raises:
+    ///     DVError: If the value is not unitless or outside [-1, 1]
+    fn asin(&self) -> PyResult<PyDV> {
+        match self.inner.asin() {
+            Ok(result) => Ok(PyDV { inner: result }),
+            Err(e) => Err(DVError::new_err(e)),
+        }
+    }
+
+    /// Arccosine (requires unitless value in [-1, 1]).
+    ///
+    /// Returns:
+    ///     DV: The arccosine as an angle in radians
+    ///
+    /// Raises:
+    ///     DVError: If the value is not unitless or outside [-1, 1]
+    fn acos(&self) -> PyResult<PyDV> {
+        match self.inner.acos() {
+            Ok(result) => Ok(PyDV { inner: result }),
+            Err(e) => Err(DVError::new_err(e)),
+        }
+    }
+
+    /// Arctangent (requires unitless value).
+    ///
+    /// Returns:
+    ///     DV: The arctangent as an angle in radians
+    ///
+    /// Raises:
+    ///     DVError: If the value is not unitless
+    fn atan(&self) -> PyResult<PyDV> {
+        match self.inner.atan() {
+            Ok(result) => Ok(PyDV { inner: result }),
+            Err(e) => Err(DVError::new_err(e)),
+        }
+    }
+}
+
+/// Arcsine function for f64 input, returns DimensionalVariable in radians.
+#[pyfunction]
+fn asin(x: f64) -> PyResult<PyDV> {
+    match dv_rs::asin(x) {
+        Ok(result) => Ok(PyDV { inner: result }),
+        Err(e) => Err(DVError::new_err(e)),
+    }
+}
+
+/// Arccosine function for f64 input, returns DimensionalVariable in radians.
+#[pyfunction]
+fn acos(x: f64) -> PyResult<PyDV> {
+    match dv_rs::acos(x) {
+        Ok(result) => Ok(PyDV { inner: result }),
+        Err(e) => Err(DVError::new_err(e)),
+    }
+}
+
+/// Arctangent function for f64 input, returns DimensionalVariable in radians.
+#[pyfunction]
+fn atan(x: f64) -> PyResult<PyDV> {
+    match dv_rs::atan(x) {
+        Ok(result) => Ok(PyDV { inner: result }),
+        Err(e) => Err(DVError::new_err(e)),
+    }
 }
 
 /// Python module for dv (DimensionalVariable).
@@ -339,5 +408,8 @@ impl PyDV {
 fn dv_pyo3(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyDV>()?;
     m.add("DVError", m.py().get_type::<DVError>())?;
+    m.add_function(wrap_pyfunction!(asin, m)?)?;
+    m.add_function(wrap_pyfunction!(acos, m)?)?;
+    m.add_function(wrap_pyfunction!(atan, m)?)?;
     Ok(())
 }

@@ -1,7 +1,7 @@
 """Unit tests for the Python DimensionalVariable bindings."""
 
 import pytest
-from dv_py import DimensionalVariable, DVError
+from dv_py import DimensionalVariable, DVError, asin, acos, atan
 
 
 class TestConstruction:
@@ -281,6 +281,124 @@ class TestMathFunctions:
         v = DimensionalVariable(math.pi / 4, "")
         result = v.tan()
         assert result.value() == pytest.approx(1.0)
+
+    def test_asin_unitless(self):
+        """Test arcsine of a unitless value."""
+        import math
+        v = DimensionalVariable(0.5, "")
+        result = v.asin()
+        assert result.value() == pytest.approx(math.asin(0.5))
+        # Result should be in radians
+        assert result.base_units() == (0, 0, 0, 0, 0, 0, 0, 1)
+
+    def test_acos_unitless(self):
+        """Test arccosine of a unitless value."""
+        import math
+        v = DimensionalVariable(0.5, "")
+        result = v.acos()
+        assert result.value() == pytest.approx(math.acos(0.5))
+        # Result should be in radians
+        assert result.base_units() == (0, 0, 0, 0, 0, 0, 0, 1)
+
+    def test_atan_unitless(self):
+        """Test arctangent of a unitless value."""
+        import math
+        v = DimensionalVariable(1.0, "")
+        result = v.atan()
+        assert result.value() == pytest.approx(math.pi / 4)
+        # Result should be in radians
+        assert result.base_units() == (0, 0, 0, 0, 0, 0, 0, 1)
+
+    def test_asin_with_units_fails(self):
+        """Test that asin of a value with units raises DVError."""
+        v = DimensionalVariable(0.5, "m")
+        with pytest.raises(DVError):
+            v.asin()
+
+    def test_acos_with_units_fails(self):
+        """Test that acos of a value with units raises DVError."""
+        v = DimensionalVariable(0.5, "m")
+        with pytest.raises(DVError):
+            v.acos()
+
+    def test_atan_with_units_fails(self):
+        """Test that atan of a value with units raises DVError."""
+        v = DimensionalVariable(0.5, "m")
+        with pytest.raises(DVError):
+            v.atan()
+
+    def test_asin_out_of_range_fails(self):
+        """Test that asin of a value outside [-1, 1] raises DVError."""
+        v = DimensionalVariable(2.0, "")
+        with pytest.raises(DVError):
+            v.asin()
+
+    def test_acos_out_of_range_fails(self):
+        """Test that acos of a value outside [-1, 1] raises DVError."""
+        v = DimensionalVariable(2.0, "")
+        with pytest.raises(DVError):
+            v.acos()
+
+    def test_inverse_trig_round_trip(self):
+        """Test that sin(asin(x)) == x."""
+        import math
+        v = DimensionalVariable(0.7, "")
+        angle = v.asin()
+        # sin(asin(0.7)) should equal 0.7
+        assert angle.sin().value() == pytest.approx(0.7)
+
+
+class TestFreeStandingTrigFunctions:
+    """Tests for free-standing inverse trigonometric functions."""
+
+    def test_asin_function(self):
+        """Test free-standing asin function."""
+        import math
+        result = asin(0.5)
+        assert result.value() == pytest.approx(math.asin(0.5))
+        # Result should be in radians
+        assert result.base_units() == (0, 0, 0, 0, 0, 0, 0, 1)
+
+    def test_acos_function(self):
+        """Test free-standing acos function."""
+        import math
+        result = acos(0.5)
+        assert result.value() == pytest.approx(math.acos(0.5))
+        # Result should be in radians
+        assert result.base_units() == (0, 0, 0, 0, 0, 0, 0, 1)
+
+    def test_atan_function(self):
+        """Test free-standing atan function."""
+        import math
+        result = atan(1.0)
+        assert result.value() == pytest.approx(math.pi / 4)
+        # Result should be in radians
+        assert result.base_units() == (0, 0, 0, 0, 0, 0, 0, 1)
+
+    def test_asin_out_of_range_fails(self):
+        """Test that free-standing asin with value outside [-1, 1] raises DVError."""
+        with pytest.raises(DVError):
+            asin(2.0)
+
+    def test_acos_out_of_range_fails(self):
+        """Test that free-standing acos with value outside [-1, 1] raises DVError."""
+        with pytest.raises(DVError):
+            acos(-1.5)
+
+    def test_free_standing_round_trip(self):
+        """Test that sin(asin(x)) == x using free-standing function."""
+        import math
+        angle = asin(0.7)
+        # sin(asin(0.7)) should equal 0.7
+        assert angle.sin().value() == pytest.approx(0.7)
+
+    def test_atan_special_values(self):
+        """Test atan with special values."""
+        import math
+        # atan(0) should be 0
+        assert atan(0.0).value() == pytest.approx(0.0)
+        # atan(inf) should approach π/2
+        assert atan(1e10).value() == pytest.approx(math.pi / 2, rel=1e-6)
 
 
 class TestComplexExamples:
