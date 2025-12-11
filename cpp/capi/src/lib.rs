@@ -224,6 +224,26 @@ pub extern "C" fn dv_var_atan(a: *const dv_var) -> *mut dv_var {
 
 // Free-standing trigonometric functions that take raw f64 and return angle in radians
 
+/// Convert a dv_var to a string representation.
+/// Returns a newly allocated C string that must be freed with dv_free_cstring.
+/// Returns null on error.
+#[no_mangle]
+pub extern "C" fn dv_var_to_string(ptr_: *const dv_var) -> *mut c_char {
+    if ptr_.is_null() {
+        set_last_error("null dv_var".to_string());
+        return ptr::null_mut();
+    }
+    let v = unsafe { &(*ptr_) };
+    let s = v.inner.to_string();
+    match CString::new(s) {
+        Ok(c) => c.into_raw(),
+        Err(_) => {
+            set_last_error("failed to create C string".to_string());
+            ptr::null_mut()
+        }
+    }
+}
+
 #[no_mangle]
 pub extern "C" fn dv_asin(x: c_double) -> *mut dv_var {
     match dv_rs::asin(x) {

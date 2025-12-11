@@ -116,3 +116,84 @@ fn electrical_units() {
     let power = dv::new(20.0, "W").expect(FAIL_MSG);
     assert!(power == &voltage * &current, "Power calculation failed");
 }
+
+// ===== Display / to_string() tests =====
+
+#[test]
+fn to_string_simple_unit() {
+    let length = dv::new(5.0, "m").expect(FAIL_MSG);
+    assert_eq!(length.to_string(), "5 m");
+
+    let mass = dv::new(10.0, "kg").expect(FAIL_MSG);
+    assert_eq!(mass.to_string(), "10 kg");
+
+    let time = dv::new(3.5, "s").expect(FAIL_MSG);
+    assert_eq!(time.to_string(), "3.5 s");
+}
+
+#[test]
+fn to_string_unitless() {
+    let unitless = dv::new(42.0, "").expect(FAIL_MSG);
+    assert_eq!(unitless.to_string(), "42 (unitless)");
+}
+
+#[test]
+fn to_string_with_exponents() {
+    let area = dv::new(100.0, "m^2").expect(FAIL_MSG);
+    assert_eq!(area.to_string(), "100 m^2");
+
+    let volume = dv::new(8.0, "m^3").expect(FAIL_MSG);
+    assert_eq!(volume.to_string(), "8 m^3");
+}
+
+#[test]
+fn to_string_with_denominator() {
+    let velocity = dv::new(10.0, "m/s").expect(FAIL_MSG);
+    assert_eq!(velocity.to_string(), "10 m/s");
+
+    let acceleration = dv::new(9.81, "m/s^2").expect(FAIL_MSG);
+    assert_eq!(acceleration.to_string(), "9.81 m/s^2");
+}
+
+#[test]
+fn to_string_complex_units() {
+    // Force: kg*m/s^2
+    let force = dv::new(1.0, "N").expect(FAIL_MSG);
+    assert_eq!(force.to_string(), "1 m*kg/s^2");
+
+    // Energy: kg*m^2/s^2
+    let energy = dv::new(100.0, "J").expect(FAIL_MSG);
+    assert_eq!(energy.to_string(), "100 m^2*kg/s^2");
+
+    // Power: kg*m^2/s^3
+    let power = dv::new(50.0, "W").expect(FAIL_MSG);
+    assert_eq!(power.to_string(), "50 m^2*kg/s^3");
+}
+
+#[test]
+fn to_string_only_denominator() {
+    // Create a frequency (1/s) by dividing unitless by time
+    let one = dv::new(60.0, "").expect(FAIL_MSG);
+    let time = dv::new(1.0, "s").expect(FAIL_MSG);
+    let frequency = &one / &time;
+    assert_eq!(frequency.to_string(), "60 1/s");
+
+    // Also test via negative exponent
+    let freq2 = dv::new(100.0, "s^-1").expect(FAIL_MSG);
+    assert_eq!(freq2.to_string(), "100 1/s");
+}
+
+#[test]
+fn to_string_angle() {
+    use std::f64::consts::PI;
+    let angle = dv::new(PI, "rad").expect(FAIL_MSG);
+    assert!(angle.to_string().starts_with("3.14159"));
+    assert!(angle.to_string().ends_with(" rad"));
+}
+
+#[test]
+fn to_string_format_macro() {
+    let dv_val = dv::new(2.5, "m/s").expect(FAIL_MSG);
+    let formatted = format!("The velocity is {}", dv_val);
+    assert_eq!(formatted, "The velocity is 2.5 m/s");
+}
