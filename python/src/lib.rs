@@ -21,7 +21,7 @@ pyo3::create_exception!(dv_pyo3, DVError, pyo3::exceptions::PyException);
 ///     0.02
 #[pyclass(name = "DimensionalVariable")]
 struct PyDV {
-    inner: DimensionalVariable,
+    dv: DimensionalVariable,
 }
 
 #[pymethods]
@@ -40,7 +40,7 @@ impl PyDV {
     #[new]
     fn new(value: f64, unit: &str) -> PyResult<Self> {
         match DimensionalVariable::new(value, unit) {
-            Ok(inner) => Ok(PyDV { inner }),
+            Ok(dv) => Ok(PyDV { dv }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -50,7 +50,7 @@ impl PyDV {
     /// Returns:
     ///     float: The value in SI base units
     fn value(&self) -> f64 {
-        self.inner.value()
+        self.dv.value()
     }
 
     /// Convert the value to the specified unit.
@@ -64,7 +64,7 @@ impl PyDV {
     /// Raises:
     ///     DVError: If units are incompatible or unit string is invalid
     fn value_in(&self, unit: &str) -> PyResult<f64> {
-        match self.inner.value_in(unit) {
+        match self.dv.value_in(unit) {
             Ok(v) => Ok(v),
             Err(e) => Err(DVError::new_err(e)),
         }
@@ -75,7 +75,7 @@ impl PyDV {
     /// Returns:
     ///     bool: True if dimensionless, False otherwise
     fn is_unitless(&self) -> bool {
-        self.inner.is_unitless()
+        self.dv.is_unitless()
     }
 
     /// Get the base unit exponents as a tuple.
@@ -83,22 +83,22 @@ impl PyDV {
     /// Returns:
     ///     tuple: (m, kg, s, K, A, mol, cd, rad) exponents
     fn base_units(&self) -> (f64, f64, f64, f64, f64, f64, f64, f64) {
-        let units = self.inner.unit();
+        let units = self.dv.unit();
         (units[0], units[1], units[2], units[3], units[4], units[5], units[6], units[7])
     }
 
     /// Addition operator.
     fn __add__(&self, other: &PyDV) -> PyResult<PyDV> {
-        match self.inner.try_add(&other.inner) {
-            Ok(result) => Ok(PyDV { inner: result }),
+        match self.dv.try_add(&other.dv) {
+            Ok(result) => Ok(PyDV { dv: result }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
 
     /// Subtraction operator.
     fn __sub__(&self, other: &PyDV) -> PyResult<PyDV> {
-        match self.inner.try_sub(&other.inner) {
-            Ok(result) => Ok(PyDV { inner: result }),
+        match self.dv.try_sub(&other.dv) {
+            Ok(result) => Ok(PyDV { dv: result }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -108,9 +108,9 @@ impl PyDV {
         // Try to extract as another PyDV
         if let Ok(other_dv) = other.downcast::<PyDV>() {
             let other_borrow = other_dv.borrow();
-            Ok(PyDV { inner: &self.inner * &other_borrow.inner })
+            Ok(PyDV { dv: &self.dv * &other_borrow.dv })
         } else if let Ok(scalar) = other.extract::<f64>() {
-            Ok(PyDV { inner: &self.inner * scalar })
+            Ok(PyDV { dv: &self.dv * scalar })
         } else {
             Err(PyTypeError::new_err("Cannot multiply DV with this type"))
         }
@@ -119,7 +119,7 @@ impl PyDV {
     /// Right multiplication operator (scalar * DV).
     fn __rmul__(&self, other: &Bound<'_, PyAny>) -> PyResult<PyDV> {
         if let Ok(scalar) = other.extract::<f64>() {
-            Ok(PyDV { inner: scalar * &self.inner })
+            Ok(PyDV { dv: scalar * &self.dv })
         } else {
             Err(PyTypeError::new_err("Cannot multiply this type with DV"))
         }
@@ -130,9 +130,9 @@ impl PyDV {
         // Try to extract as another PyDV
         if let Ok(other_dv) = other.downcast::<PyDV>() {
             let other_borrow = other_dv.borrow();
-            Ok(PyDV { inner: &self.inner / &other_borrow.inner })
+            Ok(PyDV { dv: &self.dv / &other_borrow.dv })
         } else if let Ok(scalar) = other.extract::<f64>() {
-            Ok(PyDV { inner: &self.inner / scalar })
+            Ok(PyDV { dv: &self.dv / scalar })
         } else {
             Err(PyTypeError::new_err("Cannot divide DV by this type"))
         }
@@ -141,7 +141,7 @@ impl PyDV {
     /// Right division operator (scalar / DV).
     fn __rtruediv__(&self, other: &Bound<'_, PyAny>) -> PyResult<PyDV> {
         if let Ok(scalar) = other.extract::<f64>() {
-            Ok(PyDV { inner: scalar / &self.inner })
+            Ok(PyDV { dv: scalar / &self.dv })
         } else {
             Err(PyTypeError::new_err("Cannot divide this type by DV"))
         }
@@ -156,10 +156,10 @@ impl PyDV {
     ///     DV: The result of raising to the power
     fn __pow__(&self, exponent: &Bound<'_, PyAny>, _modulo: Option<&Bound<'_, PyAny>>) -> PyResult<PyDV> {
         if let Ok(exp_int) = exponent.extract::<i32>() {
-            Ok(PyDV { inner: self.inner.powi(exp_int) })
+            Ok(PyDV { dv: self.dv.powi(exp_int) })
         } else if let Ok(exp_float) = exponent.extract::<f64>() {
-            match self.inner.powf(exp_float) {
-                Ok(result) => Ok(PyDV { inner: result }),
+            match self.dv.powf(exp_float) {
+                Ok(result) => Ok(PyDV { dv: result }),
                 Err(e) => Err(DVError::new_err(e)),
             }
         } else {
@@ -169,27 +169,27 @@ impl PyDV {
 
     /// Negation operator.
     fn __neg__(&self) -> PyDV {
-        PyDV { inner: -&self.inner }
+        PyDV { dv: -&self.dv }
     }
 
     /// Absolute value.
     fn __abs__(&self) -> PyDV {
-        PyDV { inner: self.inner.abs() }
+        PyDV { dv: self.dv.abs() }
     }
 
     /// Equality comparison.
     fn __eq__(&self, other: &PyDV) -> bool {
-        self.inner == other.inner
+        self.dv == other.dv
     }
 
     /// Inequality comparison.
     fn __ne__(&self, other: &PyDV) -> bool {
-        self.inner != other.inner
+        self.dv != other.dv
     }
 
     /// Less than comparison.
     fn __lt__(&self, other: &PyDV) -> PyResult<bool> {
-        match self.inner.partial_cmp(&other.inner) {
+        match self.dv.partial_cmp(&other.dv) {
             Some(std::cmp::Ordering::Less) => Ok(true),
             Some(_) => Ok(false),
             None => Err(DVError::new_err("Cannot compare values with incompatible units")),
@@ -198,7 +198,7 @@ impl PyDV {
 
     /// Less than or equal comparison.
     fn __le__(&self, other: &PyDV) -> PyResult<bool> {
-        match self.inner.partial_cmp(&other.inner) {
+        match self.dv.partial_cmp(&other.dv) {
             Some(std::cmp::Ordering::Less) | Some(std::cmp::Ordering::Equal) => Ok(true),
             Some(_) => Ok(false),
             None => Err(DVError::new_err("Cannot compare values with incompatible units")),
@@ -207,7 +207,7 @@ impl PyDV {
 
     /// Greater than comparison.
     fn __gt__(&self, other: &PyDV) -> PyResult<bool> {
-        match self.inner.partial_cmp(&other.inner) {
+        match self.dv.partial_cmp(&other.dv) {
             Some(std::cmp::Ordering::Greater) => Ok(true),
             Some(_) => Ok(false),
             None => Err(DVError::new_err("Cannot compare values with incompatible units")),
@@ -216,21 +216,21 @@ impl PyDV {
 
     /// Greater than or equal comparison.
     fn __ge__(&self, other: &PyDV) -> PyResult<bool> {
-        match self.inner.partial_cmp(&other.inner) {
+        match self.dv.partial_cmp(&other.dv) {
             Some(std::cmp::Ordering::Greater) | Some(std::cmp::Ordering::Equal) => Ok(true),
             Some(_) => Ok(false),
             None => Err(DVError::new_err("Cannot compare values with incompatible units")),
         }
     }
 
-    /// String representation.
+    /// String representation (for developers/debugging).
     fn __repr__(&self) -> String {
-        format!("DV(value={}, base_units={:?})", self.inner.value(), self.inner.unit())
+        format!("DimensionalVariable({}, '{}')", self.dv.value(), self.dv.to_string().split_whitespace().skip(1).collect::<Vec<_>>().join(""))
     }
 
-    /// String conversion.
+    /// String conversion (human-readable).
     fn __str__(&self) -> String {
-        format!("{} (SI base units)", self.inner.value())
+        self.dv.to_string()
     }
 
     // Mathematical functions
@@ -243,8 +243,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the operation fails
     fn sqrt(&self) -> PyResult<PyDV> {
-        match self.inner.sqrt() {
-            Ok(result) => Ok(PyDV { inner: result }),
+        match self.dv.sqrt() {
+            Ok(result) => Ok(PyDV { dv: result }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -257,8 +257,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the value is not unitless
     fn ln(&self) -> PyResult<PyDV> {
-        match self.inner.ln() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
+        match self.dv.ln() {
+            Ok(result) => Ok(PyDV { dv: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -271,8 +271,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the value is not unitless
     fn log2(&self) -> PyResult<PyDV> {
-        match self.inner.log2() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
+        match self.dv.log2() {
+            Ok(result) => Ok(PyDV { dv: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -285,8 +285,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the value is not unitless
     fn log10(&self) -> PyResult<PyDV> {
-        match self.inner.log10() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
+        match self.dv.log10() {
+            Ok(result) => Ok(PyDV { dv: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -299,8 +299,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the value is not an angle
     fn sin(&self) -> PyResult<PyDV> {
-        match self.inner.sin() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
+        match self.dv.sin() {
+            Ok(result) => Ok(PyDV { dv: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -313,8 +313,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the value is not an angle
     fn cos(&self) -> PyResult<PyDV> {
-        match self.inner.cos() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
+        match self.dv.cos() {
+            Ok(result) => Ok(PyDV { dv: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -327,8 +327,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the value is not an angle
     fn tan(&self) -> PyResult<PyDV> {
-        match self.inner.tan() {
-            Ok(result) => Ok(PyDV { inner: DimensionalVariable { value: result, unit: [0.0; 8] } }),
+        match self.dv.tan() {
+            Ok(result) => Ok(PyDV { dv: DimensionalVariable { value: result, unit: [0.0; 8] } }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -341,8 +341,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the value is not unitless or outside [-1, 1]
     fn asin(&self) -> PyResult<PyDV> {
-        match self.inner.asin() {
-            Ok(result) => Ok(PyDV { inner: result }),
+        match self.dv.asin() {
+            Ok(result) => Ok(PyDV { dv: result }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -355,8 +355,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the value is not unitless or outside [-1, 1]
     fn acos(&self) -> PyResult<PyDV> {
-        match self.inner.acos() {
-            Ok(result) => Ok(PyDV { inner: result }),
+        match self.dv.acos() {
+            Ok(result) => Ok(PyDV { dv: result }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -369,8 +369,8 @@ impl PyDV {
     /// Raises:
     ///     DVError: If the value is not unitless
     fn atan(&self) -> PyResult<PyDV> {
-        match self.inner.atan() {
-            Ok(result) => Ok(PyDV { inner: result }),
+        match self.dv.atan() {
+            Ok(result) => Ok(PyDV { dv: result }),
             Err(e) => Err(DVError::new_err(e)),
         }
     }
@@ -380,7 +380,7 @@ impl PyDV {
 #[pyfunction]
 fn asin(x: f64) -> PyResult<PyDV> {
     match dv_rs::asin(x) {
-        Ok(result) => Ok(PyDV { inner: result }),
+        Ok(result) => Ok(PyDV { dv: result }),
         Err(e) => Err(DVError::new_err(e)),
     }
 }
@@ -389,7 +389,7 @@ fn asin(x: f64) -> PyResult<PyDV> {
 #[pyfunction]
 fn acos(x: f64) -> PyResult<PyDV> {
     match dv_rs::acos(x) {
-        Ok(result) => Ok(PyDV { inner: result }),
+        Ok(result) => Ok(PyDV { dv: result }),
         Err(e) => Err(DVError::new_err(e)),
     }
 }
@@ -398,7 +398,7 @@ fn acos(x: f64) -> PyResult<PyDV> {
 #[pyfunction]
 fn atan(x: f64) -> PyResult<PyDV> {
     match dv_rs::atan(x) {
-        Ok(result) => Ok(PyDV { inner: result }),
+        Ok(result) => Ok(PyDV { dv: result }),
         Err(e) => Err(DVError::new_err(e)),
     }
 }

@@ -14,6 +14,7 @@ const char* dv_last_error_message(void);
 
 // Util
 size_t dv_base_units_size(void);
+void   dv_free_cstring(char* s);  // Free a string returned by dv_var_to_string
 
 // Lifecycle
 dv_var* dv_var_new(double value, const char* unit_str);
@@ -23,6 +24,7 @@ void    dv_var_free(dv_var* v);
 double  dv_var_value(const dv_var* v);
 int     dv_var_is_unitless(const dv_var* v);
 int     dv_var_value_in(const dv_var* v, const char* unit_str, double* out_value);
+char*   dv_var_to_string(const dv_var* v); // Returns allocated string, must free with dv_free_cstring
 
 // Arithmetic
 dv_var* dv_var_add(const dv_var* a, const dv_var* b);

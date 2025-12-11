@@ -2,6 +2,7 @@
 #include "dv_c.h"
 #include <stdexcept>
 #include <string>
+#include <ostream>
 
 namespace dv {
 
@@ -50,6 +51,20 @@ public:
     DV powi(int e) const { return from_new(dv_var_powi(cptr(), e)); }
     DV powf(double e) const { return from_new(dv_var_powf(cptr(), e)); }
     DV sqrt() const { return from_new(dv_var_sqrt(cptr())); }
+
+    /// Convert to string representation (e.g., "9.81 m/s^2")
+    std::string to_string() const {
+        char* s = dv_var_to_string(ptr_);
+        if (!s) throw std::runtime_error(last_error());
+        std::string result(s);
+        dv_free_cstring(s);
+        return result;
+    }
+
+    /// Stream output operator
+    friend std::ostream& operator<<(std::ostream& os, const DV& v) {
+        return os << v.to_string();
+    }
 
     // Inverse trigonometric functions (return angle in radians)
     DV asin() const { return from_new(dv_var_asin(cptr())); }

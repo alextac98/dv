@@ -220,6 +220,70 @@ impl DimensionalVariable {
  
 }
 
+impl std::fmt::Display for DimensionalVariable {
+    /// Formats the DimensionalVariable as a string in the form "value unit".
+    /// 
+    /// The unit is displayed in fraction style (e.g., "m/s^2") with:
+    /// - Positive exponents in the numerator
+    /// - Negative exponents in the denominator (as positive values)
+    /// - Exponents of 1 are omitted
+    /// - Units with exponent 0 are omitted
+    /// - Unitless quantities show "(unitless)"
+    /// 
+    /// Examples:
+    /// - 9.81 m/s^2 for acceleration
+    /// - 100 kg*m^2/s^2 for energy
+    /// - 3.14 rad for angle
+    /// - 5 (unitless) for dimensionless quantities
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut numerator_parts: Vec<String> = Vec::new();
+        let mut denominator_parts: Vec<String> = Vec::new();
+
+        for (i, &exp) in self.unit.iter().enumerate() {
+            if exp == 0.0 {
+                continue;
+            }
+
+            let unit_symbol = units::BASE_UNITS[i];
+
+            if exp > 0.0 {
+                if exp == 1.0 {
+                    numerator_parts.push(unit_symbol.to_string());
+                } else if exp == exp.trunc() {
+                    // Integer exponent
+                    numerator_parts.push(format!("{}^{}", unit_symbol, exp as i32));
+                } else {
+                    // Fractional exponent
+                    numerator_parts.push(format!("{}^{}", unit_symbol, exp));
+                }
+            } else {
+                let abs_exp = exp.abs();
+                if abs_exp == 1.0 {
+                    denominator_parts.push(unit_symbol.to_string());
+                } else if abs_exp == abs_exp.trunc() {
+                    // Integer exponent
+                    denominator_parts.push(format!("{}^{}", unit_symbol, abs_exp as i32));
+                } else {
+                    // Fractional exponent
+                    denominator_parts.push(format!("{}^{}", unit_symbol, abs_exp));
+                }
+            }
+        }
+
+        let unit_str = if numerator_parts.is_empty() && denominator_parts.is_empty() {
+            "(unitless)".to_string()
+        } else if denominator_parts.is_empty() {
+            numerator_parts.join("*")
+        } else if numerator_parts.is_empty() {
+            format!("1/{}", denominator_parts.join("*"))
+        } else {
+            format!("{}/{}", numerator_parts.join("*"), denominator_parts.join("*"))
+        };
+
+        write!(f, "{} {}", self.value, unit_str)
+    }
+}
+
 /// Arcsin function for f64 input, returns DimensionalVariable in radians.
 pub fn asin(x: f64) -> Result<DimensionalVariable, String> {
     return DimensionalVariable::new(x, "").unwrap().asin();
