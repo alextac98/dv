@@ -19,13 +19,29 @@ jobs:
       matrix:
         platform:
           # Linux
-          - { os: linux, runner: ubuntu-latest, target: x86_64-unknown-linux-gnu }        # x86 64-bit
-          - { os: linux, runner: ubuntu-latest, target: aarch64-unknown-linux-gnu }       # Arm 64-bit
-          - { os: linux, runner: ubuntu-latest, target: armv7-unknown-linux-gnueabihf }   # Arm 32-bit
+          - {
+              os: linux,
+              runner: ubuntu-latest,
+              target: x86_64-unknown-linux-gnu,
+            } # x86 64-bit
+          - {
+              os: linux,
+              runner: ubuntu-latest,
+              target: aarch64-unknown-linux-gnu,
+            } # Arm 64-bit
+          - {
+              os: linux,
+              runner: ubuntu-latest,
+              target: armv7-unknown-linux-gnueabihf,
+            } # Arm 32-bit
           # macOS
-          - { os: macos, runner: macos-latest, target: universal2-apple-darwin }          # MacOS Universal
+          - { os: macos, runner: macos-latest, target: universal2-apple-darwin } # MacOS Universal
           # Windows
-          - { os: windows, runner: windows-latest, target: x86_64-pc-windows-msvc }       # x86 64-bit
+          - {
+              os: windows,
+              runner: windows-latest,
+              target: x86_64-pc-windows-msvc,
+            } # x86 64-bit
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,7 +51,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -49,7 +65,6 @@ jobs:
         with:
           name: wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
           path: python/dist/*.whl
-
 
   # ----------------------------------------------------------------------------
   # Test Python Bindings
@@ -81,6 +96,8 @@ jobs:
       - name: Run Python Example
         run: bazel run //examples/python:python_example
 
+      - name: Run Python Regression Tests
+        run: bazel test //tests:regression_python_tests --test_output=errors --keep_going
 
   # ----------------------------------------------------------------------------
   # Publsih Python Wheels
