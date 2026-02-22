@@ -193,6 +193,82 @@ pub extern "C" fn dv_var_sqrt(a: *const dv_var) -> *mut dv_var {
 }
 
 #[no_mangle]
+pub extern "C" fn dv_var_ln(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    match a.inner.ln() {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: DimensionalVariable { value: v, unit: [0.0; units::BASE_UNITS_SIZE] } })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_var_log2(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    match a.inner.log2() {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: DimensionalVariable { value: v, unit: [0.0; units::BASE_UNITS_SIZE] } })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_var_log10(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    match a.inner.log10() {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: DimensionalVariable { value: v, unit: [0.0; units::BASE_UNITS_SIZE] } })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_var_sin(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    match a.inner.sin() {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: DimensionalVariable { value: v, unit: [0.0; units::BASE_UNITS_SIZE] } })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_var_cos(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    match a.inner.cos() {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: DimensionalVariable { value: v, unit: [0.0; units::BASE_UNITS_SIZE] } })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_var_tan(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    match a.inner.tan() {
+        Ok(v) => Box::into_raw(Box::new(dv_var { inner: DimensionalVariable { value: v, unit: [0.0; units::BASE_UNITS_SIZE] } })),
+        Err(e) => { set_last_error(e); ptr::null_mut() }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn dv_var_neg(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    let v = a.inner.neg();
+    Box::into_raw(Box::new(dv_var { inner: v }))
+}
+
+#[no_mangle]
+pub extern "C" fn dv_var_abs(a: *const dv_var) -> *mut dv_var {
+    if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
+    let a = unsafe { &(*a) };
+    let v = a.inner.abs();
+    Box::into_raw(Box::new(dv_var { inner: v }))
+}
+
+#[no_mangle]
 pub extern "C" fn dv_var_asin(a: *const dv_var) -> *mut dv_var {
     if a.is_null() { set_last_error("null operand".to_string()); return ptr::null_mut(); }
     let a = unsafe { &(*a) };

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dv/tests/regression/schema.json",
+  "title": "DV Integration Test Vectors",
+  "type": "object",
+  "required": ["suite", "cases"],
+  "properties": {
+    "suite": {"type": "string", "minLength": 1},
+    "category": {"type": "string", "enum": ["units", "math"]},
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "abs_tol": {"type": "number", "minimum": 0},
+        "rel_tol": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "operand": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": {"type": "number"},
+        "unit": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "expect": {
+      "type": "object",
+      "required": ["ok"],
+      "properties": {
+        "ok": {"type": "boolean"},
+        "value": {"type": "number"},
+        "unit": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "case": {
+      "type": "object",
+      "required": ["id", "op", "expect"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "op": {
+          "type": "string",
+          "enum": [
+            "construct",
+            "convert",
+            "add",
+            "sub",
+            "mul",
+            "div",
+            "powi",
+            "powf",
+            "sqrt",
+            "ln",
+            "log2",
+            "log10",
+            "sin",
+            "cos",
+            "tan",
+            "asin",
+            "acos",
+            "atan",
+            "neg",
+            "abs"
+          ]
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "value": {"type": "number"},
+            "unit": {"type": "string"},
+            "from_unit": {"type": "string"},
+            "to_unit": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "left": {"$ref": "#/$defs/operand"},
+        "right": {"$ref": "#/$defs/operand"},
+        "exponent": {"type": "number"},
+        "expect": {"$ref": "#/$defs/expect"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

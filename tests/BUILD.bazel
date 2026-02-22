@@ -1,0 +1,58 @@
+load("@rules_cc//cc:defs.bzl", "cc_test")
+load("@rules_python//python:defs.bzl", "py_test")
+load("@rules_rust//rust:defs.bzl", "rust_test")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "schema.json",
+    "units_tests.json",
+    "math_tests.json",
+])
+
+filegroup(
+    name = "regression_vectors",
+    srcs = [
+        "units_tests.json",
+        "math_tests.json",
+    ],
+)
+
+rust_test(
+    name = "regression_rust_tests",
+    srcs = ["regression_rust_tests.rs"],
+    data = [":regression_vectors"],
+    deps = [
+        "//core:dv_rs",
+        "@crates//:serde_json",
+    ],
+)
+
+py_test(
+    name = "regression_python_tests",
+    srcs = ["regression_python_tests.py"],
+    data = [":regression_vectors"],
+    deps = [
+        "//python:dv_py",
+        "@pypi//pytest:pkg",
+    ],
+)
+
+cc_test(
+    name = "regression_cpp_tests",
+    srcs = ["regression_cpp_tests.cpp"],
+    data = [":regression_vectors"],
+    deps = [
+        "//cpp:dv_cpp",
+        "@nlohmann_json//:json",
+    ],
+)
+
+test_suite(
+    name = "regression_tests",
+    tests = [
+        ":regression_rust_tests",
+        ":regression_python_tests",
+        ":regression_cpp_tests",
+    ],
+)

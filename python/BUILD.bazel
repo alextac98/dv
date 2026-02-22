@@ -43,4 +43,3 @@ py_test(
         "@pypi//pytest:pkg",
     ],
 )
-

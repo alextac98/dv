@@ -51,6 +51,14 @@ public:
     DV powi(int e) const { return from_new(dv_var_powi(cptr(), e)); }
     DV powf(double e) const { return from_new(dv_var_powf(cptr(), e)); }
     DV sqrt() const { return from_new(dv_var_sqrt(cptr())); }
+    DV ln() const { return from_new(dv_var_ln(cptr())); }
+    DV log2() const { return from_new(dv_var_log2(cptr())); }
+    DV log10() const { return from_new(dv_var_log10(cptr())); }
+    DV sin() const { return from_new(dv_var_sin(cptr())); }
+    DV cos() const { return from_new(dv_var_cos(cptr())); }
+    DV tan() const { return from_new(dv_var_tan(cptr())); }
+    DV abs() const { return from_new(dv_var_abs(cptr())); }
+    friend DV operator-(const DV& a) { return from_new(dv_var_neg(a.cptr())); }
 
     /// Convert to string representation (e.g., "9.81 m/s^2")
     std::string to_string() const {

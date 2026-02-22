@@ -4,16 +4,15 @@ on:
   workflow_call:
     inputs:
       os:
-        description: 'Operating system to run on'
+        description: "Operating system to run on"
         required: false
         type: string
-        default: 'ubuntu-latest'
+        default: "ubuntu-latest"
 
-jobs: 
+jobs:
   # ----------------------------------------------------------------------------
   # Build C and C++ Package
   # ----------------------------------------------------------------------------
-
 
   # ----------------------------------------------------------------------------
   # Test C
@@ -37,7 +36,7 @@ jobs:
           path: ~/.cache/bazel
           key: bazel-${{ runner.os }}
           restore-keys: bazel-${{ runner.os }}
-      
+
       - name: Run C Example (Bazel)
         run: |
           bazel run //examples/c:c_example
@@ -84,10 +83,12 @@ jobs:
           path: ~/.cache/bazel
           key: bazel-${{ runner.os }}
           restore-keys: bazel-${{ runner.os }}
-      
+
       - name: Run C++ Example (Bazel)
-        run: |
-          bazel run //examples/cpp:cpp_example
+        run: bazel run //examples/cpp:cpp_example
+
+      - name: Run C++ Regression Tests
+        run: bazel test //tests:regression_cpp_tests --test_output=errors --keep_going
 
   test-cpp-cmake:
     name: Test C++ Bindings with CMake
@@ -113,4 +114,4 @@ jobs:
   # Publish C/C++ Package
   # ----------------------------------------------------------------------------
 
-    # No publish step for C/C++ packages
+  # No publish step for C/C++ packages

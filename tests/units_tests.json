@@ -1,0 +1,46 @@
+{
+  "suite": "units_regression_tests",
+  "category": "units",
+  "defaults": {
+    "abs_tol": 1e-10,
+    "rel_tol": 1e-10
+  },
+  "cases": [
+    {
+      "id": "construct.valid_speed",
+      "op": "construct",
+      "input": {"value": 10.0, "unit": "m/s"},
+      "expect": {"ok": true, "value": 10.0, "unit": "m/s"}
+    },
+    {
+      "id": "construct.invalid_unit",
+      "op": "construct",
+      "input": {"value": 10.0, "unit": "invalid_unit"},
+      "expect": {"ok": false}
+    },
+    {
+      "id": "convert.m_to_cm",
+      "op": "convert",
+      "input": {"value": 1.0, "from_unit": "m", "to_unit": "cm"},
+      "expect": {"ok": true, "value": 100.0, "unit": "cm"}
+    },
+    {
+      "id": "convert.km_to_m",
+      "op": "convert",
+      "input": {"value": 3.5, "from_unit": "km", "to_unit": "m"},
+      "expect": {"ok": true, "value": 3500.0, "unit": "m"}
+    },
+    {
+      "id": "convert.velocity_mps_to_mph",
+      "op": "convert",
+      "input": {"value": 10.0, "from_unit": "m/s", "to_unit": "mi/hr"},
+      "expect": {"ok": true, "value": 22.369362920544025, "unit": "mi/hr"}
+    },
+    {
+      "id": "convert.incompatible_units",
+      "op": "convert",
+      "input": {"value": 1.0, "from_unit": "m", "to_unit": "s"},
+      "expect": {"ok": false}
+    }
+  ]
+}

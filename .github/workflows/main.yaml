@@ -19,7 +19,6 @@ permissions:
   actions: read
 
 jobs:
-
   # ============================================================================
   # General Jobs
   # ============================================================================
@@ -68,6 +67,29 @@ jobs:
 
       - name: Build everything
         run: bazel build //... --keep_going
+
+  test:
+    name: Test All
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}
+          restore-keys: bazel-${{ runner.os }}
+
+      - name: Test everything
+        run: bazel test //... --test_output=errors --keep_going
 
   # =============================================================================
   # Language-Specific Test Jobs

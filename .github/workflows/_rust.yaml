@@ -4,10 +4,10 @@ on:
   workflow_call:
     inputs:
       os:
-        description: 'Operating system to run on'
+        description: "Operating system to run on"
         required: false
         type: string
-        default: 'ubuntu-latest'
+        default: "ubuntu-latest"
     secrets:
       CARGO_REGISTRY_TOKEN:
         required: true
@@ -18,7 +18,7 @@ jobs:
   # ----------------------------------------------------------------------------
 
   # No build step is needed for Rust in Bazel, already happened in main workflow
-  
+
   # ----------------------------------------------------------------------------
   # Test Rust
   # ----------------------------------------------------------------------------
@@ -43,8 +43,10 @@ jobs:
           restore-keys: bazel-${{ runner.os }}
 
       - name: Test Core
-        run: |
-          bazel test //core/... --test_output=errors --keep_going
+        run: bazel test //core/... --test_output=errors --keep_going
+
+      - name: Run Regression Tests
+        run: bazel test //tests:regression_rust_tests --test_output=errors --keep_going
 
   # ----------------------------------------------------------------------------
   # Publish Rust Crate
