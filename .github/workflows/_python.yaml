@@ -100,7 +100,7 @@ jobs:
         run: bazel test //tests:regression_python_tests --test_output=errors --keep_going
 
   # ----------------------------------------------------------------------------
-  # Publsih Python Wheels
+  # Publish Python Wheels
   # ----------------------------------------------------------------------------
 
   python-publish-pypi:

@@ -39,8 +39,8 @@ py_test(
 )
 
 cc_test(
-    name = "regression_cpp_test",
-    srcs = ["regression_cpp_test.cpp"],
+    name = "regression_cpp_tests",
+    srcs = ["regression_cpp_tests.cpp"],
     data = [":regression_vectors"],
     deps = [
         "//cpp:dv_cpp",
@@ -53,6 +53,6 @@ test_suite(
     tests = [
         ":regression_rust_tests",
         ":regression_python_tests",
-        ":regression_cpp_test",
+        ":regression_cpp_tests",
     ],
 )
