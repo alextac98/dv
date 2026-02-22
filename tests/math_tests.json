@@ -1,0 +1,137 @@
+{
+  "suite": "math_integration_tests",
+  "category": "math",
+  "defaults": {
+    "abs_tol": 1e-10,
+    "rel_tol": 1e-10
+  },
+  "cases": [
+    {
+      "id": "arith.add_length",
+      "op": "add",
+      "left": {"value": 2.0, "unit": "m"},
+      "right": {"value": 30.0, "unit": "cm"},
+      "expect": {"ok": true, "value": 2.3, "unit": "m"}
+    },
+    {
+      "id": "arith.sub_length",
+      "op": "sub",
+      "left": {"value": 10.0, "unit": "m"},
+      "right": {"value": 2.0, "unit": "m"},
+      "expect": {"ok": true, "value": 8.0, "unit": "m"}
+    },
+    {
+      "id": "arith.mul_velocity_time",
+      "op": "mul",
+      "left": {"value": 3.0, "unit": "m/s"},
+      "right": {"value": 2.0, "unit": "s"},
+      "expect": {"ok": true, "value": 6.0, "unit": "m"}
+    },
+    {
+      "id": "arith.div_distance_time",
+      "op": "div",
+      "left": {"value": 100.0, "unit": "m"},
+      "right": {"value": 5.0, "unit": "s"},
+      "expect": {"ok": true, "value": 20.0, "unit": "m/s"}
+    },
+    {
+      "id": "arith.add_incompatible",
+      "op": "add",
+      "left": {"value": 2.0, "unit": "m"},
+      "right": {"value": 1.0, "unit": "s"},
+      "expect": {"ok": false}
+    },
+    {
+      "id": "math.powi_area",
+      "op": "powi",
+      "input": {"value": 3.0, "unit": "m"},
+      "exponent": 2,
+      "expect": {"ok": true, "value": 9.0, "unit": "m^2"}
+    },
+    {
+      "id": "math.powf_root",
+      "op": "powf",
+      "input": {"value": 4.0, "unit": "m^2"},
+      "exponent": 0.5,
+      "expect": {"ok": true, "value": 2.0, "unit": "m"}
+    },
+    {
+      "id": "math.sqrt",
+      "op": "sqrt",
+      "input": {"value": 16.0, "unit": "m^2"},
+      "expect": {"ok": true, "value": 4.0, "unit": "m"}
+    },
+    {
+      "id": "math.ln_unitless",
+      "op": "ln",
+      "input": {"value": 2.718281828459045, "unit": ""},
+      "expect": {"ok": true, "value": 1.0, "unit": ""}
+    },
+    {
+      "id": "math.ln_with_units_fails",
+      "op": "ln",
+      "input": {"value": 10.0, "unit": "m"},
+      "expect": {"ok": false}
+    },
+    {
+      "id": "math.log2_unitless",
+      "op": "log2",
+      "input": {"value": 8.0, "unit": ""},
+      "expect": {"ok": true, "value": 3.0, "unit": ""}
+    },
+    {
+      "id": "math.log10_unitless",
+      "op": "log10",
+      "input": {"value": 100.0, "unit": ""},
+      "expect": {"ok": true, "value": 2.0, "unit": ""}
+    },
+    {
+      "id": "math.sin_angle",
+      "op": "sin",
+      "input": {"value": 1.5707963267948966, "unit": "rad"},
+      "expect": {"ok": true, "value": 1.0, "unit": ""}
+    },
+    {
+      "id": "math.cos_angle",
+      "op": "cos",
+      "input": {"value": 0.0, "unit": "rad"},
+      "expect": {"ok": true, "value": 1.0, "unit": ""}
+    },
+    {
+      "id": "math.tan_angle",
+      "op": "tan",
+      "input": {"value": 0.7853981633974483, "unit": "rad"},
+      "expect": {"ok": true, "value": 1.0, "unit": ""}
+    },
+    {
+      "id": "math.asin",
+      "op": "asin",
+      "input": {"value": 0.5, "unit": ""},
+      "expect": {"ok": true, "value": 0.5235987755982989, "unit": "rad"}
+    },
+    {
+      "id": "math.acos",
+      "op": "acos",
+      "input": {"value": 0.5, "unit": ""},
+      "expect": {"ok": true, "value": 1.0471975511965979, "unit": "rad"}
+    },
+    {
+      "id": "math.atan",
+      "op": "atan",
+      "input": {"value": 1.0, "unit": ""},
+      "expect": {"ok": true, "value": 0.7853981633974483, "unit": "rad"}
+    },
+    {
+      "id": "math.neg",
+      "op": "neg",
+      "input": {"value": 5.0, "unit": "m"},
+      "expect": {"ok": true, "value": -5.0, "unit": "m"}
+    },
+    {
+      "id": "math.abs",
+      "op": "abs",
+      "input": {"value": -5.0, "unit": "m"},
+      "expect": {"ok": true, "value": 5.0, "unit": "m"}
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+load("@rules_cc//cc:defs.bzl", "cc_test")
+load("@rules_python//python:defs.bzl", "py_test")
+load("@rules_rust//rust:defs.bzl", "rust_test")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "schema.json",
+    "units_tests.json",
+    "math_tests.json",
+])
+
+filegroup(
+    name = "integration_vectors",
+    srcs = [
+        "units_tests.json",
+        "math_tests.json",
+    ],
+)
+
+rust_test(
+    name = "integration_rust_tests",
+    srcs = ["integration_rust_tests.rs"],
+    data = [":integration_vectors"],
+    deps = ["//core:dv_rs"],
+)
+
+py_test(
+    name = "integration_python_tests",
+    srcs = ["integration_python_tests.py"],
+    data = [":integration_vectors"],
+    deps = [
+        "//python:dv_py",
+        "@pypi//pytest:pkg",
+    ],
+)
+
+cc_test(
+    name = "integration_cpp_test",
+    srcs = ["integration_cpp_test.cpp"],
+    data = [":integration_vectors"],
+    deps = ["//cpp:dv_cpp"],
+)
+
+test_suite(
+    name = "integration_tests",
+    tests = [
+        ":integration_rust_tests",
+        ":integration_python_tests",
+        ":integration_cpp_test",
+    ],
+)

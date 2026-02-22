@@ -40,6 +40,14 @@ dv_var* dv_var_div_scalar(const dv_var* a, double s);
 dv_var* dv_var_powi(const dv_var* a, int exp);
 dv_var* dv_var_powf(const dv_var* a, double exp);
 dv_var* dv_var_sqrt(const dv_var* a);
+dv_var* dv_var_ln(const dv_var* a);
+dv_var* dv_var_log2(const dv_var* a);
+dv_var* dv_var_log10(const dv_var* a);
+dv_var* dv_var_sin(const dv_var* a);
+dv_var* dv_var_cos(const dv_var* a);
+dv_var* dv_var_tan(const dv_var* a);
+dv_var* dv_var_neg(const dv_var* a);
+dv_var* dv_var_abs(const dv_var* a);
 
 // Inverse trigonometric functions (return angle in radians)
 dv_var* dv_var_asin(const dv_var* a);
