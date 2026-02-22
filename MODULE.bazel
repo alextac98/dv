@@ -16,6 +16,7 @@ bazel_dep(name = "rules_cc", version = "0.2.8")
 bazel_dep(name = "rules_python", version = "1.6.3")
 bazel_dep(name = "rules_uv", version = "0.88.0")
 bazel_dep(name = "aspect_rules_js", version = "2.6.0")
+bazel_dep(name = "nlohmann_json", version = "3.11.3")
 
 # =============================================================================
 # Rust Setup
@@ -24,6 +25,15 @@ bazel_dep(name = "aspect_rules_js", version = "2.6.0")
 rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(edition = "2024")
 use_repo(rust, "rust_toolchains")
+
+# Shared Rust crates for workspace tests/utilities
+crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
+crate.spec(
+    package = "serde_json",
+    version = "1.0",
+)
+crate.from_specs()
+use_repo(crate, "crates")
 
 # ==============================================================================
 # PyO3 Setup

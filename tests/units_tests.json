@@ -1,5 +1,5 @@
 {
-  "suite": "units_integration_tests",
+  "suite": "units_regression_tests",
   "category": "units",
   "defaults": {
     "abs_tol": 1e-10,

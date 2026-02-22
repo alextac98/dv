@@ -1,4 +1,4 @@
-"""Shared integration test runner for Python bindings."""
+"""Shared regression test runner for Python bindings."""
 
 from __future__ import annotations
 
@@ -233,9 +233,9 @@ def _run_file(file_name: str) -> None:
         _run_case(case, abs_tol, rel_tol)
 
 
-def test_units_integration_vectors() -> None:
+def test_units_regression_vectors() -> None:
     _run_file("units_tests.json")
 
 
-def test_math_integration_vectors() -> None:
+def test_math_regression_vectors() -> None:
     _run_file("math_tests.json")

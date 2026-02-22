@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://dv/tests/integration/schema.json",
+  "$id": "https://dv/tests/regression/schema.json",
   "title": "DV Integration Test Vectors",
   "type": "object",
   "required": ["suite", "cases"],

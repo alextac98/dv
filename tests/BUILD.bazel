@@ -11,7 +11,7 @@ exports_files([
 ])
 
 filegroup(
-    name = "integration_vectors",
+    name = "regression_vectors",
     srcs = [
         "units_tests.json",
         "math_tests.json",
@@ -19,16 +19,19 @@ filegroup(
 )
 
 rust_test(
-    name = "integration_rust_tests",
-    srcs = ["integration_rust_tests.rs"],
-    data = [":integration_vectors"],
-    deps = ["//core:dv_rs"],
+    name = "regression_rust_tests",
+    srcs = ["regression_rust_tests.rs"],
+    data = [":regression_vectors"],
+    deps = [
+        "//core:dv_rs",
+        "@crates//:serde_json",
+    ],
 )
 
 py_test(
-    name = "integration_python_tests",
-    srcs = ["integration_python_tests.py"],
-    data = [":integration_vectors"],
+    name = "regression_python_tests",
+    srcs = ["regression_python_tests.py"],
+    data = [":regression_vectors"],
     deps = [
         "//python:dv_py",
         "@pypi//pytest:pkg",
@@ -36,17 +39,20 @@ py_test(
 )
 
 cc_test(
-    name = "integration_cpp_test",
-    srcs = ["integration_cpp_test.cpp"],
-    data = [":integration_vectors"],
-    deps = ["//cpp:dv_cpp"],
+    name = "regression_cpp_test",
+    srcs = ["regression_cpp_test.cpp"],
+    data = [":regression_vectors"],
+    deps = [
+        "//cpp:dv_cpp",
+        "@nlohmann_json//:json",
+    ],
 )
 
 test_suite(
-    name = "integration_tests",
+    name = "regression_tests",
     tests = [
-        ":integration_rust_tests",
-        ":integration_python_tests",
-        ":integration_cpp_test",
+        ":regression_rust_tests",
+        ":regression_python_tests",
+        ":regression_cpp_test",
     ],
 )

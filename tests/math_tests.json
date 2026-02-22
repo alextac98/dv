@@ -1,5 +1,5 @@
 {
-  "suite": "math_integration_tests",
+  "suite": "math_regression_tests",
   "category": "math",
   "defaults": {
     "abs_tol": 1e-10,
