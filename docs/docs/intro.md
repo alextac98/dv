@@ -99,9 +99,9 @@ DV fixes all of these issues
 Status | Language | Notes
 -------|----------|------
 ✅ Core | Rust | Reference implementation
-✅ C | C ABI (`dv_c.h`)
-✅ C++ | C++ RAII wrapper (`dv.hpp`)
-✅ Python | Python via PyO3
+✅ C | Diplomat-generated C bindings
+✅ C++ | Diplomat-generated C++ bindings
+✅ Python | Diplomat-generated nanobind bindings (+ Python compatibility wrapper)
 🛠 Planned | JavaScript / TypeScript | WASM or N-API layer
 🛠 Planned | Java | JNI via C ABI (or pure port)
 🛠 Planned | Matlab | MEX wrapper

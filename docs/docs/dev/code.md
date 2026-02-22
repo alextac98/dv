@@ -32,8 +32,8 @@ bazel run //core:serve_docs
 #### Python
 
 ```shell
-# Build the extension
-bazel build //python:maturin_build
+# Build the extension module (.so)
+bazel build //generated/diplomat/nanobind:dv_pyo3.so
 
 # Run tests
 bazel test //python:test_dv

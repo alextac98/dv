@@ -5,5 +5,5 @@ package(default_visibility = ["//visibility:public"])
 cc_binary(
     name = "c_example",
     srcs = ["main.c"],
-    deps = ["//cpp:dv_c"],
+    deps = ["//generated/diplomat/c:dv_diplomat_c"],
 )

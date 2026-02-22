@@ -1,102 +1,122 @@
 #pragma once
-#include "dv_c.h"
+
+#include "DimensionalVariable.hpp"
+
+#include <optional>
 #include <stdexcept>
 #include <string>
-#include <ostream>
+#include <utility>
 
 namespace dv {
 
 inline std::string last_error() {
-    const char* msg = dv_last_error_message();
-    return msg ? std::string(msg) : std::string();
+    return "dv operation failed";
+}
+
+template <class T, class E>
+inline T unwrap_or_throw(diplomat::result<T, E>&& result, const char* msg = "dv operation failed") {
+    auto v = std::move(result).ok();
+    if (!v.has_value()) {
+        throw std::runtime_error(msg);
+    }
+    return std::move(*v);
+}
+
+template <class T>
+inline T unwrap_utf8_and_throw(
+    diplomat::result<diplomat::result<T, std::monostate>, diplomat::Utf8Error>&& result,
+    const char* msg = "dv operation failed"
+) {
+    auto outer = std::move(result).ok();
+    if (!outer.has_value()) {
+        throw std::runtime_error("invalid UTF-8");
+    }
+    auto inner = std::move(*outer).ok();
+    if (!inner.has_value()) {
+        throw std::runtime_error(msg);
+    }
+    return std::move(*inner);
 }
 
 class DV {
 public:
-    DV() : ptr_(nullptr) {}
-    DV(double value, const char* unit) : ptr_(dv_var_new(value, unit)) {
-        if (!ptr_) throw std::runtime_error(last_error());
-    }
+    DV() = default;
+
+    DV(double value, const char* unit)
+        : ptr_(unwrap_utf8_and_throw<std::unique_ptr<DimensionalVariable>>(DimensionalVariable::new_(value, unit))) {}
+
     DV(const DV&) = delete;
     DV& operator=(const DV&) = delete;
-    DV(DV&& o) noexcept : ptr_(o.ptr_) { o.ptr_ = nullptr; }
-    DV& operator=(DV&& o) noexcept { if (this != &o) { reset(); ptr_ = o.ptr_; o.ptr_ = nullptr; } return *this; }
-    ~DV() { reset(); }
+    DV(DV&&) noexcept = default;
+    DV& operator=(DV&&) noexcept = default;
+    ~DV() = default;
 
-    void reset() { if (ptr_) { dv_var_free(ptr_); ptr_ = nullptr; } }
-    bool valid() const { return ptr_ != nullptr; }
-    const dv_var* cptr() const { return ptr_; }
-    dv_var* ptr() { return ptr_; }
+    double value() const { return ptr_->value(); }
+    bool is_unitless() const { return ptr_->is_unitless(); }
 
-    double value() const { return dv_var_value(ptr_); }
-    bool is_unitless() const { return dv_var_is_unitless(ptr_) != 0; }
     double value_in(const char* unit) const {
-        double out = 0.0;
-        if (!dv_var_value_in(ptr_, unit, &out)) {
-            throw std::runtime_error(last_error());
-        }
-        return out;
+        return unwrap_utf8_and_throw<double>(ptr_->value_in(unit));
     }
 
-    // Arithmetic: return new objects
-    friend DV operator+(const DV& a, const DV& b) { return from_new(dv_var_add(a.cptr(), b.cptr())); }
-    friend DV operator-(const DV& a, const DV& b) { return from_new(dv_var_sub(a.cptr(), b.cptr())); }
-    friend DV operator*(const DV& a, const DV& b) { return from_new(dv_var_mul(a.cptr(), b.cptr())); }
-    friend DV operator/(const DV& a, const DV& b) { return from_new(dv_var_div(a.cptr(), b.cptr())); }
+    DV powi(int e) const { return from_ptr(ptr_->powi(e)); }
+    DV powf(double e) const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->powf(e))); }
+    DV sqrt() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->sqrt())); }
+    DV ln() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->ln())); }
+    DV log2() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->log2())); }
+    DV log10() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->log10())); }
+    DV sin() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->sin())); }
+    DV cos() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->cos())); }
+    DV tan() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->tan())); }
+    DV abs() const { return from_ptr(ptr_->abs()); }
+    DV asin() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->asin())); }
+    DV acos() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->acos())); }
+    DV atan() const { return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(ptr_->atan())); }
 
-    friend DV operator*(const DV& a, double s) { return from_new(dv_var_mul_scalar(a.cptr(), s)); }
-    friend DV operator*(double s, const DV& a) { return from_new(dv_var_mul_scalar(a.cptr(), s)); }
-    friend DV operator/(const DV& a, double s) { return from_new(dv_var_div_scalar(a.cptr(), s)); }
+    std::string to_string() const { return unwrap_or_throw<std::string>(ptr_->to_string()); }
 
-    DV powi(int e) const { return from_new(dv_var_powi(cptr(), e)); }
-    DV powf(double e) const { return from_new(dv_var_powf(cptr(), e)); }
-    DV sqrt() const { return from_new(dv_var_sqrt(cptr())); }
-    DV ln() const { return from_new(dv_var_ln(cptr())); }
-    DV log2() const { return from_new(dv_var_log2(cptr())); }
-    DV log10() const { return from_new(dv_var_log10(cptr())); }
-    DV sin() const { return from_new(dv_var_sin(cptr())); }
-    DV cos() const { return from_new(dv_var_cos(cptr())); }
-    DV tan() const { return from_new(dv_var_tan(cptr())); }
-    DV abs() const { return from_new(dv_var_abs(cptr())); }
-    friend DV operator-(const DV& a) { return from_new(dv_var_neg(a.cptr())); }
-
-    /// Convert to string representation (e.g., "9.81 m/s^2")
-    std::string to_string() const {
-        char* s = dv_var_to_string(ptr_);
-        if (!s) throw std::runtime_error(last_error());
-        std::string result(s);
-        dv_free_cstring(s);
-        return result;
+    friend DV operator+(const DV& a, const DV& b) {
+        return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(a.ptr_->add(*b.ptr_)));
     }
-
-    /// Stream output operator
-    friend std::ostream& operator<<(std::ostream& os, const DV& v) {
-        return os << v.to_string();
+    friend DV operator-(const DV& a, const DV& b) {
+        return from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(a.ptr_->sub(*b.ptr_)));
     }
+    friend DV operator*(const DV& a, const DV& b) {
+        return from_ptr(a.ptr_->mul(*b.ptr_));
+    }
+    friend DV operator/(const DV& a, const DV& b) {
+        return from_ptr(a.ptr_->div(*b.ptr_));
+    }
+    friend DV operator*(const DV& a, double s) { return from_ptr(a.ptr_->mul_scalar(s)); }
+    friend DV operator*(double s, const DV& a) { return from_ptr(a.ptr_->mul_scalar(s)); }
+    friend DV operator/(const DV& a, double s) { return from_ptr(a.ptr_->div_scalar(s)); }
+    friend DV operator/(double s, const DV& a) { return from_ptr(a.ptr_->rdiv_scalar(s)); }
+    friend DV operator-(const DV& a) { return from_ptr(a.ptr_->neg()); }
 
-    // Inverse trigonometric functions (return angle in radians)
-    DV asin() const { return from_new(dv_var_asin(cptr())); }
-    DV acos() const { return from_new(dv_var_acos(cptr())); }
-    DV atan() const { return from_new(dv_var_atan(cptr())); }
+    friend bool operator==(const DV& a, const DV& b) { return a.ptr_->equals(*b.ptr_); }
+    friend bool operator!=(const DV& a, const DV& b) { return a.ptr_->not_equals(*b.ptr_); }
+    friend bool operator<(const DV& a, const DV& b) { return unwrap_or_throw<bool>(a.ptr_->less_than(*b.ptr_)); }
+    friend bool operator<=(const DV& a, const DV& b) { return unwrap_or_throw<bool>(a.ptr_->less_equal(*b.ptr_)); }
+    friend bool operator>(const DV& a, const DV& b) { return unwrap_or_throw<bool>(a.ptr_->greater_than(*b.ptr_)); }
+    friend bool operator>=(const DV& a, const DV& b) { return unwrap_or_throw<bool>(a.ptr_->greater_equal(*b.ptr_)); }
 
 private:
-    static DV from_new(dv_var* p) {
-        if (!p) throw std::runtime_error(last_error());
-        DV v; v.ptr_ = p; return v;
+    explicit DV(std::unique_ptr<DimensionalVariable> p) : ptr_(std::move(p)) {}
+
+    static DV from_ptr(std::unique_ptr<DimensionalVariable> p) {
+        if (!p) throw std::runtime_error("dv operation failed");
+        return DV(std::move(p));
     }
 
-    dv_var* ptr_;
+    std::unique_ptr<DimensionalVariable> ptr_;
 
     friend DV asin(double x);
     friend DV acos(double x);
     friend DV atan(double x);
 };
 
-inline size_t base_units_size() { return dv_base_units_size(); }
-
-// Free-standing inverse trigonometric functions (take raw double, return angle in radians)
-inline DV asin(double x) { return DV::from_new(dv_asin(x)); }
-inline DV acos(double x) { return DV::from_new(dv_acos(x)); }
-inline DV atan(double x) { return DV::from_new(dv_atan(x)); }
+inline size_t base_units_size() { return DimensionalVariable::base_units_size(); }
+inline DV asin(double x) { return DV::from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(DimensionalVariable::asin_scalar(x))); }
+inline DV acos(double x) { return DV::from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(DimensionalVariable::acos_scalar(x))); }
+inline DV atan(double x) { return DV::from_ptr(unwrap_or_throw<std::unique_ptr<DimensionalVariable>>(DimensionalVariable::atan_scalar(x))); }
 
 } // namespace dv

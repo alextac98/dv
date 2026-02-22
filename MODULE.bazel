@@ -9,9 +9,8 @@ module(name = "dv")
 # Import Bazel Dependencies
 # =============================================================================
 
-bazel_dep(name = "platforms", version="1.0.0")
+bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "rules_rust", version = "0.67.0")
-bazel_dep(name = "rules_rust_pyo3", version = "0.67.0")
 bazel_dep(name = "rules_cc", version = "0.2.8")
 bazel_dep(name = "rules_python", version = "1.6.3")
 bazel_dep(name = "rules_uv", version = "0.88.0")
@@ -32,16 +31,20 @@ crate.spec(
     package = "serde_json",
     version = "1.0",
 )
+crate.spec(
+    package = "diplomat",
+    version = "0.14.0",
+)
+crate.spec(
+    package = "diplomat-runtime",
+    version = "0.14.0",
+)
+crate.spec(
+    package = "diplomat-tool",
+    version = "0.14.1",
+)
 crate.from_specs()
 use_repo(crate, "crates")
-
-# ==============================================================================
-# PyO3 Setup
-# ==============================================================================
-register_toolchains(
-    "@rules_rust_pyo3//toolchains:toolchain",
-    "@rules_rust_pyo3//toolchains:rust_toolchain",
-)
 
 # ==============================================================================
 # C/C++ Setup
@@ -49,6 +52,7 @@ register_toolchains(
 
 # Hermetic C/C++ toolchains (LLVM/Clang)
 bazel_dep(name = "toolchains_llvm", version = "1.5.0")
+
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
 llvm.toolchain(
     name = "llvm_toolchain",
@@ -89,6 +93,7 @@ use_repo(pip, "pypi")
 # By default you get the node version from DEFAULT_NODE_VERSION in @rules_nodejs//nodejs:repositories.bzl
 # Optionally you can pin a different node version:
 bazel_dep(name = "rules_nodejs", version = "6.3.0")
+
 node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node", dev_dependency = True)
 node.toolchain(node_version = "20.13.1")
 

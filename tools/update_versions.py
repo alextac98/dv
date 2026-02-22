@@ -106,7 +106,7 @@ def update_rust(versions: tuple, dryrun: bool = False) -> bool:
 
 
 def update_python(versions: tuple, dryrun: bool = False) -> bool:
-    """Update the Python pyproject.toml and Cargo.toml versions based on the provided versions.
+    """Update the Python pyproject.toml version based on the provided versions.
     Args:
         versions (tuple): A tuple containing major, minor, and patch versions.
         dryrun (bool): If True, only check for consistency without making changes.
@@ -133,15 +133,7 @@ def update_python(versions: tuple, dryrun: bool = False) -> bool:
 
     current_pyproject_version = pyproject_toml["project"]["version"]
 
-    # Check Cargo.toml
-    cargo_path = workspace_root / "python" / "Cargo.toml"
-    with open(cargo_path, "r") as f:
-        cargo_toml = toml.load(f)
-
-    current_cargo_version = cargo_toml["package"]["version"]
-
     versions_match_pyproject = current_pyproject_version == version_str
-    versions_match_cargo = current_cargo_version == version_str
     version_not_used = version_str not in pypi_versions
 
     has_passed = True
@@ -155,17 +147,15 @@ def update_python(versions: tuple, dryrun: bool = False) -> bool:
         print("\t❌ Python package version is already published on PyPI.")
         has_passed &= False
 
-    if versions_match_pyproject and versions_match_cargo:
+    if versions_match_pyproject:
         # Versions already match
-        print("\t✅ Python pyproject.toml and Cargo.toml versions are consistent.")
+        print("\t✅ Python pyproject.toml version is consistent.")
         has_passed &= True
     else:
         if dryrun:
-            print("\t❌ Python package versions are inconsistent.")
+            print("\t❌ Python package version is inconsistent.")
             if not versions_match_pyproject:
                 print(f"\t\tpyproject.toml: {current_pyproject_version}")
-            if not versions_match_cargo:
-                print(f"\t\tCargo.toml:     {current_cargo_version}")
             print(f"\t\tVersion.toml:   {version_str}")
             has_passed &= False
         elif not version_not_used:
@@ -181,15 +171,6 @@ def update_python(versions: tuple, dryrun: bool = False) -> bool:
                     toml.dump(pyproject_toml, f)
                 print(
                     f"\t⚠️  Updated Python pyproject.toml version from {current_pyproject_version} to {version_str}."
-                )
-
-            # Update the version in Cargo.toml
-            if not versions_match_cargo:
-                cargo_toml["package"]["version"] = version_str
-                with open(cargo_path, "w") as f:
-                    toml.dump(cargo_toml, f)
-                print(
-                    f"\t⚠️  Updated Python Cargo.toml version from {current_cargo_version} to {version_str}."
                 )
 
             has_passed &= True

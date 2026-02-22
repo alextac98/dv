@@ -1,36 +1,37 @@
-#include "dv_c.h"
+#include "DimensionalVariable.h"
 #include <stdio.h>
+#include <string.h>
 
-static void print_last_error(const char* prefix) {
-    const char* msg = dv_last_error_message();
-    if (msg && *msg) {
-        fprintf(stderr, "%s: %s\n", prefix, msg);
-    } else {
-        fprintf(stderr, "%s: (unknown error)\n", prefix);
-    }
+static DiplomatStringView str_view(const char* s) {
+    DiplomatStringView v;
+    v.data = s;
+    v.len = strlen(s);
+    return v;
 }
 
 int main(void) {
-    dv_var* d = dv_var_new(42.0, "m");
-    if (!d) { print_last_error("dv_var_new(d)"); return 1; }
+    DimensionalVariable_new_result d_res = DimensionalVariable_new(42.0, str_view("m"));
+    if (!d_res.is_ok) { fprintf(stderr, "DimensionalVariable_new(d) failed\n"); return 1; }
+    DimensionalVariable* d = d_res.ok;
 
-    dv_var* t = dv_var_new(3.0, "s");
-    if (!t) { print_last_error("dv_var_new(t)"); dv_var_free(d); return 1; }
+    DimensionalVariable_new_result t_res = DimensionalVariable_new(3.0, str_view("s"));
+    if (!t_res.is_ok) { fprintf(stderr, "DimensionalVariable_new(t) failed\n"); DimensionalVariable_destroy(d); return 1; }
+    DimensionalVariable* t = t_res.ok;
 
-    dv_var* v = dv_var_div(d, t); // 14 m/s
-    if (!v) { print_last_error("dv_var_div(d,t)"); dv_var_free(d); dv_var_free(t); return 1; }
+    DimensionalVariable* v = DimensionalVariable_div(d, t); // 14 m/s
+    if (!v) { fprintf(stderr, "DimensionalVariable_div(d,t) failed\n"); DimensionalVariable_destroy(d); DimensionalVariable_destroy(t); return 1; }
 
-    double mph = 0.0;
-    if (!dv_var_value_in(v, "mi/hr", &mph)) {
-        print_last_error("dv_var_value_in(v, mi/hr)");
-        dv_var_free(v); dv_var_free(d); dv_var_free(t);
+    DimensionalVariable_value_in_result mph_res = DimensionalVariable_value_in(v, str_view("mi/hr"));
+    if (!mph_res.is_ok) {
+        fprintf(stderr, "DimensionalVariable_value_in(v, mi/hr) failed\n");
+        DimensionalVariable_destroy(v); DimensionalVariable_destroy(d); DimensionalVariable_destroy(t);
         return 1;
     }
 
-    printf("speed = %.4f mi/hr\n", mph);
+    printf("speed = %.4f mi/hr\n", mph_res.ok);
 
-    dv_var_free(v);
-    dv_var_free(d);
-    dv_var_free(t);
+    DimensionalVariable_destroy(v);
+    DimensionalVariable_destroy(d);
+    DimensionalVariable_destroy(t);
     return 0;
 }

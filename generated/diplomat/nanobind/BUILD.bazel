@@ -1,0 +1,42 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+NANOBIND_REPO = "external/rules_python++pip+pypi_312_nanobind/site-packages/nanobind"
+
+cc_library(
+    name = "headers",
+    hdrs = glob(["include/*.hpp"]),
+    includes = ["include"],
+)
+
+cc_library(
+    name = "nanobind_wheel_files",
+    hdrs = ["@pypi//nanobind:extracted_whl_files"],
+)
+
+cc_binary(
+    name = "dv_pyo3.so",
+    srcs = [
+        "dv_pyo3_ext.cpp",
+        "sub_modules/dv_pyo3/BaseUnits_binding.cpp",
+        "sub_modules/dv_pyo3/DimensionalVariable_binding.cpp",
+        "@@rules_python++pip+pypi_312_nanobind//:site-packages/nanobind/src/nb_combined.cpp",
+    ],
+    copts = [
+        "-std=c++17",
+        "-faligned-allocation",
+        "-fvisibility=hidden",
+        "-I" + NANOBIND_REPO + "/include",
+        "-I" + NANOBIND_REPO + "/src",
+        "-I" + NANOBIND_REPO + "/ext/robin_map/include",
+    ],
+    deps = [
+        ":headers",
+        ":nanobind_wheel_files",
+        "//ffi/diplomat:dv_diplomat_capi_static",
+        "@python_3_12//:libpython",
+        "@python_3_12//:python_headers",
+    ],
+    linkshared = True,
+)

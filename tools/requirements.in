@@ -1,4 +1,4 @@
 toml
 requests
 pytest
-maturin
+nanobind

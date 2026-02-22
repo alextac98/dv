@@ -93,9 +93,8 @@ This project is a library in multiple languages for handling units and checking 
 - Raise and assert `DVError` for invalid operations.
 
 ### C/C++ (bindings)
-- Headers live in `cpp/include`:
-  - `dv_c.h` for C API
-  - `dv.hpp` for C++ RAII wrapper
+- Bazel-facing bindings are generated under `generated/diplomat/{c,cpp}`.
+- `cpp/include/dv.hpp` is a thin compatibility wrapper over the generated Diplomat C++ bindings.
 - CMake support is minimal; prefer Bazel for consistency.
 
 ### Docs (Docusaurus)

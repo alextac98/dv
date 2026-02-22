@@ -16,7 +16,7 @@ sidebar_position: 3
 </div>
 #
 
-DV supports python via PyO3 bindings to the core library. Any Rust `Results<>` are converted to Python exceptions.
+DV supports Python via Diplomat-generated nanobind bindings, with a thin Python compatibility wrapper (`python/dv_py/__init__.py`) preserving the ergonomic API.
 
 The project currently builds for these architectures:
 * Linux

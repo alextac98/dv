@@ -14,13 +14,7 @@ This directory contains minimal examples for each supported language.
 
 ## CMake (C/C++)
 
-From the repository root:
-
-1. Configure
-   - `cmake -S . -B build`
-2. Build targets
-   - `cmake --build build --target dv_example_c`
-   - `cmake --build build --target dv_example_cpp`
+CMake examples are temporarily unavailable during the Diplomat migration. Use the Bazel targets above.
 
 ## Cargo (Rust)
 
@@ -28,5 +22,5 @@ From the repository root:
 
 Notes
 
-- The C and C++ examples link against the Rust C-ABI produced by the `cpp/capi` crate via the imported `dv_c` and `dv_cpp` targets.
+- The C and C++ examples now use Diplomat-generated C/C++ bindings (via `//generated/diplomat/...`) and the `ffi/diplomat` Rust bridge.
 - The Rust example depends on the core crate directly via a path dependency and uses Bazel via `//core:dv_rs` when built with Bazel.

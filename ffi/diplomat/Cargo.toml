@@ -1,0 +1,20 @@
+[package]
+name = "dv_diplomat_bridge"
+version = "0.1.0"
+edition = "2021"
+authors = ["Alex Tacescu <alextac98@gmail.com>"]
+license = "Apache-2.0"
+description = "Diplomat bridge for dv (DimensionalVariable)"
+publish = false
+
+[lib]
+name = "dv_diplomat_bridge"
+path = "src/lib.rs"
+
+[dependencies.dv_rs]
+package = "dv"
+path = "../../core"
+
+[dependencies]
+diplomat = "0.14.0"
+diplomat-runtime = "0.14.0"

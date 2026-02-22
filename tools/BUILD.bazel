@@ -17,7 +17,6 @@ py_binary(
     data = [
         "//:VERSION.toml",
         "//core:Cargo.toml",
-        "//python:Cargo.toml",
         "//python:pyproject.toml",
     ],
     deps = [

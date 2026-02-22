@@ -1,0 +1,12 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "dv_diplomat_c",
+    hdrs = glob(["*.h"]),
+    includes = ["."],
+    deps = [
+        "//ffi/diplomat:dv_diplomat_capi_static",
+    ],
+)

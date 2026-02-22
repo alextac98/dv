@@ -1,0 +1,32 @@
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_static_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+rust_library(
+    name = "dv_diplomat_bridge",
+    srcs = ["src/lib.rs"],
+    edition = "2021",
+    proc_macro_deps = [
+        "@crates//:diplomat",
+    ],
+    deps = [
+        "//core:dv_rs",
+        "@crates//:diplomat-runtime",
+    ],
+)
+
+rust_static_library(
+    name = "dv_diplomat_capi_static",
+    srcs = ["src/lib.rs"],
+    crate_name = "dv_diplomat_bridge",
+    edition = "2021",
+    proc_macro_deps = [
+        "@crates//:diplomat",
+    ],
+    deps = [
+        "//core:dv_rs",
+        "@crates//:diplomat-runtime",
+    ],
+)

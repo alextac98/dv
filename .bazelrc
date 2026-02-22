@@ -11,4 +11,3 @@ run   --macos_minimum_os=10.12
 test  --macos_minimum_os=10.12
 
 # FIXME: Temporary workaround for pyo3 stubgen issues. See ticket #45
-build --@rules_rust_pyo3//settings:experimental_stubgen=False
