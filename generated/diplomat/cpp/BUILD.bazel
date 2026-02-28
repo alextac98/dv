@@ -2,15 +2,34 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 
 package(default_visibility = ["//visibility:public"])
 
+genrule(
+    name = "codegen_cpp",
+    srcs = ["//ffi/diplomat:src/lib.rs"],
+    outs = [
+        "BaseUnits.d.hpp",
+        "BaseUnits.hpp",
+        "DimensionalVariable.d.hpp",
+        "DimensionalVariable.hpp",
+        "diplomat_runtime.hpp",
+    ],
+    tools = ["//tools/diplomat_codegen:diplomat_codegen"],
+    cmd = "$(location //tools/diplomat_codegen:diplomat_codegen) cpp $(RULEDIR) --entry $(location //ffi/diplomat:src/lib.rs)",
+)
+
+filegroup(
+    name = "generated_headers",
+    srcs = [":codegen_cpp"],
+)
+
 cc_library(
     name = "headers",
-    hdrs = glob(["*.hpp"]),
+    hdrs = [":generated_headers"],
     includes = ["."],
 )
 
 cc_library(
     name = "dv_diplomat_cpp",
-    hdrs = glob(["*.hpp"]),
+    hdrs = [":generated_headers"],
     includes = ["."],
     deps = [
         ":headers",

@@ -10,6 +10,7 @@ publish = false
 [lib]
 name = "dv_diplomat_bridge"
 path = "src/lib.rs"
+crate-type = ["rlib", "staticlib", "cdylib"]
 
 [dependencies.dv_rs]
 package = "dv"

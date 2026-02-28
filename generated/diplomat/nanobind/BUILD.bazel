@@ -4,9 +4,39 @@ package(default_visibility = ["//visibility:public"])
 
 NANOBIND_REPO = "external/rules_python++pip+pypi_312_nanobind/site-packages/nanobind"
 
+genrule(
+    name = "codegen_nanobind",
+    srcs = ["//ffi/diplomat:src/lib.rs"],
+    outs = [
+        "dv_pyo3_ext.cpp",
+        "include/BaseUnits.d.hpp",
+        "include/BaseUnits.hpp",
+        "include/DimensionalVariable.d.hpp",
+        "include/DimensionalVariable.hpp",
+        "include/diplomat_nanobind_common.hpp",
+        "include/diplomat_runtime.hpp",
+        "sub_modules/dv_pyo3/BaseUnits_binding.cpp",
+        "sub_modules/dv_pyo3/DimensionalVariable_binding.cpp",
+    ],
+    tools = ["//tools/diplomat_codegen:diplomat_codegen"],
+    cmd = "$(location //tools/diplomat_codegen:diplomat_codegen) nanobind $(RULEDIR) --entry $(location //ffi/diplomat:src/lib.rs) --config nanobind.lib_name=dv_pyo3",
+)
+
+filegroup(
+    name = "generated_headers",
+    srcs = [
+        "include/BaseUnits.d.hpp",
+        "include/BaseUnits.hpp",
+        "include/DimensionalVariable.d.hpp",
+        "include/DimensionalVariable.hpp",
+        "include/diplomat_nanobind_common.hpp",
+        "include/diplomat_runtime.hpp",
+    ],
+)
+
 cc_library(
     name = "headers",
-    hdrs = glob(["include/*.hpp"]),
+    hdrs = [":generated_headers"],
     includes = ["include"],
 )
 
