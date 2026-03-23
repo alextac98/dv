@@ -2,7 +2,7 @@ PYTHON_PACKAGE_NAME = "dv_py"
 PYTHON_PACKAGE_VERSION = "0.3.3"
 
 PYTHON_PACKAGE_SUMMARY = "Python bindings for dv (DimensionalVariable) - keeping track of units and dimensions for physical quantities"
-PYTHON_PACKAGE_REQUIRES = ">=3.8"
+PYTHON_PACKAGE_REQUIRES = ">=3.10"
 
 PYTHON_PACKAGE_AUTHOR = "Alex Tacescu"
 PYTHON_PACKAGE_AUTHOR_EMAIL = "alextac98@gmail.com"
@@ -14,14 +14,11 @@ PYTHON_PACKAGE_CLASSIFIERS = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
-    "Programming Language :: Python :: 3.15",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Software Development :: Libraries",

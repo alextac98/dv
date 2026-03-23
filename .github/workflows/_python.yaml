@@ -22,6 +22,10 @@ jobs:
           - { runner: macos-13, artifact: macos-x86_64 }
           - { runner: macos-14, artifact: macos-arm64 }
           - { runner: windows-latest, artifact: windows-x86_64 }
+        python:
+          - { version: '3.10', target: wheel_cp310, tag: cp310, dist: dist_cp310 }
+          - { version: '3.11', target: wheel_cp311, tag: cp311, dist: dist_cp311 }
+          - { version: '3.12+', target: wheel_abi3, tag: abi3, dist: dist_abi3 }
     env:
       CI: true
       BAZELISK_ALLOW_ENVS: Y
@@ -41,15 +45,15 @@ jobs:
       - name: Build wheels
         shell: bash
         run: |
-          bazel build //python:wheel.dist
+          bazel build //python:${{ matrix.python.target }}.dist
           BAZEL_BIN="$(bazel info bazel-bin)"
           mkdir -p dist
-          cp "${BAZEL_BIN}/python/dist/"*.whl dist/
+          cp "${BAZEL_BIN}/python/${{ matrix.python.dist }}/"*.whl dist/
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.platform.artifact }}
+          name: wheels-${{ matrix.platform.artifact }}-${{ matrix.python.tag }}
           path: dist/*.whl
 
   # ----------------------------------------------------------------------------
@@ -60,6 +64,14 @@ jobs:
     name: Test Python Bindings
     runs-on: ubuntu-latest
     needs: python-build-wheels
+    strategy:
+      fail-fast: false
+      matrix:
+        python:
+          - { version: '3.10', tag: cp310 }
+          - { version: '3.11', tag: cp311 }
+          - { version: '3.12', tag: abi3 }
+          - { version: '3.13', tag: abi3 }
     env:
       CI: true
       BAZELISK_ALLOW_ENVS: Y
@@ -76,15 +88,15 @@ jobs:
           key: bazel-${{ runner.os }}
           restore-keys: bazel-${{ runner.os }}
 
-      - name: Setup Python 3.12
+      - name: Setup Python ${{ matrix.python.version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python.version }}
 
       - name: Download Linux wheel
         uses: actions/download-artifact@v4
         with:
-          name: wheels-linux-x86_64
+          name: wheels-linux-x86_64-${{ matrix.python.tag }}
           path: dist/
 
       - name: Smoke test built wheel

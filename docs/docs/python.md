@@ -27,7 +27,7 @@ The project currently builds for these architectures:
 * Windows
     * x86 64-bit
 
-The current Bazel-managed PyPI wheel build is pinned to Python 3.12 (`cp312`).
+The current Bazel-managed PyPI wheel build publishes platform wheels for CPython 3.10, CPython 3.11, and a CPython 3.12+ `abi3` wheel.
     
 ## Quickstart
 
@@ -59,8 +59,11 @@ For development in this repo:
 # Build the extension module
 bazel build //python:dv_ext.so
 
-# Build the wheel
-bazel build //python:wheel.dist
+# Build the default development wheel (CPython 3.12)
+bazel build //python:wheel_abi3.dist
+
+# Build wheels for all supported Python versions
+bazel build //python:wheel_cp310.dist //python:wheel_cp311.dist //python:wheel_abi3.dist
 
 # Run the Python test suite
 bazel test //python:test_dv

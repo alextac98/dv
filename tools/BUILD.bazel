@@ -20,7 +20,7 @@ py_binary(
         "//python:pyproject.toml",
     ],
     deps = [
-        "@pypi//toml",
-        "@pypi//requests",
+        "@@rules_python++pip+pypi_312_312_toml//:pkg",
+        "@@rules_python++pip+pypi_312_312_requests//:pkg",
     ],
 )

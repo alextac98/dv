@@ -35,8 +35,11 @@ bazel run //core:serve_docs
 # Build the extension module (.so)
 bazel build //python:dv_ext.so
 
-# Build a distributable wheel
-bazel build //python:wheel.dist
+# Build the default development wheel (CPython 3.12+ abi3)
+bazel build //python:wheel_abi3.dist
+
+# Build distributable wheels for all supported Python versions
+bazel build //python:wheel_cp310.dist //python:wheel_cp311.dist //python:wheel_abi3.dist
 
 # Run tests
 bazel test //python:test_dv
