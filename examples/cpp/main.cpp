@@ -1,4 +1,5 @@
 #include "DimensionalVariable.hpp"
+#include "DvError.hpp"
 
 #include <cmath>
 #include <iostream>
@@ -6,27 +7,52 @@
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 template <class T, class E>
 T expect_ok(diplomat::result<T, E>&& result, const char* what) {
-    auto v = std::move(result).ok();
-    if (!v.has_value()) {
-        throw std::runtime_error(what);
+    if (result.is_ok()) {
+        auto v = std::move(result).ok();
+        return std::move(*v);
     }
-    return std::move(*v);
+
+    auto err = std::move(result).err();
+    if (err.has_value()) {
+        if constexpr (std::is_same_v<E, std::unique_ptr<DvError>>) {
+            auto msg = (*err)->to_string();
+            auto text = std::move(msg).ok();
+            if (text.has_value() && !text->empty()) {
+                throw std::runtime_error(*text);
+            }
+        }
+    }
+
+    throw std::runtime_error(what);
 }
 
 template <class T>
-T expect_utf8_and_ok(diplomat::result<diplomat::result<T, std::monostate>, diplomat::Utf8Error>&& result, const char* what) {
-    auto outer = std::move(result).ok();
-    if (!outer.has_value()) {
+T expect_utf8_and_ok(diplomat::result<diplomat::result<T, std::unique_ptr<DvError>>, diplomat::Utf8Error>&& result, const char* what) {
+    if (result.is_err()) {
         throw std::runtime_error("utf8 error");
     }
-    auto inner = std::move(*outer).ok();
-    if (!inner.has_value()) {
-        throw std::runtime_error(what);
+
+    auto outer = std::move(result).ok();
+    auto inner = std::move(*outer);
+    if (inner.is_ok()) {
+        auto value = std::move(inner).ok();
+        return std::move(*value);
     }
-    return std::move(*inner);
+
+    auto err = std::move(inner).err();
+    if (err.has_value()) {
+        auto msg = (*err)->to_string();
+        auto text = std::move(msg).ok();
+        if (text.has_value() && !text->empty()) {
+            throw std::runtime_error(*text);
+        }
+    }
+
+    throw std::runtime_error(what);
 }
 
 int main() {
