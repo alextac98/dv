@@ -8,6 +8,8 @@ genrule(
     outs = [
         "BaseUnits.d.h",
         "BaseUnits.h",
+        "DvError.d.h",
+        "DvError.h",
         "DimensionalVariable.d.h",
         "DimensionalVariable.h",
         "diplomat_runtime.h",

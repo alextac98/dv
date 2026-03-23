@@ -11,6 +11,10 @@ pub mod ffi {
         Box::new(DimensionalVariable(dv))
     }
 
+    fn into_boxed_error(error: String) -> Box<DvError> {
+        Box::new(DvError(error))
+    }
+
     fn clone_core(dv: &CoreDV) -> CoreDV {
         CoreDV {
             value: dv.value,
@@ -33,24 +37,30 @@ pub mod ffi {
     #[diplomat::opaque]
     pub struct DimensionalVariable(CoreDV);
 
+    #[diplomat::opaque]
+    pub struct DvError(String);
+
+    impl DvError {
+        pub fn to_string(&self, to: &mut DiplomatWrite) -> Result<(), ()> {
+            write!(to, "{}", self.0).map_err(|_| ())
+        }
+    }
+
     impl DimensionalVariable {
-        pub fn new(value: f64, unit: &str) -> Result<Box<DimensionalVariable>, ()> {
-            match CoreDV::new(value, unit) {
-                Ok(dv) => Ok(Box::new(DimensionalVariable(dv))),
-                Err(_) => Err(()),
-            }
+        pub fn new(value: f64, unit: &str) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            CoreDV::new(value, unit).map(into_boxed_dv).map_err(into_boxed_error)
         }
 
-        pub fn asin_scalar(x: f64) -> Result<Box<DimensionalVariable>, ()> {
-            dv_rs::asin(x).map(into_boxed_dv).map_err(|_| ())
+        pub fn asin_scalar(x: f64) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            dv_rs::asin(x).map(into_boxed_dv).map_err(into_boxed_error)
         }
 
-        pub fn acos_scalar(x: f64) -> Result<Box<DimensionalVariable>, ()> {
-            dv_rs::acos(x).map(into_boxed_dv).map_err(|_| ())
+        pub fn acos_scalar(x: f64) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            dv_rs::acos(x).map(into_boxed_dv).map_err(into_boxed_error)
         }
 
-        pub fn atan_scalar(x: f64) -> Result<Box<DimensionalVariable>, ()> {
-            dv_rs::atan(x).map(into_boxed_dv).map_err(|_| ())
+        pub fn atan_scalar(x: f64) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            dv_rs::atan(x).map(into_boxed_dv).map_err(into_boxed_error)
         }
 
         pub fn base_units_size() -> usize {
@@ -61,8 +71,8 @@ pub mod ffi {
             self.0.value()
         }
 
-        pub fn value_in(&self, unit: &str) -> Result<f64, ()> {
-            self.0.value_in(unit).map_err(|_| ())
+        pub fn value_in(&self, unit: &str) -> Result<f64, Box<DvError>> {
+            self.0.value_in(unit).map_err(into_boxed_error)
         }
 
         pub fn is_unitless(&self) -> bool {
@@ -83,12 +93,12 @@ pub mod ffi {
             }
         }
 
-        pub fn add(&self, other: &DimensionalVariable) -> Result<Box<DimensionalVariable>, ()> {
-            self.0.try_add(&other.0).map(into_boxed_dv).map_err(|_| ())
+        pub fn add(&self, other: &DimensionalVariable) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            self.0.try_add(&other.0).map(into_boxed_dv).map_err(into_boxed_error)
         }
 
-        pub fn sub(&self, other: &DimensionalVariable) -> Result<Box<DimensionalVariable>, ()> {
-            self.0.try_sub(&other.0).map(into_boxed_dv).map_err(|_| ())
+        pub fn sub(&self, other: &DimensionalVariable) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            self.0.try_sub(&other.0).map(into_boxed_dv).map_err(into_boxed_error)
         }
 
         pub fn mul(&self, other: &DimensionalVariable) -> Box<DimensionalVariable> {
@@ -115,72 +125,72 @@ pub mod ffi {
             into_boxed_dv(self.0.powi(exp))
         }
 
-        pub fn powf(&self, exp: f64) -> Result<Box<DimensionalVariable>, ()> {
-            self.0.powf(exp).map(into_boxed_dv).map_err(|_| ())
+        pub fn powf(&self, exp: f64) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            self.0.powf(exp).map(into_boxed_dv).map_err(into_boxed_error)
         }
 
-        pub fn sqrt(&self) -> Result<Box<DimensionalVariable>, ()> {
-            self.0.sqrt().map(into_boxed_dv).map_err(|_| ())
+        pub fn sqrt(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            self.0.sqrt().map(into_boxed_dv).map_err(into_boxed_error)
         }
 
-        pub fn ln(&self) -> Result<Box<DimensionalVariable>, ()> {
+        pub fn ln(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
             self.0
                 .ln()
                 .map(|v| CoreDV { value: v, unit: [0.0; units::BASE_UNITS_SIZE] })
                 .map(into_boxed_dv)
-                .map_err(|_| ())
+                .map_err(into_boxed_error)
         }
 
-        pub fn log2(&self) -> Result<Box<DimensionalVariable>, ()> {
+        pub fn log2(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
             self.0
                 .log2()
                 .map(|v| CoreDV { value: v, unit: [0.0; units::BASE_UNITS_SIZE] })
                 .map(into_boxed_dv)
-                .map_err(|_| ())
+                .map_err(into_boxed_error)
         }
 
-        pub fn log10(&self) -> Result<Box<DimensionalVariable>, ()> {
+        pub fn log10(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
             self.0
                 .log10()
                 .map(|v| CoreDV { value: v, unit: [0.0; units::BASE_UNITS_SIZE] })
                 .map(into_boxed_dv)
-                .map_err(|_| ())
+                .map_err(into_boxed_error)
         }
 
-        pub fn sin(&self) -> Result<Box<DimensionalVariable>, ()> {
+        pub fn sin(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
             self.0
                 .sin()
                 .map(|v| CoreDV { value: v, unit: [0.0; units::BASE_UNITS_SIZE] })
                 .map(into_boxed_dv)
-                .map_err(|_| ())
+                .map_err(into_boxed_error)
         }
 
-        pub fn cos(&self) -> Result<Box<DimensionalVariable>, ()> {
+        pub fn cos(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
             self.0
                 .cos()
                 .map(|v| CoreDV { value: v, unit: [0.0; units::BASE_UNITS_SIZE] })
                 .map(into_boxed_dv)
-                .map_err(|_| ())
+                .map_err(into_boxed_error)
         }
 
-        pub fn tan(&self) -> Result<Box<DimensionalVariable>, ()> {
+        pub fn tan(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
             self.0
                 .tan()
                 .map(|v| CoreDV { value: v, unit: [0.0; units::BASE_UNITS_SIZE] })
                 .map(into_boxed_dv)
-                .map_err(|_| ())
+                .map_err(into_boxed_error)
         }
 
-        pub fn asin(&self) -> Result<Box<DimensionalVariable>, ()> {
-            self.0.asin().map(into_boxed_dv).map_err(|_| ())
+        pub fn asin(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            self.0.asin().map(into_boxed_dv).map_err(into_boxed_error)
         }
 
-        pub fn acos(&self) -> Result<Box<DimensionalVariable>, ()> {
-            self.0.acos().map(into_boxed_dv).map_err(|_| ())
+        pub fn acos(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            self.0.acos().map(into_boxed_dv).map_err(into_boxed_error)
         }
 
-        pub fn atan(&self) -> Result<Box<DimensionalVariable>, ()> {
-            self.0.atan().map(into_boxed_dv).map_err(|_| ())
+        pub fn atan(&self) -> Result<Box<DimensionalVariable>, Box<DvError>> {
+            self.0.atan().map(into_boxed_dv).map_err(into_boxed_error)
         }
 
         pub fn neg(&self) -> Box<DimensionalVariable> {
@@ -199,20 +209,32 @@ pub mod ffi {
             self.0 != other.0
         }
 
-        pub fn less_than(&self, other: &DimensionalVariable) -> Result<bool, ()> {
-            self.0.partial_cmp(&other.0).map(|o| o.is_lt()).ok_or(())
+        pub fn less_than(&self, other: &DimensionalVariable) -> Result<bool, Box<DvError>> {
+            self.0
+                .partial_cmp(&other.0)
+                .map(|o| o.is_lt())
+                .ok_or_else(|| into_boxed_error("Incompatible units for comparison".to_string()))
         }
 
-        pub fn less_equal(&self, other: &DimensionalVariable) -> Result<bool, ()> {
-            self.0.partial_cmp(&other.0).map(|o| o.is_lt() || o.is_eq()).ok_or(())
+        pub fn less_equal(&self, other: &DimensionalVariable) -> Result<bool, Box<DvError>> {
+            self.0
+                .partial_cmp(&other.0)
+                .map(|o| o.is_lt() || o.is_eq())
+                .ok_or_else(|| into_boxed_error("Incompatible units for comparison".to_string()))
         }
 
-        pub fn greater_than(&self, other: &DimensionalVariable) -> Result<bool, ()> {
-            self.0.partial_cmp(&other.0).map(|o| o.is_gt()).ok_or(())
+        pub fn greater_than(&self, other: &DimensionalVariable) -> Result<bool, Box<DvError>> {
+            self.0
+                .partial_cmp(&other.0)
+                .map(|o| o.is_gt())
+                .ok_or_else(|| into_boxed_error("Incompatible units for comparison".to_string()))
         }
 
-        pub fn greater_equal(&self, other: &DimensionalVariable) -> Result<bool, ()> {
-            self.0.partial_cmp(&other.0).map(|o| o.is_gt() || o.is_eq()).ok_or(())
+        pub fn greater_equal(&self, other: &DimensionalVariable) -> Result<bool, Box<DvError>> {
+            self.0
+                .partial_cmp(&other.0)
+                .map(|o| o.is_gt() || o.is_eq())
+                .ok_or_else(|| into_boxed_error("Incompatible units for comparison".to_string()))
         }
 
         pub fn clone_var(&self) -> Box<DimensionalVariable> {

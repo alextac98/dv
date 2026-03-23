@@ -1,11 +1,13 @@
 #pragma once
 
+#include "DvError.hpp"
 #include "DimensionalVariable.hpp"
 
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <variant>
 
 namespace dv {
 
@@ -13,29 +15,57 @@ inline std::string last_error() {
     return "dv operation failed";
 }
 
-template <class T, class E>
-inline T unwrap_or_throw(diplomat::result<T, E>&& result, const char* msg = "dv operation failed") {
-    auto v = std::move(result).ok();
-    if (!v.has_value()) {
-        throw std::runtime_error(msg);
+inline std::string last_error(std::monostate) {
+    return last_error();
+}
+
+inline std::string last_error(diplomat::Utf8Error) {
+    return "invalid UTF-8";
+}
+
+inline std::string last_error(const std::unique_ptr<DvError>& error) {
+    if (!error) {
+        return last_error();
     }
-    return std::move(*v);
+
+    auto message = error->to_string();
+    auto text = std::move(message).ok();
+    return text.has_value() && !text->empty() ? std::move(*text) : last_error();
+}
+
+inline std::string last_error(std::unique_ptr<DvError>&& error) {
+    return last_error(static_cast<const std::unique_ptr<DvError>&>(error));
+}
+
+template <class T, class E>
+inline T unwrap_or_throw(diplomat::result<T, E>&& result) {
+    if (result.is_ok()) {
+        auto v = std::move(result).ok();
+        return std::move(*v);
+    }
+
+    auto error = std::move(result).err();
+    throw std::runtime_error(error.has_value() ? last_error(std::move(*error)) : last_error());
 }
 
 template <class T>
 inline T unwrap_utf8_and_throw(
-    diplomat::result<diplomat::result<T, std::monostate>, diplomat::Utf8Error>&& result,
-    const char* msg = "dv operation failed"
+    diplomat::result<diplomat::result<T, std::unique_ptr<DvError>>, diplomat::Utf8Error>&& result
 ) {
+    if (result.is_err()) {
+        auto error = std::move(result).err();
+        throw std::runtime_error(error.has_value() ? last_error(std::move(*error)) : last_error());
+    }
+
     auto outer = std::move(result).ok();
-    if (!outer.has_value()) {
-        throw std::runtime_error("invalid UTF-8");
+    auto inner_result = std::move(*outer);
+    if (inner_result.is_ok()) {
+        auto inner = std::move(inner_result).ok();
+        return std::move(*inner);
     }
-    auto inner = std::move(*outer).ok();
-    if (!inner.has_value()) {
-        throw std::runtime_error(msg);
-    }
-    return std::move(*inner);
+
+    auto nested = std::move(inner_result).err();
+    throw std::runtime_error(nested.has_value() ? last_error(std::move(*nested)) : last_error());
 }
 
 class DV {

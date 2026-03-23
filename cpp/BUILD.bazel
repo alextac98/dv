@@ -8,6 +8,8 @@ genrule(
     outs = [
         "BaseUnits.d.hpp",
         "BaseUnits.hpp",
+        "DvError.d.hpp",
+        "DvError.hpp",
         "DimensionalVariable.d.hpp",
         "DimensionalVariable.hpp",
         "diplomat_runtime.hpp",

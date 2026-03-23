@@ -1,6 +1,6 @@
 [project]
 name = "dv_py"
-version = "0.3.3"
+version = "0.3.4"
 description = "Python bindings for dv (DimensionalVariable) - keeping track of units and dimensions for physical quantities"
 readme = "pip-readme.md"
 requires-python = ">=3.10"

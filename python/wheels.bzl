@@ -67,6 +67,7 @@ def dv_extension(
         srcs = [
             "dv_ext_ext.cpp",
             "sub_modules/dv_ext/BaseUnits_binding.cpp",
+            "sub_modules/dv_ext/DvError_binding.cpp",
             "sub_modules/dv_ext/DimensionalVariable_binding.cpp",
             nanobind_combined_src,
         ],
@@ -77,15 +78,31 @@ def dv_extension(
     )
 
 def dv_runtime_package(name, native_target):
+    so_target = "{}_so".format(name)
+    pyd_target = "{}_pyd".format(name)
+
     native.genrule(
-        name = name,
+        name = so_target,
         srcs = [native_target],
-        outs = [
-            "dv_py/dv_ext.so",
-            "dv_py/dv_ext.pyd",
-        ],
-        cmd_bash = "cp $< $(RULEDIR)/dv_py/dv_ext.so && cp $< $(RULEDIR)/dv_py/dv_ext.pyd",
-        cmd_bat = "copy /Y \"$(location {})\" \"$(RULEDIR)\\dv_py\\dv_ext.so\" >NUL && copy /Y \"$(location {})\" \"$(RULEDIR)\\dv_py\\dv_ext.pyd\" >NUL".format(native_target, native_target),
+        outs = ["dv_py/dv_ext.so"],
+        cmd_bash = "cp $< $(RULEDIR)/dv_py/dv_ext.so",
+        cmd_bat = "copy /Y \"$(location {})\" \"$(RULEDIR)\\dv_py\\dv_ext.so\" >NUL".format(native_target),
+    )
+
+    native.genrule(
+        name = pyd_target,
+        srcs = [native_target],
+        outs = ["dv_py/dv_ext.pyd"],
+        cmd_bash = "cp $< $(RULEDIR)/dv_py/dv_ext.pyd",
+        cmd_bat = "copy /Y \"$(location {})\" \"$(RULEDIR)\\dv_py\\dv_ext.pyd\" >NUL".format(native_target),
+    )
+
+    native.filegroup(
+        name = name,
+        srcs = select({
+            "//python:windows_x86_64": [":" + pyd_target],
+            "//conditions:default": [":" + so_target],
+        }),
     )
 
 def dv_wheel(
@@ -104,28 +121,42 @@ def dv_wheel(
         python_requires,
         summary,
         version):
-    pkg_target = "{}_pkg".format(name)
+    init_pkg_target = "{}_pkg_init".format(name)
+    so_pkg_target = "{}_pkg_so".format(name)
+    pyd_pkg_target = "{}_pkg_pyd".format(name)
     contents_target = "{}_contents".format(name)
     wheel_dir = name
 
     native.genrule(
-        name = pkg_target,
-        srcs = [
-            native_target,
-            "dv_py/__init__.py",
-        ],
-        outs = [
-            "{}/dv_py/__init__.py".format(wheel_dir),
-            "{}/dv_py/dv_ext.so".format(wheel_dir),
-            "{}/dv_py/dv_ext.pyd".format(wheel_dir),
-        ],
-        cmd_bash = "cp $(location dv_py/__init__.py) $(RULEDIR)/{0}/dv_py/__init__.py && cp $(location {1}) $(RULEDIR)/{0}/dv_py/dv_ext.so && cp $(location {1}) $(RULEDIR)/{0}/dv_py/dv_ext.pyd".format(wheel_dir, native_target),
-        cmd_bat = "copy /Y \"$(location dv_py/__init__.py)\" \"$(RULEDIR)\\{0}\\dv_py\\__init__.py\" >NUL && copy /Y \"$(location {1})\" \"$(RULEDIR)\\{0}\\dv_py\\dv_ext.so\" >NUL && copy /Y \"$(location {1})\" \"$(RULEDIR)\\{0}\\dv_py\\dv_ext.pyd\" >NUL".format(wheel_dir, native_target),
+        name = init_pkg_target,
+        srcs = ["dv_py/__init__.py"],
+        outs = ["{}/dv_py/__init__.py".format(wheel_dir)],
+        cmd_bash = "cp $(location dv_py/__init__.py) $(RULEDIR)/{}/dv_py/__init__.py".format(wheel_dir),
+        cmd_bat = "copy /Y \"$(location dv_py/__init__.py)\" \"$(RULEDIR)\\{}\\dv_py\\__init__.py\" >NUL".format(wheel_dir),
+    )
+
+    native.genrule(
+        name = so_pkg_target,
+        srcs = [native_target],
+        outs = ["{}/dv_py/dv_ext.so".format(wheel_dir)],
+        cmd_bash = "cp $(location {1}) $(RULEDIR)/{0}/dv_py/dv_ext.so".format(wheel_dir, native_target),
+        cmd_bat = "copy /Y \"$(location {1})\" \"$(RULEDIR)\\{0}\\dv_py\\dv_ext.so\" >NUL".format(wheel_dir, native_target),
+    )
+
+    native.genrule(
+        name = pyd_pkg_target,
+        srcs = [native_target],
+        outs = ["{}/dv_py/dv_ext.pyd".format(wheel_dir)],
+        cmd_bash = "cp $(location {1}) $(RULEDIR)/{0}/dv_py/dv_ext.pyd".format(wheel_dir, native_target),
+        cmd_bat = "copy /Y \"$(location {1})\" \"$(RULEDIR)\\{0}\\dv_py\\dv_ext.pyd\" >NUL".format(wheel_dir, native_target),
     )
 
     native.filegroup(
         name = contents_target,
-        srcs = [":" + pkg_target],
+        srcs = select({
+            "//python:windows_x86_64": [":" + init_pkg_target, ":" + pyd_pkg_target],
+            "//conditions:default": [":" + init_pkg_target, ":" + so_pkg_target],
+        }),
     )
 
     py_wheel(

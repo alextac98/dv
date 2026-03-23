@@ -1,5 +1,5 @@
 PYTHON_PACKAGE_NAME = "dv_py"
-PYTHON_PACKAGE_VERSION = "0.3.3"
+PYTHON_PACKAGE_VERSION = "0.3.4"
 
 PYTHON_PACKAGE_SUMMARY = "Python bindings for dv (DimensionalVariable) - keeping track of units and dimensions for physical quantities"
 PYTHON_PACKAGE_REQUIRES = ">=3.10"

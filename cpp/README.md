@@ -6,5 +6,6 @@ The Rust Diplomat bridge lives in `core/ffi/diplomat/`, while the Bazel-facing C
 - C++ target alias: `//cpp:dv_cpp`
 
 See:
-- `/Users/alex/code/alextac98/dv/c`
-- `/Users/alex/code/alextac98/dv/cpp`
+- `c/` for the generated C bindings and the `//c:dv_c` Bazel target
+- `cpp/` for the C++ compatibility wrapper and the `//cpp:dv_cpp` Bazel target
+- `docs/c.md` and `docs/cpp.md` for usage and build examples
