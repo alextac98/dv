@@ -31,6 +31,8 @@ bazel run //core:serve_docs
 
 #### Python
 
+On Windows, prefer PowerShell/cmd for Bazel commands, or set `MSYS2_ARG_CONV_EXCL='*'` when using Git Bash so `//...` labels are passed through unchanged.
+
 ```shell
 # Build the extension module (.so)
 bazel build //python:dv_ext.so

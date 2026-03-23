@@ -12,9 +12,13 @@ set(DV_CODEGEN_ROOT ${CMAKE_BINARY_DIR}/generated/diplomat)
 set(DV_CODEGEN_C_DIR ${DV_CODEGEN_ROOT}/c)
 set(DV_CODEGEN_CPP_DIR ${DV_CODEGEN_ROOT}/cpp)
 
+file(MAKE_DIRECTORY ${DV_CODEGEN_C_DIR} ${DV_CODEGEN_CPP_DIR})
+
 set(DV_GEN_C_HEADERS
     ${DV_CODEGEN_C_DIR}/BaseUnits.d.h
     ${DV_CODEGEN_C_DIR}/BaseUnits.h
+    ${DV_CODEGEN_C_DIR}/DvError.d.h
+    ${DV_CODEGEN_C_DIR}/DvError.h
     ${DV_CODEGEN_C_DIR}/DimensionalVariable.d.h
     ${DV_CODEGEN_C_DIR}/DimensionalVariable.h
     ${DV_CODEGEN_C_DIR}/diplomat_runtime.h
@@ -22,6 +26,8 @@ set(DV_GEN_C_HEADERS
 set(DV_GEN_CPP_HEADERS
     ${DV_CODEGEN_CPP_DIR}/BaseUnits.d.hpp
     ${DV_CODEGEN_CPP_DIR}/BaseUnits.hpp
+    ${DV_CODEGEN_CPP_DIR}/DvError.d.hpp
+    ${DV_CODEGEN_CPP_DIR}/DvError.hpp
     ${DV_CODEGEN_CPP_DIR}/DimensionalVariable.d.hpp
     ${DV_CODEGEN_CPP_DIR}/DimensionalVariable.hpp
     ${DV_CODEGEN_CPP_DIR}/diplomat_runtime.hpp

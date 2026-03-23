@@ -19,13 +19,22 @@ jobs:
       matrix:
         platform:
           - { runner: ubuntu-latest, artifact: linux-x86_64 }
-          - { runner: macos-13, artifact: macos-x86_64 }
           - { runner: macos-14, artifact: macos-arm64 }
           - { runner: windows-latest, artifact: windows-x86_64 }
         python:
-          - { version: '3.10', target: wheel_cp310, tag: cp310, dist: dist_cp310 }
-          - { version: '3.11', target: wheel_cp311, tag: cp311, dist: dist_cp311 }
-          - { version: '3.12+', target: wheel_abi3, tag: abi3, dist: dist_abi3 }
+          - {
+              version: "3.10",
+              target: wheel_cp310,
+              tag: cp310,
+              dist: dist_cp310,
+            }
+          - {
+              version: "3.11",
+              target: wheel_cp311,
+              tag: cp311,
+              dist: dist_cp311,
+            }
+          - { version: "3.12+", target: wheel_abi3, tag: abi3, dist: dist_abi3 }
     env:
       CI: true
       BAZELISK_ALLOW_ENVS: Y
@@ -44,6 +53,8 @@ jobs:
 
       - name: Build wheels
         shell: bash
+        env:
+          MSYS2_ARG_CONV_EXCL: "*"
         run: |
           bazel build //python:${{ matrix.python.target }}.dist
           BAZEL_BIN="$(bazel info bazel-bin)"
@@ -68,10 +79,10 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          - { version: '3.10', tag: cp310 }
-          - { version: '3.11', tag: cp311 }
-          - { version: '3.12', tag: abi3 }
-          - { version: '3.13', tag: abi3 }
+          - { version: "3.10", tag: cp310 }
+          - { version: "3.11", tag: cp311 }
+          - { version: "3.12", tag: abi3 }
+          - { version: "3.13", tag: abi3 }
     env:
       CI: true
       BAZELISK_ALLOW_ENVS: Y

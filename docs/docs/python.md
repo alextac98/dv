@@ -55,6 +55,8 @@ print(f"Distance: {distance.value_in('m')} m")
 
 For development in this repo:
 
+On Windows, run Bazel from PowerShell/cmd, or set `MSYS2_ARG_CONV_EXCL='*'` first if you are using Git Bash so labels like `//python:wheel_abi3.dist` are not rewritten into invalid `/python:...` paths.
+
 ```bash
 # Build the extension module
 bazel build //python:dv_ext.so
