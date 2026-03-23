@@ -68,9 +68,12 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
           $bazelArgs = @("--output_user_root=C:/bzl")
           bazel @bazelArgs build //python:${{ matrix.python.target }}.dist
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $bazelBin = bazel @bazelArgs info bazel-bin
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Copy-Item "$bazelBin/python/${{ matrix.python.dist }}/*.whl" dist/
 

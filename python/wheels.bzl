@@ -62,6 +62,11 @@ def dv_extension(
     if python_libs:
         deps.append(python_libs)
 
+    resolved_linkopts = select({
+        "//python:windows_x86_64": ["ntdll.lib"],
+        "//conditions:default": [],
+    }) + linkopts
+
     cc_binary(
         name = native_target,
         srcs = [
@@ -73,7 +78,7 @@ def dv_extension(
         ],
         copts = _nanobind_copts(nanobind_repo_path, limited_api = limited_api),
         deps = deps + extra_deps,
-        linkopts = linkopts,
+        linkopts = resolved_linkopts,
         linkshared = True,
     )
 

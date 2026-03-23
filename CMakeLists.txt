@@ -77,6 +77,7 @@ set_target_properties(dv_c PROPERTIES
     IMPORTED_LOCATION ${DV_DIPLOMAT_STATIC}
     INTERFACE_INCLUDE_DIRECTORIES ${DV_CODEGEN_C_DIR}
 )
+target_link_libraries(dv_c INTERFACE $<$<PLATFORM_ID:Linux>:m>)
 add_dependencies(dv_c dv_diplomat_bridge_ext dv_diplomat_codegen)
 
 add_library(dv_cpp INTERFACE)
