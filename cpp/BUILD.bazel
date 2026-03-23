@@ -1,55 +1,57 @@
-load("@rules_cc//cc:defs.bzl", "cc_library", "cc_binary")
-load("@rules_rust//rust:defs.bzl", "rust_shared_library", "rust_static_library")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
 package(default_visibility = ["//visibility:public"])
 
-# =============================================================================
-# C/C++ Interface
-# =============================================================================
-
-# C/C++ headers
-cc_library(
-    name = "dv_headers",
-    hdrs = [
-        "include/dv_c.h",
-        "include/dv.hpp",
+genrule(
+    name = "codegen_cpp",
+    srcs = ["//core/ffi/diplomat:src/lib.rs"],
+    outs = [
+        "BaseUnits.d.hpp",
+        "BaseUnits.hpp",
+        "DvError.d.hpp",
+        "DvError.hpp",
+        "DimensionalVariable.d.hpp",
+        "DimensionalVariable.hpp",
+        "diplomat_runtime.hpp",
     ],
-    includes = ["include"],
+    tools = ["//tools/diplomat_codegen:diplomat_codegen"],
+    cmd = "$(location //tools/diplomat_codegen:diplomat_codegen) cpp $(RULEDIR) --entry $(location //core/ffi/diplomat:src/lib.rs)",
 )
 
-# Linkable library for C/C++ that exposes the Rust C ABI.
+filegroup(
+    name = "generated_headers",
+    srcs = [":codegen_cpp"],
+)
+
 cc_library(
+    name = "generated_cpp_headers",
+    hdrs = [":generated_headers"],
+    includes = ["."],
+)
+
+alias(
+    name = "dv_headers",
+    actual = ":dv_cpp",
+)
+
+alias(
     name = "dv_c",
-    hdrs = ["include/dv_c.h"],
-    deps = ["//cpp:dv_capi_static"],
-    includes = ["include"],
+    actual = "//c:dv_c",
+)
+
+cc_library(
+    name = "dv_generated",
+    hdrs = [":generated_headers"],
+    includes = ["."],
+    deps = [
+        ":generated_cpp_headers",
+        "//core/ffi/diplomat:dv_diplomat_capi_static",
+    ],
 )
 
 cc_library(
     name = "dv_cpp",
     hdrs = ["include/dv.hpp"],
-    deps = [":dv_c"],
     includes = ["include"],
-)
-
-# =============================================================================
-# C-compatible Rust Library
-# =============================================================================
-
-# C ABI shared library for C/C++ consumers
-rust_shared_library(
-    name = "dv_capi_shared",
-    srcs = ["capi/src/lib.rs"],
-    crate_name = "dv_capi",
-    edition = "2021",
-    deps = ["//core:dv_rs"],
-)
-
-# Static variant for C/C++ to link without runtime dylib.
-rust_static_library(
-    name = "dv_capi_static",
-    srcs = ["capi/src/lib.rs"],
-    crate_name = "dv_capi",
-    edition = "2021",
-    deps = ["//core:dv_rs"],
+    deps = [":dv_generated"],
 )

@@ -19,6 +19,19 @@ bool nearly_equal(double actual, double expected, double abs_tol, double rel_tol
     return diff <= std::max(abs_tol, rel_tol * std::fabs(expected));
 }
 
+void expect_error_contains(const char* context, const std::string& needle, const std::function<void()>& fn) {
+    try {
+        fn();
+    } catch (const std::exception& e) {
+        if (std::string(e.what()).find(needle) == std::string::npos) {
+            throw std::runtime_error(std::string(context) + ": expected error containing '" + needle + "', got '" + e.what() + "'");
+        }
+        return;
+    }
+
+    throw std::runtime_error(std::string(context) + ": expected exception");
+}
+
 fs::path resolve_vector_path(const std::string& file_name) {
     std::vector<fs::path> candidates;
 
@@ -304,10 +317,39 @@ void run_vector_file(const std::string& file_name) {
     }
 }
 
+void run_error_message_checks() {
+    expect_error_contains("construct invalid unit", "Failed to parse unit 'nope'", []() {
+        dv::DV bad(1.0, "nope");
+    });
+
+    expect_error_contains("convert incompatible unit", "Incompatible unit conversion to: s", []() {
+        dv::DV distance(1.0, "m");
+        (void)distance.value_in("s");
+    });
+
+    expect_error_contains("add incompatible units", "Incompatible units for addition", []() {
+        dv::DV distance(1.0, "m");
+        dv::DV time(1.0, "s");
+        (void)(distance + time);
+    });
+
+    expect_error_contains("ln dimensional quantity", "ln requires a unitless quantity", []() {
+        dv::DV distance(1.0, "m");
+        (void)distance.ln();
+    });
+
+    expect_error_contains("comparison incompatible units", "Incompatible units for comparison", []() {
+        dv::DV distance(1.0, "m");
+        dv::DV time(1.0, "s");
+        (void)(distance < time);
+    });
+}
+
 int main() {
     try {
         run_vector_file("units_tests.json");
         run_vector_file("math_tests.json");
+        run_error_message_checks();
         std::cout << "Regression vectors passed for C++\n";
         return 0;
     } catch (const std::exception& e) {

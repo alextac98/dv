@@ -16,18 +16,18 @@ sidebar_position: 3
 </div>
 #
 
-DV supports python via PyO3 bindings to the core library. Any Rust `Results<>` are converted to Python exceptions.
+DV supports Python via Diplomat-generated nanobind bindings, with a thin Python compatibility wrapper (`python/dv_py/__init__.py`) preserving the ergonomic API.
 
 The project currently builds for these architectures:
 * Linux
     * x86 64-bit
-    * Arm 64-bit (aarch64-gnu)
-    * Arm 32-bit (armv7-gnueabihf)
 * MacOS
     * Arm 64-bit
     * x86 64-bit
 * Windows
     * x86 64-bit
+
+The current Bazel-managed PyPI wheel build publishes platform wheels for CPython 3.10, CPython 3.11, and a CPython 3.12+ `abi3` wheel.
     
 ## Quickstart
 
@@ -40,7 +40,7 @@ pip install dv-py
 Then import and use it in your Python code:
 
 ```python
-from dv import DV
+from dv_py import DimensionalVariable as DV
 
 # Create dimensioned variables
 velocity = DV(10.0, "m/s")
@@ -49,6 +49,26 @@ time = DV(2.0, "s")
 # Perform calculations with automatic dimensional analysis
 distance = velocity * time
 print(f"Distance: {distance.value_in('m')} m")
+```
+
+## Build Targets
+
+For development in this repo:
+
+On Windows, run Bazel from PowerShell/cmd, or set `MSYS2_ARG_CONV_EXCL='*'` first if you are using Git Bash so labels like `//python:wheel_abi3.dist` are not rewritten into invalid `/python:...` paths.
+
+```bash
+# Build the extension module
+bazel build //python:dv_ext.so
+
+# Build the default development wheel (CPython 3.12)
+bazel build //python:wheel_abi3.dist
+
+# Build wheels for all supported Python versions
+bazel build //python:wheel_cp310.dist //python:wheel_cp311.dist //python:wheel_abi3.dist
+
+# Run the Python test suite
+bazel test //python:test_dv
 ```
 
 
@@ -64,7 +84,8 @@ This example demonstrates:
 - Error handling for incompatible operations
 """
 
-from dv import DV, DVError
+from dv_py import DVError
+from dv_py import DimensionalVariable as DV
 
 
 def main():

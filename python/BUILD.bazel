@@ -1,34 +1,219 @@
 load("@rules_python//python:defs.bzl", "py_library", "py_test")
-load("@rules_rust_pyo3//:defs.bzl", "pyo3_extension")
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load(":package_metadata.bzl", "PYTHON_PACKAGE_AUTHOR", "PYTHON_PACKAGE_AUTHOR_EMAIL", "PYTHON_PACKAGE_CLASSIFIERS", "PYTHON_PACKAGE_LICENSE", "PYTHON_PACKAGE_NAME", "PYTHON_PACKAGE_PROJECT_URLS", "PYTHON_PACKAGE_REQUIRES", "PYTHON_PACKAGE_SUMMARY", "PYTHON_PACKAGE_VERSION")
+load(":wheels.bzl", "dv_extension", "dv_runtime_package", "dv_wheel")
 
 package(default_visibility = ["//visibility:public"])
 
-# Export files for version management and publishing
+NANOBIND_REPO_CP310 = "external/rules_python++pip+pypi_310_310_nanobind/site-packages/nanobind"
+NANOBIND_REPO_CP311 = "external/rules_python++pip+pypi_311_311_nanobind/site-packages/nanobind"
+NANOBIND_REPO_CP312 = "external/rules_python++pip+pypi_312_312_nanobind/site-packages/nanobind"
+
+# Export files for version management and packaging metadata
 exports_files([
-    "Cargo.toml",
+    "package_metadata.bzl",
     "pyproject.toml",
 ])
 
-# =============================================================================
-# Python PyO3 Extension Module
-# =============================================================================
-
-pyo3_extension(
-    name = "dv_pyo3",
-    srcs = ["src/lib.rs"],
-    deps = ["//core:dv_rs"],
+config_setting(
+    name = "linux_x86_64",
+    constraint_values = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:linux",
+    ],
 )
 
-# Python library that exposes the extension module
-# This creates a "dv" package by making __init__.py available at the root level
+config_setting(
+    name = "linux_aarch64",
+    constraint_values = [
+        "@platforms//cpu:aarch64",
+        "@platforms//os:linux",
+    ],
+)
+
+config_setting(
+    name = "macos_x86_64",
+    constraint_values = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:macos",
+    ],
+)
+
+config_setting(
+    name = "macos_arm64",
+    constraint_values = [
+        "@platforms//cpu:arm64",
+        "@platforms//os:macos",
+    ],
+)
+
+config_setting(
+    name = "windows_x86_64",
+    constraint_values = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:windows",
+    ],
+)
+
+genrule(
+    name = "codegen_python_nanobind",
+    srcs = ["//core/ffi/diplomat:src/lib.rs"],
+    outs = [
+        "dv_ext_ext.cpp",
+        "include/BaseUnits.d.hpp",
+        "include/BaseUnits.hpp",
+        "include/DvError.d.hpp",
+        "include/DvError.hpp",
+        "include/DimensionalVariable.d.hpp",
+        "include/DimensionalVariable.hpp",
+        "include/diplomat_nanobind_common.hpp",
+        "include/diplomat_runtime.hpp",
+        "sub_modules/dv_ext/BaseUnits_binding.cpp",
+        "sub_modules/dv_ext/DvError_binding.cpp",
+        "sub_modules/dv_ext/DimensionalVariable_binding.cpp",
+    ],
+    tools = ["//tools/diplomat_codegen:diplomat_codegen"],
+    cmd = "$(location //tools/diplomat_codegen:diplomat_codegen) nanobind $(RULEDIR) --entry $(location //core/ffi/diplomat:src/lib.rs) --config nanobind.lib_name=dv_ext",
+)
+
+filegroup(
+    name = "generated_nanobind_headers",
+    srcs = [
+        "include/BaseUnits.d.hpp",
+        "include/BaseUnits.hpp",
+        "include/DvError.d.hpp",
+        "include/DvError.hpp",
+        "include/DimensionalVariable.d.hpp",
+        "include/DimensionalVariable.hpp",
+        "include/diplomat_nanobind_common.hpp",
+        "include/diplomat_runtime.hpp",
+    ],
+)
+
+cc_library(
+    name = "generated_nanobind_header_lib",
+    hdrs = [":generated_nanobind_headers"],
+    includes = ["include"],
+)
+
+dv_extension(
+    name = "cp310",
+    nanobind_repo_path = NANOBIND_REPO_CP310,
+    nanobind_whl_files = "@@rules_python++pip+pypi_310_310_nanobind//:extracted_whl_files",
+    nanobind_combined_src = "@@rules_python++pip+pypi_310_310_nanobind//:site-packages/nanobind/src/nb_combined.cpp",
+    python_headers = "@python_3_10//:python_headers",
+    python_libs = "@python_3_10//:libpython",
+)
+
+dv_extension(
+    name = "cp311",
+    nanobind_repo_path = NANOBIND_REPO_CP311,
+    nanobind_whl_files = "@@rules_python++pip+pypi_311_311_nanobind//:extracted_whl_files",
+    nanobind_combined_src = "@@rules_python++pip+pypi_311_311_nanobind//:site-packages/nanobind/src/nb_combined.cpp",
+    python_headers = "@python_3_11//:python_headers",
+    python_libs = "@python_3_11//:libpython",
+)
+
+dv_extension(
+    name = "cp312",
+    nanobind_repo_path = NANOBIND_REPO_CP312,
+    nanobind_whl_files = "@@rules_python++pip+pypi_312_312_nanobind//:extracted_whl_files",
+    nanobind_combined_src = "@@rules_python++pip+pypi_312_312_nanobind//:site-packages/nanobind/src/nb_combined.cpp",
+    python_headers = "@python_3_12//:python_headers",
+    python_libs = "@python_3_12//:libpython",
+)
+
+dv_extension(
+    name = "abi3",
+    nanobind_repo_path = NANOBIND_REPO_CP312,
+    nanobind_whl_files = "@@rules_python++pip+pypi_312_312_nanobind//:extracted_whl_files",
+    nanobind_combined_src = "@@rules_python++pip+pypi_312_312_nanobind//:site-packages/nanobind/src/nb_combined.cpp",
+    python_headers = "@python_3_12//:python_headers",
+    limited_api = True,
+    extra_deps = select({
+        ":windows_x86_64": ["@@rules_python++python+python_3_12_x86_64-pc-windows-msvc//:abi3_interface"],
+        "//conditions:default": [],
+    }),
+    linkopts = select({
+        ":macos_arm64": ["-undefined", "dynamic_lookup"],
+        ":macos_x86_64": ["-undefined", "dynamic_lookup"],
+        "//conditions:default": [],
+    }),
+)
+
+alias(
+    name = "dv_ext.so",
+    actual = ":dv_ext_native_cp312",
+)
+
+dv_runtime_package(
+    name = "dv_ext_pkg_cp312",
+    native_target = ":dv_ext_native_cp312",
+)
+
+# Python library that exposes the generated nanobind extension module
 py_library(
     name = "dv_py",
     srcs = [
         "dv_py/__init__.py",
     ],
-    data = [":dv_pyo3"],
+    data = [":dv_ext_pkg_cp312"],
     imports = ["."],
     visibility = ["//visibility:public"],
+)
+
+dv_wheel(
+    name = "wheel_cp310",
+    native_target = ":dv_ext_native_cp310",
+    abi = "cp310",
+    python_tag = "cp310",
+    dist_folder = "dist_cp310",
+    author = PYTHON_PACKAGE_AUTHOR,
+    author_email = PYTHON_PACKAGE_AUTHOR_EMAIL,
+    classifiers = PYTHON_PACKAGE_CLASSIFIERS,
+    description_file = "pip-readme.md",
+    distribution = PYTHON_PACKAGE_NAME,
+    license = PYTHON_PACKAGE_LICENSE,
+    project_urls = PYTHON_PACKAGE_PROJECT_URLS,
+    python_requires = PYTHON_PACKAGE_REQUIRES,
+    summary = PYTHON_PACKAGE_SUMMARY,
+    version = PYTHON_PACKAGE_VERSION,
+)
+
+dv_wheel(
+    name = "wheel_cp311",
+    native_target = ":dv_ext_native_cp311",
+    abi = "cp311",
+    python_tag = "cp311",
+    dist_folder = "dist_cp311",
+    author = PYTHON_PACKAGE_AUTHOR,
+    author_email = PYTHON_PACKAGE_AUTHOR_EMAIL,
+    classifiers = PYTHON_PACKAGE_CLASSIFIERS,
+    description_file = "pip-readme.md",
+    distribution = PYTHON_PACKAGE_NAME,
+    license = PYTHON_PACKAGE_LICENSE,
+    project_urls = PYTHON_PACKAGE_PROJECT_URLS,
+    python_requires = PYTHON_PACKAGE_REQUIRES,
+    summary = PYTHON_PACKAGE_SUMMARY,
+    version = PYTHON_PACKAGE_VERSION,
+)
+
+dv_wheel(
+    name = "wheel_abi3",
+    native_target = ":dv_ext_native_abi3",
+    abi = "abi3",
+    python_tag = "cp312",
+    dist_folder = "dist_abi3",
+    author = PYTHON_PACKAGE_AUTHOR,
+    author_email = PYTHON_PACKAGE_AUTHOR_EMAIL,
+    classifiers = PYTHON_PACKAGE_CLASSIFIERS,
+    description_file = "pip-readme.md",
+    distribution = PYTHON_PACKAGE_NAME,
+    license = PYTHON_PACKAGE_LICENSE,
+    project_urls = PYTHON_PACKAGE_PROJECT_URLS,
+    python_requires = PYTHON_PACKAGE_REQUIRES,
+    summary = PYTHON_PACKAGE_SUMMARY,
+    version = PYTHON_PACKAGE_VERSION,
 )
 
 # =============================================================================
@@ -40,6 +225,6 @@ py_test(
     srcs = ["tests/test_dv.py"],
     deps = [
         ":dv_py",
-        "@pypi//pytest:pkg",
+        "@@rules_python++pip+pypi_312_312_pytest//:pkg",
     ],
 )

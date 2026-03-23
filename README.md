@@ -17,6 +17,14 @@ DV is a package that keeps track of units, and allows you to perform math while 
     - Java (Planned on [GH-6](https://github.com/alextac98/dv/issues/6))
     - Matlab (Planned on [GH-7](https://github.com/alextac98/dv/issues/7))
 
+## Repository structure
+
+- `core/`: Rust core logic and the published Rust crate
+- `core/ffi/diplomat/`: Rust-owned Diplomat bridge crate
+- `python/`: Python package, wrapper, tests, and Bazel Python binding targets
+- `c/`: C binding targets
+- `cpp/`: C++ binding targets and the `dv.hpp` compatibility wrapper
+
 ## Contributing to the project
 
 This project is always a work in progress. We welcome contributions, small or large! Please visit this page to learn more! https://dv.alextac.com/docs/category/developers-guides
@@ -27,4 +35,4 @@ This project is licensed under the Apache License, Version 2.0 (the "License"). 
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
-Copyright &copy; 2025 Alex Tacescu
+Copyright &copy; 2026 Alex Tacescu

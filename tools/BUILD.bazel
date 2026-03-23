@@ -17,11 +17,10 @@ py_binary(
     data = [
         "//:VERSION.toml",
         "//core:Cargo.toml",
-        "//python:Cargo.toml",
         "//python:pyproject.toml",
     ],
     deps = [
-        "@pypi//toml",
-        "@pypi//requests",
+        "@@rules_python++pip+pypi_312_312_toml//:pkg",
+        "@@rules_python++pip+pypi_312_312_requests//:pkg",
     ],
 )

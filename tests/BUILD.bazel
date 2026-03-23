@@ -34,7 +34,7 @@ py_test(
     data = [":regression_vectors"],
     deps = [
         "//python:dv_py",
-        "@pypi//pytest:pkg",
+        "@@rules_python++pip+pypi_312_312_pytest//:pkg",
     ],
 )
 

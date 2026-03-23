@@ -1,0 +1,12 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+rust_binary(
+    name = "diplomat_codegen",
+    srcs = ["main.rs"],
+    edition = "2021",
+    deps = [
+        "@crates//:diplomat-tool",
+    ],
+)

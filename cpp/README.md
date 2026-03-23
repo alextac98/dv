@@ -1,13 +1,11 @@
 # dv C/C++ Bindings
 
-This folder contains C and C++ headers wrapping the Rust core via a small C ABI shim.
+The Rust Diplomat bridge lives in `core/ffi/diplomat/`, while the Bazel-facing C/C++ binding targets live directly in the language directories.
 
-See full docs under docs site pages “C” and “C++”.
+- C target alias: `//cpp:dv_c`
+- C++ target alias: `//cpp:dv_cpp`
 
-Quick usage:
-- Bazel: `bazel run //cpp:demo_c` and `bazel run //cpp:demo_cpp`
-- CMake: `cmake -S . -B build && cmake --build build --target dv_c_demo dv_cpp_demo`
-
-Headers in `cpp/include`:
-- `dv_c.h`: C API
-- `dv.hpp`: C++ RAII wrapper
+See:
+- `c/` for the generated C bindings and the `//c:dv_c` Bazel target
+- `cpp/` for the C++ compatibility wrapper and the `//cpp:dv_cpp` Bazel target
+- `docs/c.md` and `docs/cpp.md` for usage and build examples

@@ -31,9 +31,17 @@ bazel run //core:serve_docs
 
 #### Python
 
+On Windows, prefer PowerShell/cmd for Bazel commands, or set `MSYS2_ARG_CONV_EXCL='*'` when using Git Bash so `//...` labels are passed through unchanged.
+
 ```shell
-# Build the extension
-bazel build //python:maturin_build
+# Build the extension module (.so)
+bazel build //python:dv_ext.so
+
+# Build the default development wheel (CPython 3.12+ abi3)
+bazel build //python:wheel_abi3.dist
+
+# Build distributable wheels for all supported Python versions
+bazel build //python:wheel_cp310.dist //python:wheel_cp311.dist //python:wheel_abi3.dist
 
 # Run tests
 bazel test //python:test_dv
@@ -62,9 +70,11 @@ The core of the library is written in rust, and lives in the `core` directory. L
 | Path | Description |
 |---|---|
 | `core/` | Rust crate + core functionality |
+| `core/ffi/diplomat/` | Rust-owned Diplomat bridge crate |
+| `c/` | C binding targets |
 | `docs/` | Docs site for users and developers |
-| `cpp/` | C/C++ bindings |
-| `python/` | Python bindings |
+| `cpp/` | C++ bindings and compatibility wrapper |
+| `python/` | Python bindings, wheel packaging, and tests |
 | `MODULE.bazel` | Bazel module dependencies |
 
 ### Contributing Units
