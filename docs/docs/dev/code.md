@@ -33,7 +33,10 @@ bazel run //core:serve_docs
 
 ```shell
 # Build the extension module (.so)
-bazel build //generated/diplomat/nanobind:dv_pyo3.so
+bazel build //python:dv_ext.so
+
+# Build a distributable wheel
+bazel build //python:wheel.dist
 
 # Run tests
 bazel test //python:test_dv
@@ -62,9 +65,11 @@ The core of the library is written in rust, and lives in the `core` directory. L
 | Path | Description |
 |---|---|
 | `core/` | Rust crate + core functionality |
+| `core/ffi/diplomat/` | Rust-owned Diplomat bridge crate |
+| `c/` | C binding targets |
 | `docs/` | Docs site for users and developers |
-| `cpp/` | C/C++ bindings |
-| `python/` | Python bindings |
+| `cpp/` | C++ bindings and compatibility wrapper |
+| `python/` | Python bindings, wheel packaging, and tests |
 | `MODULE.bazel` | Bazel module dependencies |
 
 ### Contributing Units

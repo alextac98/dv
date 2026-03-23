@@ -1,17 +1,155 @@
 load("@rules_python//python:defs.bzl", "py_library", "py_test")
+load("@rules_python//python:packaging.bzl", "py_wheel")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+load(":package_metadata.bzl", "PYTHON_PACKAGE_AUTHOR", "PYTHON_PACKAGE_AUTHOR_EMAIL", "PYTHON_PACKAGE_CLASSIFIERS", "PYTHON_PACKAGE_LICENSE", "PYTHON_PACKAGE_NAME", "PYTHON_PACKAGE_PROJECT_URLS", "PYTHON_PACKAGE_REQUIRES", "PYTHON_PACKAGE_SUMMARY", "PYTHON_PACKAGE_VERSION")
 
 package(default_visibility = ["//visibility:public"])
 
+NANOBIND_REPO = "external/rules_python++pip+pypi_312_nanobind/site-packages/nanobind"
+
 # Export files for version management and packaging metadata
 exports_files([
+    "package_metadata.bzl",
     "pyproject.toml",
 ])
 
+config_setting(
+    name = "linux_x86_64",
+    constraint_values = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:linux",
+    ],
+)
+
+config_setting(
+    name = "linux_aarch64",
+    constraint_values = [
+        "@platforms//cpu:aarch64",
+        "@platforms//os:linux",
+    ],
+)
+
+config_setting(
+    name = "macos_x86_64",
+    constraint_values = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:macos",
+    ],
+)
+
+config_setting(
+    name = "macos_arm64",
+    constraint_values = [
+        "@platforms//cpu:arm64",
+        "@platforms//os:macos",
+    ],
+)
+
+config_setting(
+    name = "windows_x86_64",
+    constraint_values = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:windows",
+    ],
+)
+
 genrule(
-    name = "dv_pyo3_ext_pkg",
-    srcs = ["//generated/diplomat/nanobind:dv_pyo3.so"],
-    outs = ["dv_py/dv_pyo3.so"],
-    cmd = "cp $< $@",
+    name = "codegen_python_nanobind",
+    srcs = ["//core/ffi/diplomat:src/lib.rs"],
+    outs = [
+        "dv_ext_ext.cpp",
+        "include/BaseUnits.d.hpp",
+        "include/BaseUnits.hpp",
+        "include/DimensionalVariable.d.hpp",
+        "include/DimensionalVariable.hpp",
+        "include/diplomat_nanobind_common.hpp",
+        "include/diplomat_runtime.hpp",
+        "sub_modules/dv_ext/BaseUnits_binding.cpp",
+        "sub_modules/dv_ext/DimensionalVariable_binding.cpp",
+    ],
+    tools = ["//tools/diplomat_codegen:diplomat_codegen"],
+    cmd = "$(location //tools/diplomat_codegen:diplomat_codegen) nanobind $(RULEDIR) --entry $(location //core/ffi/diplomat:src/lib.rs) --config nanobind.lib_name=dv_ext",
+)
+
+filegroup(
+    name = "generated_nanobind_headers",
+    srcs = [
+        "include/BaseUnits.d.hpp",
+        "include/BaseUnits.hpp",
+        "include/DimensionalVariable.d.hpp",
+        "include/DimensionalVariable.hpp",
+        "include/diplomat_nanobind_common.hpp",
+        "include/diplomat_runtime.hpp",
+    ],
+)
+
+cc_library(
+    name = "generated_nanobind_header_lib",
+    hdrs = [":generated_nanobind_headers"],
+    includes = ["include"],
+)
+
+cc_library(
+    name = "nanobind_wheel_files",
+    hdrs = ["@pypi//nanobind:extracted_whl_files"],
+)
+
+cc_binary(
+    name = "dv_ext_native",
+    srcs = [
+        "dv_ext_ext.cpp",
+        "sub_modules/dv_ext/BaseUnits_binding.cpp",
+        "sub_modules/dv_ext/DimensionalVariable_binding.cpp",
+        "@@rules_python++pip+pypi_312_nanobind//:site-packages/nanobind/src/nb_combined.cpp",
+    ],
+    copts = select({
+        ":windows_x86_64": [
+            "/std:c++17",
+            "/I" + NANOBIND_REPO + "/include",
+            "/I" + NANOBIND_REPO + "/src",
+            "/I" + NANOBIND_REPO + "/ext/robin_map/include",
+        ],
+        "//conditions:default": [
+            "-std=c++17",
+            "-faligned-allocation",
+            "-fvisibility=hidden",
+            "-I" + NANOBIND_REPO + "/include",
+            "-I" + NANOBIND_REPO + "/src",
+            "-I" + NANOBIND_REPO + "/ext/robin_map/include",
+        ],
+    }),
+    deps = [
+        ":generated_nanobind_header_lib",
+        ":nanobind_wheel_files",
+        "//core/ffi/diplomat:dv_diplomat_capi_static",
+        "@python_3_12//:libpython",
+        "@python_3_12//:python_headers",
+    ],
+    linkshared = True,
+)
+
+alias(
+    name = "dv_ext.so",
+    actual = ":dv_ext_native",
+)
+
+genrule(
+    name = "dv_ext_pkg",
+    srcs = [":dv_ext_native"],
+    outs = [
+        "dv_py/dv_ext.so",
+        "dv_py/dv_ext.pyd",
+    ],
+    cmd_bash = "cp $< $(RULEDIR)/dv_py/dv_ext.so && cp $< $(RULEDIR)/dv_py/dv_ext.pyd",
+    cmd_bat = "copy /Y \"$(location :dv_ext_native)\" \"$(RULEDIR)\\dv_py\\dv_ext.so\" >NUL && copy /Y \"$(location :dv_ext_native)\" \"$(RULEDIR)\\dv_py\\dv_ext.pyd\" >NUL",
+)
+
+filegroup(
+    name = "wheel_contents",
+    srcs = [
+        ":dv_ext_pkg",
+        "dv_py/__init__.py",
+    ],
 )
 
 # Python library that exposes the generated nanobind extension module
@@ -20,9 +158,38 @@ py_library(
     srcs = [
         "dv_py/__init__.py",
     ],
-    data = [":dv_pyo3_ext_pkg"],
+    data = [":dv_ext_pkg"],
     imports = ["."],
     visibility = ["//visibility:public"],
+)
+
+py_wheel(
+    name = "wheel",
+    abi = "cp312",
+    author = PYTHON_PACKAGE_AUTHOR,
+    author_email = PYTHON_PACKAGE_AUTHOR_EMAIL,
+    classifiers = PYTHON_PACKAGE_CLASSIFIERS,
+    description_file = "pip-readme.md",
+    distribution = PYTHON_PACKAGE_NAME,
+    dist_folder = "dist",
+    license = PYTHON_PACKAGE_LICENSE,
+    platform = select(
+        {
+            ":linux_aarch64": "linux_aarch64",
+            ":linux_x86_64": "linux_x86_64",
+            ":macos_arm64": "macosx_11_0_arm64",
+            ":macos_x86_64": "macosx_10_15_x86_64",
+            ":windows_x86_64": "win_amd64",
+        },
+        no_match_error = "Wheel platform tags are only configured for Linux/macOS x86_64 and arm64, plus Windows x86_64.",
+    ),
+    project_urls = PYTHON_PACKAGE_PROJECT_URLS,
+    python_requires = PYTHON_PACKAGE_REQUIRES,
+    python_tag = "cp312",
+    strip_path_prefixes = ["python"],
+    summary = PYTHON_PACKAGE_SUMMARY,
+    version = PYTHON_PACKAGE_VERSION,
+    deps = [":wheel_contents"],
 )
 
 # =============================================================================

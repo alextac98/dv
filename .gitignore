@@ -19,12 +19,5 @@ __pycache__/
 # CMake Build Directories
 build-*/
 
-
-# Diplomat generated bindings are produced by Bazel/CMake at build time
-generated/diplomat/**
-!generated/diplomat/
-!generated/diplomat/**/
-!generated/diplomat/**/BUILD.bazel
-
 # VSCode Settings
 .vscode/

@@ -21,13 +21,13 @@ DV supports Python via Diplomat-generated nanobind bindings, with a thin Python 
 The project currently builds for these architectures:
 * Linux
     * x86 64-bit
-    * Arm 64-bit (aarch64-gnu)
-    * Arm 32-bit (armv7-gnueabihf)
 * MacOS
     * Arm 64-bit
     * x86 64-bit
 * Windows
     * x86 64-bit
+
+The current Bazel-managed PyPI wheel build is pinned to Python 3.12 (`cp312`).
     
 ## Quickstart
 
@@ -40,7 +40,7 @@ pip install dv-py
 Then import and use it in your Python code:
 
 ```python
-from dv import DV
+from dv_py import DimensionalVariable as DV
 
 # Create dimensioned variables
 velocity = DV(10.0, "m/s")
@@ -49,6 +49,21 @@ time = DV(2.0, "s")
 # Perform calculations with automatic dimensional analysis
 distance = velocity * time
 print(f"Distance: {distance.value_in('m')} m")
+```
+
+## Build Targets
+
+For development in this repo:
+
+```bash
+# Build the extension module
+bazel build //python:dv_ext.so
+
+# Build the wheel
+bazel build //python:wheel.dist
+
+# Run the Python test suite
+bazel test //python:test_dv
 ```
 
 
@@ -64,7 +79,8 @@ This example demonstrates:
 - Error handling for incompatible operations
 """
 
-from dv import DV, DVError
+from dv_py import DVError
+from dv_py import DimensionalVariable as DV
 
 
 def main():

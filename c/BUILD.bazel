@@ -4,7 +4,7 @@ package(default_visibility = ["//visibility:public"])
 
 genrule(
     name = "codegen_c",
-    srcs = ["//ffi/diplomat:src/lib.rs"],
+    srcs = ["//core/ffi/diplomat:src/lib.rs"],
     outs = [
         "BaseUnits.d.h",
         "BaseUnits.h",
@@ -13,7 +13,7 @@ genrule(
         "diplomat_runtime.h",
     ],
     tools = ["//tools/diplomat_codegen:diplomat_codegen"],
-    cmd = "$(location //tools/diplomat_codegen:diplomat_codegen) c $(RULEDIR) --entry $(location //ffi/diplomat:src/lib.rs)",
+    cmd = "$(location //tools/diplomat_codegen:diplomat_codegen) c $(RULEDIR) --entry $(location //core/ffi/diplomat:src/lib.rs)",
 )
 
 filegroup(
@@ -22,10 +22,10 @@ filegroup(
 )
 
 cc_library(
-    name = "dv_diplomat_c",
+    name = "dv_c",
     hdrs = [":generated_headers"],
     includes = ["."],
     deps = [
-        "//ffi/diplomat:dv_diplomat_capi_static",
+        "//core/ffi/diplomat:dv_diplomat_capi_static",
     ],
 )

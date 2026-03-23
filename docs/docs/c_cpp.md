@@ -15,7 +15,7 @@ For Bazel, make sure you properly have both Rust and C/C++ toolchains (ideally h
 
 ## C++
 
-DV exposes generated C and C++ bindings via Diplomat.
+DV exposes generated C and C++ bindings via Diplomat. The Rust bridge crate lives in `core/ffi/diplomat`, while the Bazel targets for each language live in `c/` and `cpp/`.
 
 ```cpp 
 #include "DimensionalVariable.hpp"
@@ -44,9 +44,11 @@ load("@rules_cc//cc:defs.bzl", "cc_binary")
 cc_binary(
     name = "example",
     srcs = ["main.cpp"],
-    deps = ["@dv//cpp:dv_cpp"],  # alias to generated Diplomat C++ bindings
+    deps = ["@dv//cpp:dv_cpp"],  # compatibility wrapper target
 )
 ```
+
+If you want the raw generated C++ API directly, depend on `@dv//cpp:dv_generated`.
 
 ### Static vs dynamic linking
 
@@ -83,10 +85,10 @@ load("@rules_cc//cc:defs.bzl", "cc_binary")
 cc_binary(
   name = "example_c",
   srcs = ["main.c"],
-  deps = ["@dv//cpp:dv_c"],
+  deps = ["@dv//c:dv_c"],
 )
 ```
 
 ### CMake
 
-CMake support is being updated for the Diplomat-based binding generation. Use Bazel for now.
+CMake support shells out to the Rust Diplomat bridge in `core/ffi/diplomat` to regenerate C and C++ headers in the build tree. Bazel remains the primary development path.

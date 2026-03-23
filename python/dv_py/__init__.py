@@ -5,9 +5,9 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    from . import dv_pyo3 as _nb
+    from . import dv_ext as _nb
 except ImportError:
-    import dv_pyo3 as _nb
+    import dv_ext as _nb
 
 
 class DVError(Exception):

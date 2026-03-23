@@ -6,7 +6,7 @@ include(ExternalProject)
 find_program(BAZEL_EXECUTABLE bazel REQUIRED)
 find_program(CARGO_EXECUTABLE cargo REQUIRED)
 
-set(DV_BRIDGE_DIR ${CMAKE_CURRENT_LIST_DIR}/ffi/diplomat)
+set(DV_BRIDGE_DIR ${CMAKE_CURRENT_LIST_DIR}/core/ffi/diplomat)
 set(DV_BRIDGE_ENTRY ${DV_BRIDGE_DIR}/src/lib.rs)
 set(DV_CODEGEN_ROOT ${CMAKE_BINARY_DIR}/generated/diplomat)
 set(DV_CODEGEN_C_DIR ${DV_CODEGEN_ROOT}/c)

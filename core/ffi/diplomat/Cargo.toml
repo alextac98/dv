@@ -14,7 +14,7 @@ crate-type = ["rlib", "staticlib", "cdylib"]
 
 [dependencies.dv_rs]
 package = "dv"
-path = "../../core"
+path = "../.."
 
 [dependencies]
 diplomat = "0.14.0"

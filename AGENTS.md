@@ -93,7 +93,8 @@ This project is a library in multiple languages for handling units and checking 
 - Raise and assert `DVError` for invalid operations.
 
 ### C/C++ (bindings)
-- Bazel-facing bindings are generated under `generated/diplomat/{c,cpp}`.
+- The Rust Diplomat bridge lives under `core/ffi/diplomat`.
+- Bazel-facing generated bindings live in the language directories: `c/`, `cpp/`, and `python/`.
 - `cpp/include/dv.hpp` is a thin compatibility wrapper over the generated Diplomat C++ bindings.
 - CMake support is minimal; prefer Bazel for consistency.
 

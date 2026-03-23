@@ -107,3 +107,15 @@ Status | Language | Notes
 🛠 Planned | Matlab | MEX wrapper
 
 Cross‑language parity tests will ensure identical exponent math and error strings (where sensible).
+
+## Repository Layout
+
+The repository is organized around one Rust source of truth plus language-specific package directories:
+
+| Path | Purpose |
+| --- | --- |
+| `core/` | Core Rust logic and the published Rust crate |
+| `core/ffi/diplomat/` | Rust-owned Diplomat bridge crate used for cross-language code generation |
+| `python/` | Python package wrapper, wheel packaging, tests, and generated extension build targets |
+| `c/` | C binding targets |
+| `cpp/` | C++ binding targets and the `dv.hpp` compatibility wrapper |

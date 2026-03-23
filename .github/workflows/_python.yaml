@@ -12,59 +12,45 @@ jobs:
   # ----------------------------------------------------------------------------
 
   python-build-wheels:
-    name: Build wheels on ${{ matrix.platform.os }} (${{ matrix.platform.target }})
+    name: Build wheels on ${{ matrix.platform.runner }}
     runs-on: ${{ matrix.platform.runner }}
     strategy:
       fail-fast: false
       matrix:
         platform:
-          # Linux
-          - {
-              os: linux,
-              runner: ubuntu-latest,
-              target: x86_64-unknown-linux-gnu,
-            } # x86 64-bit
-          - {
-              os: linux,
-              runner: ubuntu-latest,
-              target: aarch64-unknown-linux-gnu,
-            } # Arm 64-bit
-          - {
-              os: linux,
-              runner: ubuntu-latest,
-              target: armv7-unknown-linux-gnueabihf,
-            } # Arm 32-bit
-          # macOS
-          - { os: macos, runner: macos-latest, target: universal2-apple-darwin } # MacOS Universal
-          # Windows
-          - {
-              os: windows,
-              runner: windows-latest,
-              target: x86_64-pc-windows-msvc,
-            } # x86 64-bit
+          - { runner: ubuntu-latest, artifact: linux-x86_64 }
+          - { runner: macos-13, artifact: macos-x86_64 }
+          - { runner: macos-14, artifact: macos-arm64 }
+          - { runner: windows-latest, artifact: windows-x86_64 }
+    env:
+      CI: true
+      BAZELISK_ALLOW_ENVS: Y
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Cache Bazel
+        uses: actions/cache@v4
         with:
-          python-version: "3.12"
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}
+          restore-keys: bazel-${{ runner.os }}
 
       - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        with:
-          working-directory: python
-          target: ${{ matrix.platform.target }}
-          args: --release --strip --out dist --compatibility pypi
-          manylinux: ${{ matrix.platform.os == 'linux' && 'auto' || null }}
+        shell: bash
+        run: |
+          bazel build //python:wheel.dist
+          BAZEL_BIN="$(bazel info bazel-bin)"
+          mkdir -p dist
+          cp "${BAZEL_BIN}/python/dist/"*.whl dist/
+
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.platform.os }}-${{ matrix.platform.target }}
-          path: python/dist/*.whl
+          name: wheels-${{ matrix.platform.artifact }}
+          path: dist/*.whl
 
   # ----------------------------------------------------------------------------
   # Test Python Bindings
@@ -89,6 +75,23 @@ jobs:
           path: ~/.cache/bazel
           key: bazel-${{ runner.os }}
           restore-keys: bazel-${{ runner.os }}
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download Linux wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-linux-x86_64
+          path: dist/
+
+      - name: Smoke test built wheel
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install dist/*.whl
+          python -c "import dv_py; value = dv_py.DimensionalVariable(10, 'm').value(); print(value)"
 
       - name: Test Python Bindings
         run: bazel test //python/... --test_output=errors --keep_going

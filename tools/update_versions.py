@@ -2,6 +2,7 @@ import argparse
 import toml
 import requests
 import os
+import re
 from pathlib import Path
 
 
@@ -131,9 +132,23 @@ def update_python(versions: tuple, dryrun: bool = False) -> bool:
     with open(pyproject_path, "r") as f:
         pyproject_toml = toml.load(f)
 
+    package_metadata_path = workspace_root / "python" / "package_metadata.bzl"
+    package_metadata_text = package_metadata_path.read_text()
+    version_match = re.search(
+        r'^PYTHON_PACKAGE_VERSION = "([^"]+)"$',
+        package_metadata_text,
+        re.MULTILINE,
+    )
+    if not version_match:
+        raise ValueError(
+            f"Unable to find PYTHON_PACKAGE_VERSION in {package_metadata_path}"
+        )
+
     current_pyproject_version = pyproject_toml["project"]["version"]
+    current_build_version = version_match.group(1)
 
     versions_match_pyproject = current_pyproject_version == version_str
+    versions_match_build = current_build_version == version_str
     version_not_used = version_str not in pypi_versions
 
     has_passed = True
@@ -147,15 +162,17 @@ def update_python(versions: tuple, dryrun: bool = False) -> bool:
         print("\t❌ Python package version is already published on PyPI.")
         has_passed &= False
 
-    if versions_match_pyproject:
+    if versions_match_pyproject and versions_match_build:
         # Versions already match
-        print("\t✅ Python pyproject.toml version is consistent.")
+        print("\t✅ Python package version metadata is consistent.")
         has_passed &= True
     else:
         if dryrun:
             print("\t❌ Python package version is inconsistent.")
             if not versions_match_pyproject:
                 print(f"\t\tpyproject.toml: {current_pyproject_version}")
+            if not versions_match_build:
+                print(f"\t\tpackage_metadata.bzl: {current_build_version}")
             print(f"\t\tVersion.toml:   {version_str}")
             has_passed &= False
         elif not version_not_used:
@@ -171,6 +188,18 @@ def update_python(versions: tuple, dryrun: bool = False) -> bool:
                     toml.dump(pyproject_toml, f)
                 print(
                     f"\t⚠️  Updated Python pyproject.toml version from {current_pyproject_version} to {version_str}."
+                )
+
+            if not versions_match_build:
+                updated_package_metadata_text = re.sub(
+                    r'^PYTHON_PACKAGE_VERSION = "([^"]+)"$',
+                    f'PYTHON_PACKAGE_VERSION = "{version_str}"',
+                    package_metadata_text,
+                    flags = re.MULTILINE,
+                )
+                package_metadata_path.write_text(updated_package_metadata_text)
+                print(
+                    f"\t⚠️  Updated Python package_metadata.bzl version from {current_build_version} to {version_str}."
                 )
 
             has_passed &= True
