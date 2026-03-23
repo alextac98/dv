@@ -47,11 +47,14 @@ jobs:
       - name: Cache Bazel
         uses: actions/cache@v4
         with:
-          path: ~/.cache/bazel
+          path: |
+            ~/.cache/bazel
+            C:\bzl
           key: bazel-${{ runner.os }}
           restore-keys: bazel-${{ runner.os }}
 
-      - name: Build wheels
+      - name: Build wheels (Unix)
+        if: runner.os != 'Windows'
         shell: bash
         env:
           MSYS2_ARG_CONV_EXCL: "*"
@@ -60,6 +63,16 @@ jobs:
           BAZEL_BIN="$(bazel info bazel-bin)"
           mkdir -p dist
           cp "${BAZEL_BIN}/python/${{ matrix.python.dist }}/"*.whl dist/
+
+      - name: Build wheels (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $bazelArgs = @("--output_user_root=C:/bzl")
+          bazel @bazelArgs build //python:${{ matrix.python.target }}.dist
+          $bazelBin = bazel @bazelArgs info bazel-bin
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item "$bazelBin/python/${{ matrix.python.dist }}/*.whl" dist/
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4

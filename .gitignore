@@ -17,6 +17,7 @@ __pycache__/
 **/dist/
 
 # CMake Build Directories
+build/
 build-*/
 
 # VSCode Settings
